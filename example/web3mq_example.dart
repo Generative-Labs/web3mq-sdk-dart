@@ -2,7 +2,7 @@ import 'package:web3mq/src/client.dart';
 import 'package:web3mq/src/ws/models/user.dart';
 
 Future<void> main() async {
-  final client = Web3MQClient('b67pax5b2wdq');
+  final client = Web3MQClient('api-key');
 
   await client.connectUser(User(
       "user:7c0b577c0786e51f90522f833bf8ac8749cb32d681e7eccedba1dcc45f9a5173",

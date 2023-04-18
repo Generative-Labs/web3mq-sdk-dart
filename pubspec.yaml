@@ -1,5 +1,5 @@
 name: web3mq
-description: A starting point for Dart libraries or applications.
+description: Provides a modern way of implementing Web3MQ APIs.
 version: 0.1.0-dev.1
 homepage: https://www.web3mq.com
 
