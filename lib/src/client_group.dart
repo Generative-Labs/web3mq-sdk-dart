@@ -11,9 +11,7 @@ extension ClientGroup on Web3MQClient {
   Future<Group> createGroup(String name, String? avatarUrl) async {
     final group = await _service.group.createGroup(name, avatarUrl);
     // if create group success, should refresh channel list.
-    if (null != group) {
-      queryChannelsOnline();
-    }
+    queryChannelsOnline();
     return group;
   }
 
