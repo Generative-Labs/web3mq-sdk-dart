@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
 import 'package:cryptography/cryptography.dart';
+import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:pointycastle/api.dart' as pointycastle;
 import 'package:rxdart/rxdart.dart';
@@ -22,7 +23,6 @@ import 'package:web3mq/src/wallet_connector.dart';
 import 'package:web3mq/src/ws/models/pb/message.pb.dart';
 import 'package:web3mq/src/ws/models/ws_models.dart';
 import 'package:web3mq/src/ws/websocket.dart';
-import 'package:intl/intl.dart';
 
 import 'api/responses.dart';
 import 'client_state.dart';
