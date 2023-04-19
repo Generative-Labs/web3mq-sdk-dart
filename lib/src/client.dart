@@ -6,6 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:intl/intl.dart';
+import 'package:intl/intl_standalone.dart';
 import 'package:logging/logging.dart';
 import 'package:pointycastle/api.dart' as pointycastle;
 import 'package:rxdart/rxdart.dart';
@@ -322,22 +323,10 @@ class Web3MQClient {
     // we want to query the channels and sync the state
     if (currentState == ConnectionStatus.connected &&
         previousState != ConnectionStatus.connected) {
-      final topics = state.channels.keys.toList(growable: false);
-      // should be auto retryable
-      queryChannels().listen((event) {});
-      if (topics.isNotEmpty) {
-        if (persistenceEnabled) {
-          await sync();
-        }
-      } else {
-        // channels are empty, assuming it's a fresh start
-        // and making sure `lastSyncAt` is initialized
-        if (persistenceEnabled) {
-          final lastSyncAt = await _persistenceClient?.getLastSyncAt();
-          if (lastSyncAt == null) {
-            await _persistenceClient?.updateLastSyncAt(DateTime.now());
-          }
-        }
+      Stream<List<ChannelModel>> channels = queryChannels();
+      await for (List<ChannelModel> _ in channels) {}
+      if (persistenceEnabled) {
+        await sync();
       }
     }
   }
