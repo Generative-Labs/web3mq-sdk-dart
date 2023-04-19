@@ -127,8 +127,17 @@ extension RegisterExtension on Web3MQClient {
         hex.encode(await tempKeyPair.extractPrivateKeyBytes()));
   }
 
-  ///
-  Future<String> _getOrGenerateUserId(String didType, String didValue) async =>
-      (await _service.user.userInfo(didType, didValue))?.userId ??
-      "user:${hex.encode(await Sha224().hash(utf8.encode('$didType:$didValue')).then((value) => value.bytes))}";
+  Future<String> _getOrGenerateUserId(String didType, String didValue) async {
+    try {
+      final user = await _service.user.userInfo(didType, didValue);
+      final userId = user?.userId;
+      if (null != userId) {
+        return userId;
+      }
+    } catch (_) {}
+    // Generate and return a new user ID if the user ID is null or an exception occurs
+    final bytes = utf8.encode('$didType:$didValue');
+    final sha224Bytes = await Sha224().hash(bytes).then((value) => value.bytes);
+    return "user:${hex.encode(sha224Bytes)}";
+  }
 }
