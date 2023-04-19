@@ -3,6 +3,8 @@ import 'package:cryptography/cryptography.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+part 'user.g.dart';
+
 /// The Did info which contains [type] and [value].
 @JsonSerializable()
 class DID extends Equatable {
@@ -17,6 +19,12 @@ class DID extends Equatable {
 
   ///
   DID(this.type, this.value);
+
+  /// Create a new instance from a json
+  factory DID.fromJson(Map<String, dynamic> json) => _$DIDFromJson(json);
+
+  /// Serialize to json
+  Map<String, dynamic> toJson() => _$DIDToJson(this);
 
   @override
   List<Object?> get props => [type, value];
@@ -36,6 +44,12 @@ class User {
 
   ///
   User(this.userId, this.did, this.sessionKey);
+
+  /// Create a new instance from a json
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+
+  /// Serialize to json
+  Map<String, dynamic> toJson() => _$UserToJson(this);
 }
 
 extension PublicKey on User {

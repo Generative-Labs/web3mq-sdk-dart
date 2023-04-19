@@ -863,10 +863,10 @@ class Group {
   final String groupId;
 
   @JsonKey(name: 'avatar_url')
-  final String avatarUrl;
+  final String? avatarUrl;
 
   @JsonKey(name: 'group_name')
-  final String groupName;
+  final String? groupName;
 
   /// Creates a new instance
   Group(this.groupId, this.avatarUrl, this.groupName);

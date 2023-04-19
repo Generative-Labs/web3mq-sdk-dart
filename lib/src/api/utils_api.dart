@@ -6,7 +6,7 @@ class UtilsApi {
   final dio = Dio();
 
   /// Get the domain with lowest latency.
-  Future<String> findTheLowestLatencyUrl() async {
+  Future<String> findTheLowestLatencyEndpoint() async {
     final domains = TestnetEndpoint.all;
     final results = await Future.wait(domains.map((e) => mesure(e)));
     final lowest = results.min;

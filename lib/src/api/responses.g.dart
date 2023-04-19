@@ -486,8 +486,8 @@ Map<String, dynamic> _$ThreadMessageListResponseToJson(
 
 Group _$GroupFromJson(Map<String, dynamic> json) => Group(
       json['groupid'] as String,
-      json['avatar_url'] as String,
-      json['group_name'] as String,
+      json['avatar_url'] as String?,
+      json['group_name'] as String?,
     );
 
 Map<String, dynamic> _$GroupToJson(Group instance) => <String, dynamic>{

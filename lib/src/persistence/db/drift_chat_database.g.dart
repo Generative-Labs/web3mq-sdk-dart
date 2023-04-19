@@ -40,7 +40,6 @@ class ChannelEntity extends DataClass implements Insertable<ChannelEntity> {
 
   /// The date of the last channel update
   final DateTime updatedAt;
-
   ChannelEntity(
       {required this.id,
       required this.name,
@@ -53,7 +52,6 @@ class ChannelEntity extends DataClass implements Insertable<ChannelEntity> {
       this.deletedAt,
       required this.createdAt,
       required this.updatedAt});
-
   factory ChannelEntity.fromData(Map<String, dynamic> data, {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return ChannelEntity(
@@ -81,7 +79,6 @@ class ChannelEntity extends DataClass implements Insertable<ChannelEntity> {
           .mapFromDatabaseResponse(data['${effectivePrefix}updated_at'])!,
     );
   }
-
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -144,7 +141,6 @@ class ChannelEntity extends DataClass implements Insertable<ChannelEntity> {
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
-
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
@@ -188,7 +184,6 @@ class ChannelEntity extends DataClass implements Insertable<ChannelEntity> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
-
   @override
   String toString() {
     return (StringBuffer('ChannelEntity(')
@@ -220,7 +215,6 @@ class ChannelEntity extends DataClass implements Insertable<ChannelEntity> {
       deletedAt,
       createdAt,
       updatedAt);
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -250,7 +244,6 @@ class ChannelsCompanion extends UpdateCompanion<ChannelEntity> {
   final Value<DateTime?> deletedAt;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
-
   const ChannelsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -264,7 +257,6 @@ class ChannelsCompanion extends UpdateCompanion<ChannelEntity> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
-
   ChannelsCompanion.insert({
     required String id,
     required String name,
@@ -282,7 +274,6 @@ class ChannelsCompanion extends UpdateCompanion<ChannelEntity> {
         topic = Value(topic),
         topicType = Value(topicType),
         channelType = Value(channelType);
-
   static Insertable<ChannelEntity> custom({
     Expression<String>? id,
     Expression<String>? name,
@@ -402,9 +393,7 @@ class $ChannelsTable extends Channels
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-
   $ChannelsTable(this.attachedDatabase, [this._alias]);
-
   final VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<String?> id = GeneratedColumn<String?>(
@@ -469,7 +458,6 @@ class $ChannelsTable extends Channels
       type: const IntType(),
       requiredDuringInsert: false,
       defaultValue: currentDateAndTime);
-
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -484,13 +472,10 @@ class $ChannelsTable extends Channels
         createdAt,
         updatedAt
       ];
-
   @override
   String get aliasedName => _alias ?? 'channels';
-
   @override
   String get actualTableName => 'channels';
-
   @override
   VerificationContext validateIntegrity(Insertable<ChannelEntity> instance,
       {bool isInserting = false}) {
@@ -560,7 +545,6 @@ class $ChannelsTable extends Channels
 
   @override
   Set<GeneratedColumn> get $primaryKey => {topic};
-
   @override
   ChannelEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
     return ChannelEntity.fromData(data,
@@ -618,7 +602,6 @@ class MessageEntity extends DataClass implements Insertable<MessageEntity> {
 
   /// Message custom extraData
   final Map<String, Object?>? extraData;
-
   MessageEntity(
       {required this.id,
       this.messageText,
@@ -635,7 +618,6 @@ class MessageEntity extends DataClass implements Insertable<MessageEntity> {
       required this.channelTopic,
       required this.cipherSuite,
       this.extraData});
-
   factory MessageEntity.fromData(Map<String, dynamic> data, {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return MessageEntity(
@@ -671,7 +653,6 @@ class MessageEntity extends DataClass implements Insertable<MessageEntity> {
           .mapFromDatabaseResponse(data['${effectivePrefix}extra_data'])),
     );
   }
-
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -762,7 +743,6 @@ class MessageEntity extends DataClass implements Insertable<MessageEntity> {
       extraData: serializer.fromJson<Map<String, Object?>?>(json['extraData']),
     );
   }
-
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
@@ -818,7 +798,6 @@ class MessageEntity extends DataClass implements Insertable<MessageEntity> {
         cipherSuite: cipherSuite ?? this.cipherSuite,
         extraData: extraData ?? this.extraData,
       );
-
   @override
   String toString() {
     return (StringBuffer('MessageEntity(')
@@ -858,7 +837,6 @@ class MessageEntity extends DataClass implements Insertable<MessageEntity> {
       channelTopic,
       cipherSuite,
       extraData);
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -896,7 +874,6 @@ class MessagesCompanion extends UpdateCompanion<MessageEntity> {
   final Value<String> channelTopic;
   final Value<String> cipherSuite;
   final Value<Map<String, Object?>?> extraData;
-
   const MessagesCompanion({
     this.id = const Value.absent(),
     this.messageText = const Value.absent(),
@@ -914,7 +891,6 @@ class MessagesCompanion extends UpdateCompanion<MessageEntity> {
     this.cipherSuite = const Value.absent(),
     this.extraData = const Value.absent(),
   });
-
   MessagesCompanion.insert({
     required String id,
     this.messageText = const Value.absent(),
@@ -936,7 +912,6 @@ class MessagesCompanion extends UpdateCompanion<MessageEntity> {
         userId = Value(userId),
         channelTopic = Value(channelTopic),
         cipherSuite = Value(cipherSuite);
-
   static Insertable<MessageEntity> custom({
     Expression<String>? id,
     Expression<String?>? messageText,
@@ -1090,9 +1065,7 @@ class $MessagesTable extends Messages
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-
   $MessagesTable(this.attachedDatabase, [this._alias]);
-
   final VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<String?> id = GeneratedColumn<String?>(
@@ -1188,7 +1161,6 @@ class $MessagesTable extends Messages
       extraData = GeneratedColumn<String?>('extra_data', aliasedName, true,
               type: const StringType(), requiredDuringInsert: false)
           .withConverter<Map<String, Object?>>($MessagesTable.$converter1);
-
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -1207,13 +1179,10 @@ class $MessagesTable extends Messages
         cipherSuite,
         extraData
       ];
-
   @override
   String get aliasedName => _alias ?? 'messages';
-
   @override
   String get actualTableName => 'messages';
-
   @override
   VerificationContext validateIntegrity(Insertable<MessageEntity> instance,
       {bool isInserting = false}) {
@@ -1297,7 +1266,6 @@ class $MessagesTable extends Messages
 
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
-
   @override
   MessageEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
     return MessageEntity.fromData(data,
@@ -1330,14 +1298,12 @@ class UserEntity extends DataClass implements Insertable<UserEntity> {
 
   /// Date of last user update
   final DateTime updatedAt;
-
   UserEntity(
       {required this.id,
       this.nickname,
       this.avatarUrl,
       required this.createdAt,
       required this.updatedAt});
-
   factory UserEntity.fromData(Map<String, dynamic> data, {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return UserEntity(
@@ -1353,7 +1319,6 @@ class UserEntity extends DataClass implements Insertable<UserEntity> {
           .mapFromDatabaseResponse(data['${effectivePrefix}updated_at'])!,
     );
   }
-
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1394,7 +1359,6 @@ class UserEntity extends DataClass implements Insertable<UserEntity> {
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
-
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
@@ -1420,7 +1384,6 @@ class UserEntity extends DataClass implements Insertable<UserEntity> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
-
   @override
   String toString() {
     return (StringBuffer('UserEntity(')
@@ -1436,7 +1399,6 @@ class UserEntity extends DataClass implements Insertable<UserEntity> {
   @override
   int get hashCode =>
       Object.hash(id, nickname, avatarUrl, createdAt, updatedAt);
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1454,7 +1416,6 @@ class UsersCompanion extends UpdateCompanion<UserEntity> {
   final Value<String?> avatarUrl;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
-
   const UsersCompanion({
     this.id = const Value.absent(),
     this.nickname = const Value.absent(),
@@ -1462,7 +1423,6 @@ class UsersCompanion extends UpdateCompanion<UserEntity> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
-
   UsersCompanion.insert({
     required String id,
     this.nickname = const Value.absent(),
@@ -1470,7 +1430,6 @@ class UsersCompanion extends UpdateCompanion<UserEntity> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   }) : id = Value(id);
-
   static Insertable<UserEntity> custom({
     Expression<String>? id,
     Expression<String?>? nickname,
@@ -1540,9 +1499,7 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UserEntity> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-
   $UsersTable(this.attachedDatabase, [this._alias]);
-
   final VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<String?> id = GeneratedColumn<String?>(
@@ -1572,17 +1529,13 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UserEntity> {
       type: const IntType(),
       requiredDuringInsert: false,
       defaultValue: currentDateAndTime);
-
   @override
   List<GeneratedColumn> get $columns =>
       [id, nickname, avatarUrl, createdAt, updatedAt];
-
   @override
   String get aliasedName => _alias ?? 'users';
-
   @override
   String get actualTableName => 'users';
-
   @override
   VerificationContext validateIntegrity(Insertable<UserEntity> instance,
       {bool isInserting = false}) {
@@ -1614,7 +1567,6 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UserEntity> {
 
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
-
   @override
   UserEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
     return UserEntity.fromData(data,
@@ -1639,13 +1591,11 @@ class MemberEntity extends DataClass implements Insertable<MemberEntity> {
 
   /// The last date of update
   final DateTime updatedAt;
-
   MemberEntity(
       {required this.userId,
       required this.channelTopic,
       required this.createdAt,
       required this.updatedAt});
-
   factory MemberEntity.fromData(Map<String, dynamic> data, {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return MemberEntity(
@@ -1659,7 +1609,6 @@ class MemberEntity extends DataClass implements Insertable<MemberEntity> {
           .mapFromDatabaseResponse(data['${effectivePrefix}updated_at'])!,
     );
   }
-
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1689,7 +1638,6 @@ class MemberEntity extends DataClass implements Insertable<MemberEntity> {
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
-
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
@@ -1712,7 +1660,6 @@ class MemberEntity extends DataClass implements Insertable<MemberEntity> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
-
   @override
   String toString() {
     return (StringBuffer('MemberEntity(')
@@ -1726,7 +1673,6 @@ class MemberEntity extends DataClass implements Insertable<MemberEntity> {
 
   @override
   int get hashCode => Object.hash(userId, channelTopic, createdAt, updatedAt);
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1742,14 +1688,12 @@ class MembersCompanion extends UpdateCompanion<MemberEntity> {
   final Value<String> channelTopic;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
-
   const MembersCompanion({
     this.userId = const Value.absent(),
     this.channelTopic = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
-
   MembersCompanion.insert({
     required String userId,
     required String channelTopic,
@@ -1757,7 +1701,6 @@ class MembersCompanion extends UpdateCompanion<MemberEntity> {
     this.updatedAt = const Value.absent(),
   })  : userId = Value(userId),
         channelTopic = Value(channelTopic);
-
   static Insertable<MemberEntity> custom({
     Expression<String>? userId,
     Expression<String>? channelTopic,
@@ -1820,9 +1763,7 @@ class $MembersTable extends Members
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-
   $MembersTable(this.attachedDatabase, [this._alias]);
-
   final VerificationMeta _userIdMeta = const VerificationMeta('userId');
   @override
   late final GeneratedColumn<String?> userId = GeneratedColumn<String?>(
@@ -1850,17 +1791,13 @@ class $MembersTable extends Members
       type: const IntType(),
       requiredDuringInsert: false,
       defaultValue: currentDateAndTime);
-
   @override
   List<GeneratedColumn> get $columns =>
       [userId, channelTopic, createdAt, updatedAt];
-
   @override
   String get aliasedName => _alias ?? 'members';
-
   @override
   String get actualTableName => 'members';
-
   @override
   VerificationContext validateIntegrity(Insertable<MemberEntity> instance,
       {bool isInserting = false}) {
@@ -1893,7 +1830,6 @@ class $MembersTable extends Members
 
   @override
   Set<GeneratedColumn> get $primaryKey => {userId, channelTopic};
-
   @override
   MemberEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
     return MemberEntity.fromData(data,
@@ -1913,9 +1849,7 @@ class ChannelQueryEntity extends DataClass
 
   /// The channel cid of this query
   final String channelTopic;
-
   ChannelQueryEntity({required this.queryHash, required this.channelTopic});
-
   factory ChannelQueryEntity.fromData(Map<String, dynamic> data,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -1926,7 +1860,6 @@ class ChannelQueryEntity extends DataClass
           .mapFromDatabaseResponse(data['${effectivePrefix}channel_topic'])!,
     );
   }
-
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1950,7 +1883,6 @@ class ChannelQueryEntity extends DataClass
       channelTopic: serializer.fromJson<String>(json['channelTopic']),
     );
   }
-
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
@@ -1965,7 +1897,6 @@ class ChannelQueryEntity extends DataClass
         queryHash: queryHash ?? this.queryHash,
         channelTopic: channelTopic ?? this.channelTopic,
       );
-
   @override
   String toString() {
     return (StringBuffer('ChannelQueryEntity(')
@@ -1977,7 +1908,6 @@ class ChannelQueryEntity extends DataClass
 
   @override
   int get hashCode => Object.hash(queryHash, channelTopic);
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1989,18 +1919,15 @@ class ChannelQueryEntity extends DataClass
 class ChannelQueriesCompanion extends UpdateCompanion<ChannelQueryEntity> {
   final Value<String> queryHash;
   final Value<String> channelTopic;
-
   const ChannelQueriesCompanion({
     this.queryHash = const Value.absent(),
     this.channelTopic = const Value.absent(),
   });
-
   ChannelQueriesCompanion.insert({
     required String queryHash,
     required String channelTopic,
   })  : queryHash = Value(queryHash),
         channelTopic = Value(channelTopic);
-
   static Insertable<ChannelQueryEntity> custom({
     Expression<String>? queryHash,
     Expression<String>? channelTopic,
@@ -2046,9 +1973,7 @@ class $ChannelQueriesTable extends ChannelQueries
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-
   $ChannelQueriesTable(this.attachedDatabase, [this._alias]);
-
   final VerificationMeta _queryHashMeta = const VerificationMeta('queryHash');
   @override
   late final GeneratedColumn<String?> queryHash = GeneratedColumn<String?>(
@@ -2060,16 +1985,12 @@ class $ChannelQueriesTable extends ChannelQueries
   late final GeneratedColumn<String?> channelTopic = GeneratedColumn<String?>(
       'channel_topic', aliasedName, false,
       type: const StringType(), requiredDuringInsert: true);
-
   @override
   List<GeneratedColumn> get $columns => [queryHash, channelTopic];
-
   @override
   String get aliasedName => _alias ?? 'channel_queries';
-
   @override
   String get actualTableName => 'channel_queries';
-
   @override
   VerificationContext validateIntegrity(Insertable<ChannelQueryEntity> instance,
       {bool isInserting = false}) {
@@ -2094,7 +2015,6 @@ class $ChannelQueriesTable extends ChannelQueries
 
   @override
   Set<GeneratedColumn> get $primaryKey => {queryHash, channelTopic};
-
   @override
   ChannelQueryEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
     return ChannelQueryEntity.fromData(data,
@@ -2129,7 +2049,6 @@ class ConnectionEventEntity extends DataClass
 
   /// DateTime of the last sync
   final DateTime? lastSyncAt;
-
   ConnectionEventEntity(
       {required this.id,
       required this.type,
@@ -2138,7 +2057,6 @@ class ConnectionEventEntity extends DataClass
       this.unreadChannels,
       this.lastEventAt,
       this.lastSyncAt});
-
   factory ConnectionEventEntity.fromData(Map<String, dynamic> data,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -2159,7 +2077,6 @@ class ConnectionEventEntity extends DataClass
           .mapFromDatabaseResponse(data['${effectivePrefix}last_sync_at']),
     );
   }
-
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -2219,7 +2136,6 @@ class ConnectionEventEntity extends DataClass
       lastSyncAt: serializer.fromJson<DateTime?>(json['lastSyncAt']),
     );
   }
-
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
@@ -2251,7 +2167,6 @@ class ConnectionEventEntity extends DataClass
         lastEventAt: lastEventAt ?? this.lastEventAt,
         lastSyncAt: lastSyncAt ?? this.lastSyncAt,
       );
-
   @override
   String toString() {
     return (StringBuffer('ConnectionEventEntity(')
@@ -2269,7 +2184,6 @@ class ConnectionEventEntity extends DataClass
   @override
   int get hashCode => Object.hash(id, type, ownUser, totalUnreadCount,
       unreadChannels, lastEventAt, lastSyncAt);
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2291,7 +2205,6 @@ class ConnectionEventsCompanion extends UpdateCompanion<ConnectionEventEntity> {
   final Value<int?> unreadChannels;
   final Value<DateTime?> lastEventAt;
   final Value<DateTime?> lastSyncAt;
-
   const ConnectionEventsCompanion({
     this.id = const Value.absent(),
     this.type = const Value.absent(),
@@ -2301,7 +2214,6 @@ class ConnectionEventsCompanion extends UpdateCompanion<ConnectionEventEntity> {
     this.lastEventAt = const Value.absent(),
     this.lastSyncAt = const Value.absent(),
   });
-
   ConnectionEventsCompanion.insert({
     this.id = const Value.absent(),
     required String type,
@@ -2311,7 +2223,6 @@ class ConnectionEventsCompanion extends UpdateCompanion<ConnectionEventEntity> {
     this.lastEventAt = const Value.absent(),
     this.lastSyncAt = const Value.absent(),
   }) : type = Value(type);
-
   static Insertable<ConnectionEventEntity> custom({
     Expression<int>? id,
     Expression<String>? type,
@@ -2399,9 +2310,7 @@ class $ConnectionEventsTable extends ConnectionEvents
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-
   $ConnectionEventsTable(this.attachedDatabase, [this._alias]);
-
   final VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
@@ -2442,7 +2351,6 @@ class $ConnectionEventsTable extends ConnectionEvents
   late final GeneratedColumn<DateTime?> lastSyncAt = GeneratedColumn<DateTime?>(
       'last_sync_at', aliasedName, true,
       type: const IntType(), requiredDuringInsert: false);
-
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -2453,13 +2361,10 @@ class $ConnectionEventsTable extends ConnectionEvents
         lastEventAt,
         lastSyncAt
       ];
-
   @override
   String get aliasedName => _alias ?? 'connection_events';
-
   @override
   String get actualTableName => 'connection_events';
-
   @override
   VerificationContext validateIntegrity(
       Insertable<ConnectionEventEntity> instance,
@@ -2505,7 +2410,6 @@ class $ConnectionEventsTable extends ConnectionEvents
 
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
-
   @override
   ConnectionEventEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
     return ConnectionEventEntity.fromData(data,
@@ -2524,7 +2428,6 @@ class $ConnectionEventsTable extends ConnectionEvents
 abstract class _$DriftChatDatabase extends GeneratedDatabase {
   _$DriftChatDatabase(QueryExecutor e)
       : super(SqlTypeSystem.defaultInstance, e);
-
   _$DriftChatDatabase.connect(DatabaseConnection c) : super.connect(c);
   late final $ChannelsTable channels = $ChannelsTable(this);
   late final $MessagesTable messages = $MessagesTable(this);
@@ -2541,10 +2444,8 @@ abstract class _$DriftChatDatabase extends GeneratedDatabase {
       ChannelQueryDao(this as DriftChatDatabase);
   late final ConnectionEventDao connectionEventDao =
       ConnectionEventDao(this as DriftChatDatabase);
-
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
-
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
       [channels, messages, users, members, channelQueries, connectionEvents];
