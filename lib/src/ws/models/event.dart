@@ -11,8 +11,8 @@ class EventType {
   /// Event sent when receiving a new message
   static const String messageNew = 'message.new';
 
-  /// Event sent when a message is sent
-  static const String messageSent = 'message.sent';
+  /// Event sent when a message is trying to send
+  static const String messageSending = 'message.sending';
 
   /// Event sent when receiving a new message
   static const String notificationMessageNew = 'notification.message_new';
@@ -103,8 +103,8 @@ class Event {
     return Event(EventType.messageUpdated, messageStatusResponse: response);
   }
 
-  factory Event.fromMessageSent(Web3MQRequestMessage message) {
-    return Event(EventType.messageSent,
+  factory Event.fromMessageSending(Web3MQRequestMessage message) {
+    return Event(EventType.messageSending,
         message: WSMessage.fromWebSocketMessage(message));
   }
 

@@ -158,11 +158,11 @@ class ClientState {
       }),
     );
     _eventsSubscription?.add(
-      _client.on(EventType.messageSent).listen((Event event) async {
+      _client.on(EventType.messageSending).listen((Event event) async {
         final wsMessage = event.message;
         if (null == wsMessage) return;
         final message = Message.fromWSMessage(wsMessage)
-            .copyWith(sendingStatus: MessageSendingStatus.sent);
+            .copyWith(sendingStatus: MessageSendingStatus.sending);
         _updateByMessageIfNeeded(message);
       }),
     );
@@ -177,6 +177,7 @@ class ClientState {
         if (null == value) return;
         final finalMessage = value.copyWith(
             sendingStatus: convertMessageStatusToSendingStatus(status));
+        //
         _updateByMessageIfNeeded(finalMessage);
       });
     }));
@@ -296,7 +297,8 @@ class ClientState {
   final _totalUnreadCountController = BehaviorSubject<int>.seeded(0);
 
   bool _countMessageAsUnread(Message message) {
-    return message.messageStatus?.status != 'read';
+    return message.sendingStatus == MessageSendingStatus.sent &&
+        message.messageStatus?.status != 'read';
   }
 
   void dispose() {

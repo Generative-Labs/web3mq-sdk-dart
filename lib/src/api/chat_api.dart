@@ -77,9 +77,12 @@ class ChatApi {
   /// Marks all messages to read
   Future<void> markAllMessagesToRead(
       String topic, List<String> messageIds) async {
-    final signResult = await _signer.signatureForRequest('read');
+    final status = 'read';
+    final signResult = await _signer.signatureForRequest(status);
     final response = await _client.post("/api/messages/status/", data: {
       'messages': messageIds,
+      'topic': topic,
+      'status': status,
       'userid': signResult.userId,
       'web3mq_signature': signResult.signature,
       'timestamp': signResult.time.millisecondsSinceEpoch

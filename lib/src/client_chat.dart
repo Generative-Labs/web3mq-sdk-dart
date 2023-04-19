@@ -88,7 +88,7 @@ extension ClientChat on Web3MQClient {
         text, topic, user.userId, user.sessionKey, nodeId,
         threadId: threadId, needStore: needStore, cipherSuite: cipherSuite);
     _ws.send(chatMessage);
-    _eventController.add(Event.fromMessageSent(chatMessage.message));
+    _eventController.add(Event.fromMessageSending(chatMessage.message));
     return Message.fromProtobufMessage(chatMessage.message);
   }
 
@@ -140,10 +140,9 @@ extension ClientChat on Web3MQClient {
   }
 
   /// Marks all message in the given topic to read
-  void markAllMessagesToReadByTopic(String topic) async {
-    await _service.chat.markAllMessagesToRead(topic, []);
-    // calculate the current unread count.
-    //
+  void markAllMessagesToReadByTopic(
+      String topic, List<String> messageIds) async {
+    _service.chat.markAllMessagesToRead(topic, messageIds);
     _persistenceClient?.markAllToReadByTopic(topic);
   }
 
