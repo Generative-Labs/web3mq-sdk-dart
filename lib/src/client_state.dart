@@ -147,6 +147,11 @@ class ClientState {
     );
   }
 
+  void _updateLastSync(int timestamp) {
+    _client.persistenceClient
+        ?.updateLastSyncAt(DateTime.fromMillisecondsSinceEpoch(timestamp));
+  }
+
   void _listenMessageAdd() {
     _eventsSubscription?.add(
       _client.on(EventType.messageNew).listen((Event event) async {
@@ -155,6 +160,7 @@ class ClientState {
         final message = Message.fromWSMessage(wsMessage)
             .copyWith(sendingStatus: MessageSendingStatus.sent);
         _updateByMessageIfNeeded(message);
+        _updateLastSync(message.timestamp);
       }),
     );
     _eventsSubscription?.add(

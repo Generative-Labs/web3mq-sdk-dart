@@ -169,31 +169,39 @@ extension ClientChat on Web3MQClient {
       PersistenceClient persistenceClient) {
     int totalUnreadCount = 0;
     int unreadChannelCount = 0;
+    List<ChannelModel> updatedChannels = [];
 
-    for (String channelId in events.keys) {
+    Future.forEach(events.keys, (String channelId) async {
       bool hasUnread = false;
       Map<String, String> channelData = events[channelId]!;
 
+      int unreadCount = 0;
       for (String messageId in channelData.keys) {
         String readStatus = channelData[messageId]!;
 
         if (readStatus != 'read') {
           totalUnreadCount++;
           hasUnread = true;
+          unreadCount++;
         }
       }
 
       if (hasUnread) {
         unreadChannelCount++;
       }
-    }
 
-    persistenceClient.updateConnectionInfo(Event(EventType.connectionChanged,
-        unreadChannels: unreadChannelCount,
-        totalUnreadCount: totalUnreadCount));
-
-    print('Total Unread Count: $totalUnreadCount');
-    print('Unread Channel Count: $unreadChannelCount');
+      final channel = await persistenceClient.getChannelByTopic(channelId);
+      if (channel != null) {
+        final updatedChannel = channel.copyWith(
+            unreadMessageCount: channel.unreadMessageCount + unreadCount);
+        updatedChannels.add(updatedChannel);
+      }
+    }).then((_) {
+      persistenceClient.updateChannels(updatedChannels);
+      persistenceClient.updateConnectionInfo(Event(EventType.connectionChanged,
+          unreadChannels: unreadChannelCount,
+          totalUnreadCount: totalUnreadCount));
+    });
   }
 
   MapEntry<Map<String, ChannelModel>, List<ChannelModel>>

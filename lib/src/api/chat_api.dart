@@ -158,7 +158,8 @@ class ChatApi {
   Future<Map<String, Map<String, String>>> sync(
     DateTime lastSyncAt,
   ) async {
-    final signResult = await _signer.signatureForRequest(null);
+    final signResult = await _signer
+        .signatureForRequest(lastSyncAt.millisecondsSinceEpoch.toString());
     final response = await _client.post(
       '/api/get_new_messages/',
       data: {
