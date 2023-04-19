@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
-import 'package:web3mq/src/api/utils_api.dart';
 import 'package:web3mq/src/error/error.dart';
 import 'package:web3mq/src/http/web3mq_dio_error.dart';
+import 'package:web3mq/src/models/endpoint.dart';
 
 import 'interceptor/additional_headers_interceptor.dart';
 import 'interceptor/logging_interceptor.dart';

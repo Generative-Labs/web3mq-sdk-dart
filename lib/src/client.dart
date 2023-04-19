@@ -6,7 +6,6 @@ import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/intl_standalone.dart';
 import 'package:logging/logging.dart';
 import 'package:pointycastle/api.dart' as pointycastle;
 import 'package:rxdart/rxdart.dart';
