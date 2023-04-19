@@ -94,8 +94,6 @@ class ClientState {
         _totalUnreadCountController.add(count);
       }));
 
-    _listenUserUpdate();
-
     _listenAllChannelsRead();
 
     _listenChannelDeleted();
@@ -116,21 +114,6 @@ class ClientState {
   /// Pauses listening to the client events.
   void pauseEventSubscription([Future<void>? resumeSignal]) {
     _eventsSubscription?.pause(resumeSignal);
-  }
-
-  void _listenUserUpdate() {
-    currentUserStream.listen((event) async {
-      if (null == event) {
-        Web3MQClient.additionalHeaders = {};
-      } else {
-        final publicHex = await event.publicKey;
-        Web3MQClient.additionalHeaders = {
-          "api-version": 2,
-          "web3mq-request-pubkey": publicHex,
-          "didkey": "${event.did.type}:${event.did.value}"
-        };
-      }
-    });
   }
 
   void _listenAllChannelsRead() {
@@ -290,6 +273,20 @@ class ClientState {
   set currentUser(User? user) {
     _currentUserController.add(user);
     _signer.updateUser(user);
+    _setupAdditionalHeadersOnCurrentUserUpdate(user);
+  }
+
+  Future<void> _setupAdditionalHeadersOnCurrentUserUpdate(User? user) async {
+    if (null == user) {
+      Web3MQClient.additionalHeaders = {};
+    } else {
+      final publicHex = await user.publicKey;
+      Web3MQClient.additionalHeaders = {
+        "api-version": 2,
+        "web3mq-request-pubkey": publicHex,
+        "didkey": "${user.did.type}:${user.did.value}"
+      };
+    }
   }
 
   final _channelsController =
