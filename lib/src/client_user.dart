@@ -8,7 +8,8 @@ extension RegisterExtension on Web3MQClient {
   }
 
   /// Gets your main private key.
-  Future<RegisterResult> register(DID did, String password) async {
+  Future<RegisterResult> register(DID did, String password,
+      {String? domain}) async {
     if (null == walletConnector) {
       throw Web3MQError('WalletConnector did not setup');
     }
@@ -29,7 +30,7 @@ extension RegisterExtension on Web3MQClient {
     final currentDate = DateTime.now();
     final timestamp = currentDate.millisecondsSinceEpoch;
 
-    final domainUrl = "www.web3mq.com";
+    final domainUrl = domain ?? "www.web3mq.com";
 
     final nonceContentRaw =
         "$userId$pubKeyType$publicKeyHex$didType$didValue$timestamp";
@@ -39,8 +40,8 @@ extension RegisterExtension on Web3MQClient {
         sha224.process(Uint8List.fromList(utf8.encode(nonceContentRaw)));
     final nonceContent = hex.encode(hashed);
 
-    final dateFormatter = FixedDateTimeFormatter('dd/MM/yyyy HH:mm');
-    final formattedDateString = dateFormatter.encode(currentDate);
+    final dateFormatter = DateFormat('dd/MM/yyyy HH:mm');
+    final formattedDateString = dateFormatter.format(currentDate);
 
     final signatureRaw = SignTextFactory.forRegister(
         walletTypeName, didValue, domainUrl, nonceContent, formattedDateString);
