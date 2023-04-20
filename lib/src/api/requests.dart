@@ -18,3 +18,20 @@ enum ReadStatus {
   delivered,
   read,
 }
+
+enum GroupPermission {
+  invite,
+  public,
+  nftValidation;
+
+  String get value {
+    switch (this) {
+      case GroupPermission.invite:
+        return 'ceator_invite_friends';
+      case GroupPermission.public:
+        return 'public';
+      case GroupPermission.nftValidation:
+        return 'nft_validation';
+    }
+  }
+}

@@ -7,9 +7,13 @@ extension ClientGroup on Web3MQClient {
     return await _service.group.groups(pagination: pagination);
   }
 
-  /// Creates a new group with the specified name and avatar URL.
-  /// Upon successful creation, refreshes the channel list.
-  Future<Group> createGroup(String name, String? avatarUrl) async {
+  /// Creates a group and returns a Group object.
+  ///
+  /// [groupName] is the name of the group.
+  /// [avatarUrl] is the URL of the group's avatar.
+  /// [permissions] are the permissions of the group [GroupPermission]. Defaults to public.
+  Future<Group> createGroup(String name, String? avatarUrl,
+      {GroupPermission permission = GroupPermission.public}) async {
     final group = await _service.group.createGroup(name, avatarUrl);
     // if create group success, should refresh channel list.
     queryChannelsOnline();

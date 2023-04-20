@@ -1,3 +1,4 @@
+import 'package:web3mq/src/api/requests.dart';
 import 'package:web3mq/src/api/responses.dart';
 import 'package:web3mq/src/models/pagination.dart';
 
@@ -32,12 +33,22 @@ class GroupApi {
     throw Web3MQNetworkError.raw(code: res.code, message: res.message ?? "");
   }
 
-  /// Creates a new group with the specified name and avatar URL.
-  Future<Group> createGroup(String name, String? avatarUrl) async {
+  /// Creates a group and returns a Group object.
+  ///
+  /// [groupName] is the name of the group.
+  /// [avatarUrl] is the URL of the group's avatar.
+  /// [permissions] are the permissions of the group [GroupPermission]. Defaults to public.
+  ///
+  /// Returns a [Future<Group>] object representing the asynchronous operation result
+  Future<Group> createGroup(String groupName, String? avatarUrl,
+      {GroupPermission permissions = GroupPermission.public}) async {
     final signResult = await _signer.signatureForRequest(null);
     final response = await _client.post('/api/groups/', data: {
-      'group_name': name,
+      'group_name': groupName,
       'avatar_url': avatarUrl,
+      'permissions': {
+        'group:join': {'type': 'enum', 'value': permissions.value}
+      },
       'userid': signResult.userId,
       'web3mq_signature': signResult.signature,
       'timestamp': signResult.time.millisecondsSinceEpoch
@@ -105,7 +116,10 @@ class GroupApi {
     throw Web3MQNetworkError.raw(code: res.code, message: res.message ?? "");
   }
 
-  /// Updates the group permissions for the specified group.
+  /// Updates the permissions of a group.
+  ///
+  /// [groupId] is the ID of the group to update.
+  /// [permission] is the new permission to set for the group.
   Future<void> updateGroupPermissions(
       String groupId, GroupPermission permission) async {
     final signResult = await _signer.signatureForRequest(groupId);
@@ -156,22 +170,5 @@ class GroupApi {
       return;
     }
     throw Web3MQNetworkError.raw(code: res.code, message: res.message ?? "");
-  }
-}
-
-enum GroupPermission {
-  invite,
-  public,
-  nftValidation;
-
-  String get value {
-    switch (this) {
-      case GroupPermission.invite:
-        return 'ceator_invite_friends';
-      case GroupPermission.public:
-        return 'public';
-      case GroupPermission.nftValidation:
-        return 'nft_validation';
-    }
   }
 }
