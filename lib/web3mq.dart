@@ -15,3 +15,4 @@ export 'src/ws/models/connection_status.dart';
 export 'src/ws/models/event.dart';
 export 'src/ws/models/user.dart';
 export 'src/ws/models/ws_models.dart';
+export 'src/models/endpoint.dart';
