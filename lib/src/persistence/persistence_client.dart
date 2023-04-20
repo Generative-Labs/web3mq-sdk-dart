@@ -154,9 +154,18 @@ class Web3MQPersistenceClient extends PersistenceClient {
   Future<void> markAllToReadByTopic(String topic) {
     assert(_debugIsConnected, '');
     _logger.info('markAllToReadByTopic');
-    return _readProtected(() => db!.messageDao.updateAllToReadByTopic(topic));
+    return _readProtected(() async {
+      // mark channel.unreadCount to zero.
+      final channel = await db!.channelDao.getChannelByTopic(topic);
+      if (null != channel) {
+        final finalChannel = channel.copyWith(unreadMessageCount: 0);
+        db!.channelDao.updateChannels([finalChannel]);
+      }
+      return db!.messageDao.updateAllToReadByTopic(topic);
+    });
   }
 
+  @override
   Future<Message?> getMessageById(String messageId) {
     assert(_debugIsConnected, '');
     _logger.info('getMessageById');

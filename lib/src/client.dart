@@ -24,7 +24,6 @@ import 'package:web3mq/src/ws/models/pb/message.pb.dart';
 import 'package:web3mq/src/ws/models/ws_models.dart';
 import 'package:web3mq/src/ws/websocket.dart';
 
-import 'api/group_api.dart';
 import 'api/responses.dart';
 import 'client_state.dart';
 import 'http/http_client.dart';
