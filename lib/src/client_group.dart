@@ -50,9 +50,14 @@ extension ClientGroup on Web3MQClient {
     queryChannelsOnline();
   }
 
-  /// Quits a group with the specified group ID.
+  @Deprecated("Use [leaveGroup] instead")
   Future<void> quitGroup(String groupId) async {
-    await _service.group.quitGroup(groupId);
+    await leaveGroup(groupId);
+  }
+
+  /// Quits a group with the specified group ID.
+  Future<void> leaveGroup(String groupId) async {
+    await _service.group.leaveGroup(groupId);
     // if quit group success, should refresh channel list.
     queryChannelsOnline();
   }
