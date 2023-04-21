@@ -72,13 +72,11 @@ extension ClientChat on Web3MQClient {
   }
 
   /// Sends text message to the given topic.
-  Future<Message> sendText(
-    String text,
-    String topic, {
-    String? threadId,
-    String cipherSuite = 'NONE',
-    bool needStore = true,
-  }) async {
+  Future<Message> sendText(String text, String topic,
+      {String? threadId,
+      String cipherSuite = 'NONE',
+      bool needStore = true,
+      Map<String, String>? extraData}) async {
     final user = state.currentUser;
     final nodeId = state.currentNodeId;
     if (user == null || nodeId == null) {
@@ -86,7 +84,10 @@ extension ClientChat on Web3MQClient {
     }
     final chatMessage = await MessageFactory.fromText(
         text, topic, user.userId, user.sessionKey, nodeId,
-        threadId: threadId, needStore: needStore, cipherSuite: cipherSuite);
+        threadId: threadId,
+        needStore: needStore,
+        cipherSuite: cipherSuite,
+        extraData: extraData);
     _ws.send(chatMessage);
     _eventController.add(Event.fromMessageSending(chatMessage.message));
     return Message.fromProtobufMessage(chatMessage.message);
