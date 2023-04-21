@@ -601,7 +601,7 @@ class MessageEntity extends DataClass implements Insertable<MessageEntity> {
   final String cipherSuite;
 
   /// Message custom extraData
-  final Map<String, Object?>? extraData;
+  final Map<String, String>? extraData;
   MessageEntity(
       {required this.id,
       this.messageText,
@@ -740,7 +740,7 @@ class MessageEntity extends DataClass implements Insertable<MessageEntity> {
       userId: serializer.fromJson<String>(json['userId']),
       channelTopic: serializer.fromJson<String>(json['channelTopic']),
       cipherSuite: serializer.fromJson<String>(json['cipherSuite']),
-      extraData: serializer.fromJson<Map<String, Object?>?>(json['extraData']),
+      extraData: serializer.fromJson<Map<String, String>?>(json['extraData']),
     );
   }
   @override
@@ -761,7 +761,7 @@ class MessageEntity extends DataClass implements Insertable<MessageEntity> {
       'userId': serializer.toJson<String>(userId),
       'channelTopic': serializer.toJson<String>(channelTopic),
       'cipherSuite': serializer.toJson<String>(cipherSuite),
-      'extraData': serializer.toJson<Map<String, Object?>?>(extraData),
+      'extraData': serializer.toJson<Map<String, String>?>(extraData),
     };
   }
 
@@ -780,7 +780,7 @@ class MessageEntity extends DataClass implements Insertable<MessageEntity> {
           String? userId,
           String? channelTopic,
           String? cipherSuite,
-          Map<String, Object?>? extraData}) =>
+          Map<String, String>? extraData}) =>
       MessageEntity(
         id: id ?? this.id,
         messageText: messageText ?? this.messageText,
@@ -873,7 +873,7 @@ class MessagesCompanion extends UpdateCompanion<MessageEntity> {
   final Value<String> userId;
   final Value<String> channelTopic;
   final Value<String> cipherSuite;
-  final Value<Map<String, Object?>?> extraData;
+  final Value<Map<String, String>?> extraData;
   const MessagesCompanion({
     this.id = const Value.absent(),
     this.messageText = const Value.absent(),
@@ -927,7 +927,7 @@ class MessagesCompanion extends UpdateCompanion<MessageEntity> {
     Expression<String>? userId,
     Expression<String>? channelTopic,
     Expression<String>? cipherSuite,
-    Expression<Map<String, Object?>?>? extraData,
+    Expression<Map<String, String>?>? extraData,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -963,7 +963,7 @@ class MessagesCompanion extends UpdateCompanion<MessageEntity> {
       Value<String>? userId,
       Value<String>? channelTopic,
       Value<String>? cipherSuite,
-      Value<Map<String, Object?>?>? extraData}) {
+      Value<Map<String, String>?>? extraData}) {
     return MessagesCompanion(
       id: id ?? this.id,
       messageText: messageText ?? this.messageText,
@@ -1157,10 +1157,10 @@ class $MessagesTable extends Messages
       type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _extraDataMeta = const VerificationMeta('extraData');
   @override
-  late final GeneratedColumnWithTypeConverter<Map<String, Object?>, String?>
+  late final GeneratedColumnWithTypeConverter<Map<String, String>, String?>
       extraData = GeneratedColumn<String?>('extra_data', aliasedName, true,
               type: const StringType(), requiredDuringInsert: false)
-          .withConverter<Map<String, Object?>>($MessagesTable.$converter1);
+          .withConverter<Map<String, String>>($MessagesTable.$converter1);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -1279,8 +1279,8 @@ class $MessagesTable extends Messages
 
   static TypeConverter<MessageSendingStatus, int> $converter0 =
       MessageSendingStatusConverter();
-  static TypeConverter<Map<String, Object?>, String> $converter1 =
-      MapConverter<Object?>();
+  static TypeConverter<Map<String, String>, String> $converter1 =
+      MapConverter<String>();
 }
 
 class UserEntity extends DataClass implements Insertable<UserEntity> {

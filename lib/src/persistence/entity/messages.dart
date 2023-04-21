@@ -52,7 +52,7 @@ class Messages extends Table {
   TextColumn get cipherSuite => text()();
 
   /// Message custom extraData
-  TextColumn get extraData => text().nullable().map(MapConverter<Object?>())();
+  TextColumn get extraData => text().nullable().map(MapConverter<String>())();
 
   @override
   Set<Column> get primaryKey => {id};

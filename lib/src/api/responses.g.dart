@@ -370,6 +370,9 @@ Message _$MessageFromJson(Map<String, dynamic> json) => Message(
       json['text'] as String?,
       json['threadid'] as String?,
       json['message_type'] as String?,
+      (json['extra_data'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, e as String),
+      ),
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
@@ -390,6 +393,7 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'timestamp': instance.timestamp,
       'payload': instance.payload,
       'threadid': instance.threadId,
+      'extra_data': instance.extraData,
       'message_status': instance.messageStatus,
       'sending_status': readonly(instance.sendingStatus),
       'user': readonly(instance.user),

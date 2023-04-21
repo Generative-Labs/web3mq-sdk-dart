@@ -92,6 +92,9 @@ class WSMessage extends Web3MQWebSocketMessage with Web3MQBufferConvertible {
   /// The parent message id.
   final String? threadId;
 
+  /// The extra data.
+  final Map<String, String>? extraData;
+
   ///
   WSMessage(
       this.id,
@@ -108,7 +111,8 @@ class WSMessage extends Web3MQWebSocketMessage with Web3MQBufferConvertible {
       this.commandType,
       this.messageType,
       this.threadId,
-      this.validatePubKey);
+      this.validatePubKey,
+      this.extraData);
 
   @override
   GeneratedMessage toProto3Object() {
@@ -126,7 +130,8 @@ class WSMessage extends Web3MQWebSocketMessage with Web3MQBufferConvertible {
         messageType: messageType,
         threadId: threadId ?? '',
         version: version,
-        validatePubKey: validatePubKey);
+        validatePubKey: validatePubKey,
+        extraData: extraData);
   }
 
   factory WSMessage.fromWebSocketMessage(Web3MQRequestMessage message) {
@@ -145,6 +150,7 @@ class WSMessage extends Web3MQWebSocketMessage with Web3MQBufferConvertible {
         WSCommandType.message,
         message.messageType,
         message.threadId.isEmpty ? null : message.threadId,
-        message.validatePubKey);
+        message.validatePubKey,
+        message.extraData);
   }
 }
