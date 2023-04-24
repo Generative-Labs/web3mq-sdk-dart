@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:cryptography/cryptography.dart';
 import 'package:pointycastle/api.dart';
 import 'package:test/test.dart';
-import 'package:web3mq/src/signer.dart';
 
 void main() {
   group('A group of signer tests', () {

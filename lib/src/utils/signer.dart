@@ -4,8 +4,8 @@ import 'package:convert/convert.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:fixnum/fixnum.dart';
 
-import 'error/error.dart';
-import 'ws/models/user.dart';
+import '../error/error.dart';
+import '../ws/models/user.dart';
 
 ///
 abstract class Web3MQSigner {

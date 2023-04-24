@@ -1,6 +1,6 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
-import 'package:web3mq/src/client.dart';
+import 'package:web3mq/src/client/client.dart';
 import 'package:web3mq/src/error/error.dart';
 import 'package:web3mq/src/ws/models/connection_status.dart';
 import 'package:web3mq/src/ws/models/user.dart';
@@ -55,8 +55,8 @@ void main() {
 
     setUp(() {
       final ws = FakeWebSocketWithConnectionError();
-      client =
-          Web3MQClient(apiKey, apiService: service, ws: ws, signer: MockSigner());
+      client = Web3MQClient(apiKey,
+          apiService: service, ws: ws, signer: MockSigner());
     });
 
     test('`.connectUser` should throw if `ws.connect` fails', () async {
@@ -81,8 +81,8 @@ void main() {
     setUp(() {
       final ws = FakeWebSocket();
       did = DID("type", "value");
-      client =
-          Web3MQClient(apiKey, apiService: service, ws: ws, signer: MockSigner());
+      client = Web3MQClient(apiKey,
+          apiService: service, ws: ws, signer: MockSigner());
     });
 
     test('Register an user should be fail if did not setup WalletConnector',

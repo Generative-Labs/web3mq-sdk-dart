@@ -1,16 +1,19 @@
-import 'package:web3mq/src/client.dart';
-import 'package:web3mq/src/ws/models/user.dart';
+import 'package:web3mq/web3mq.dart';
 
 Future<void> main() async {
   final client = Web3MQClient('api-key');
 
-  await client.connectUser(User(
-      "user:7c0b577c0786e51f90522f833bf8ac8749cb32d681e7eccedba1dcc45f9a5173",
-      DID("eth",
-          "0x7c0b577c0786e51f90522f833bf8ac8749cb32d681e7eccedba1dcc45f9a5173"),
-      "0bf8eae8be0e7d364710ad1027598bb273e8122f75d4b70886f6ad855c03a991"));
+  final user = User("userId", DID("type", "value"), "sessionKey");
+  await client.connectUser(user);
 
   client.notificationStream.listen((event) {
     // handle with the notifications.
+  });
+
+  // send message
+  client.sendText('text', 'topic');
+
+  client.newMessageStream.listen((event) {
+    // handle the new message
   });
 }

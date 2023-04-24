@@ -1,8 +1,8 @@
 import 'package:web3mq/src/ws/models/event.dart';
 
-import 'api/responses.dart';
-import 'models/channel_state.dart';
-import 'models/pagination.dart';
+import '../api/responses.dart';
+import '../models/channel_state.dart';
+import '../models/pagination.dart';
 
 /// A simple client used for persisting chat data locally.
 abstract class PersistenceClient {

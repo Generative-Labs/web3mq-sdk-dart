@@ -12,28 +12,33 @@ import 'package:web3mq/src/api/contacts.api.dart';
 import 'package:web3mq/src/api/requests.dart';
 import 'package:web3mq/src/api/responses.dart' as web3mq;
 import 'package:web3mq/src/api/web3mq_service.dart';
+import 'package:web3mq/src/client/persistence_client.dart';
 import 'package:web3mq/src/error/error.dart';
 import 'package:web3mq/src/models/accounts.dart';
 import 'package:web3mq/src/models/channel_state.dart';
-import 'package:web3mq/src/persistence_client.dart';
-import 'package:web3mq/src/signer.dart';
 import 'package:web3mq/src/utils/sign_text_factory.dart';
 import 'package:web3mq/src/utils/utils.dart';
-import 'package:web3mq/src/wallet_connector.dart';
 import 'package:web3mq/src/ws/models/pb/message.pb.dart';
 import 'package:web3mq/src/ws/models/ws_models.dart';
 import 'package:web3mq/src/ws/websocket.dart';
 
-import 'api/responses.dart';
+import '../api/responses.dart';
+import '../http/http_client.dart';
+import '../models/pagination.dart';
+import '../utils/signer.dart';
+import '../utils/wallet_connector.dart';
 import 'client_state.dart';
-import 'http/http_client.dart';
-import 'models/pagination.dart';
 
 part 'client_chat.dart';
+
 part 'client_contacts.dart';
+
 part 'client_group.dart';
+
 part 'client_notification.dart';
+
 part 'client_topic.dart';
+
 part 'client_user.dart';
 
 /// Handler function used for logging records. Function requires a single

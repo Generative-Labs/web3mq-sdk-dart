@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 import 'package:web3mq/src/error/error.dart';
+import 'package:web3mq/src/utils/signer.dart';
 import 'package:web3mq/src/ws/models/buffer_convertible.dart';
 import 'package:web3mq/src/ws/models/connection_status.dart';
 import 'package:web3mq/src/ws/models/pb/connect.pb.dart';
 import 'package:web3mq/src/ws/models/user.dart';
-import 'package:web3mq/src/signer.dart';
 import 'package:web3mq/src/ws/websocket.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 

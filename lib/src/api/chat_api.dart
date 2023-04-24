@@ -3,7 +3,7 @@ import 'package:web3mq/src/api/responses.dart';
 import '../error/error.dart';
 import '../http/http_client.dart';
 import '../models/pagination.dart';
-import '../signer.dart';
+import '../utils/signer.dart';
 
 class ChatApi {
   /// Initialize a new user api

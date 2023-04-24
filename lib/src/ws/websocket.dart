@@ -5,14 +5,14 @@ import 'dart:math' as math;
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:web3mq/src/command_generator.dart';
-import 'package:web3mq/src/signer.dart';
+import 'package:web3mq/src/utils/command_generator.dart';
 import 'package:web3mq/src/ws/timer_helper.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../error/error.dart';
+import '../utils/signer.dart';
 import 'channel_sender.dart';
 import 'models/buffer_convertible.dart';
 import 'models/connection_status.dart';

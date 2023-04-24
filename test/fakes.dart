@@ -5,7 +5,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:web3mq/src/api/notification_api.dart';
 import 'package:web3mq/src/api/user_api.dart';
 import 'package:web3mq/src/api/web3mq_service.dart';
-import 'package:web3mq/src/client_state.dart';
+import 'package:web3mq/src/client/client_state.dart';
 import 'package:web3mq/src/error/error.dart';
 import 'package:web3mq/src/ws/models/connection_status.dart';
 import 'package:web3mq/src/ws/models/event.dart';

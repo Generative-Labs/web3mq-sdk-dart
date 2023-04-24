@@ -2,13 +2,11 @@ import 'dart:async';
 
 import 'package:rxdart/rxdart.dart';
 import 'package:web3mq/src/api/responses.dart';
-import 'package:web3mq/src/signer.dart';
-import 'package:web3mq/src/ws/models/event.dart';
 
+import '../utils/signer.dart';
+import '../ws/models/pb/message.pb.dart';
+import '../ws/models/ws_models.dart';
 import 'client.dart';
-import 'ws/models/pb/message.pb.dart';
-import 'ws/models/user.dart';
-import 'ws/models/ws_message.dart';
 
 class ClientState {
   /// Creates a new instance listening to events and updating the state

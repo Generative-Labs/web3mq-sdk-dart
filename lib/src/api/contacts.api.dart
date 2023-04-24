@@ -3,7 +3,7 @@ import 'package:web3mq/src/models/pagination.dart';
 
 import '../error/error.dart';
 import '../http/http_client.dart';
-import '../signer.dart';
+import '../utils/signer.dart';
 
 enum FollowAction {
   follow,

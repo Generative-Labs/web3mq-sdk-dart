@@ -6,7 +6,7 @@ import 'package:web3mq/src/api/requests.dart';
 import 'package:web3mq/src/api/topic_api.dart';
 import 'package:web3mq/src/api/user_api.dart';
 import 'package:web3mq/src/models/pagination.dart';
-import 'package:web3mq/src/signer.dart';
+import 'package:web3mq/src/utils/signer.dart';
 
 import 'mocks.dart';
 

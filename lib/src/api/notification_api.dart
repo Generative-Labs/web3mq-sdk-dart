@@ -4,7 +4,7 @@ import 'package:web3mq/src/error/error.dart';
 
 import '../http/http_client.dart';
 import '../models/pagination.dart';
-import '../signer.dart';
+import '../utils/signer.dart';
 
 ///
 class NotificationApi {

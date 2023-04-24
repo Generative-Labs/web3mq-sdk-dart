@@ -1,4 +1,4 @@
-import 'package:web3mq/src/signer.dart';
+import 'package:web3mq/src/utils/signer.dart';
 import 'package:web3mq/src/ws/models/connect_request_message.dart';
 
 ///

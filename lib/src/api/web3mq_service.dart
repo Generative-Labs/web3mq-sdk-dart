@@ -3,9 +3,9 @@ import 'package:web3mq/src/api/chat_api.dart';
 import 'package:web3mq/src/api/contacts.api.dart';
 import 'package:web3mq/src/api/group_api.dart';
 import 'package:web3mq/src/api/utils_api.dart';
-import 'package:web3mq/src/signer.dart';
 
 import '../http/http_client.dart';
+import '../utils/signer.dart';
 import 'notification_api.dart';
 import 'topic_api.dart';
 import 'user_api.dart';

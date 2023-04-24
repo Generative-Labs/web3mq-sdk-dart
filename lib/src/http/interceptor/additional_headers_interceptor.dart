@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import '../../client.dart';
+import '../../client/client.dart';
 
 /// Interceptor that sets additional headers for all requests.
 class AdditionalHeadersInterceptor extends Interceptor {
