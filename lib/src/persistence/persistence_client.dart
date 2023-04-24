@@ -3,8 +3,8 @@ import 'package:logging/logging.dart';
 import 'package:mutex/mutex.dart';
 
 import '../../web3mq.dart';
-import '../models/channel_state.dart';
 import '../client/persistence_client.dart';
+import '../models/channel_state.dart';
 import 'db/drift_chat_database.dart';
 import 'db/shared/native_db.dart';
 

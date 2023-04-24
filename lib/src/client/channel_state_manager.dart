@@ -6,8 +6,6 @@ import 'package:web3mq/src/models/channel_state.dart';
 import 'package:web3mq/src/ws/models/pb/message.pb.dart';
 import 'package:web3mq/web3mq.dart';
 
-import 'client.dart';
-
 /// The [ChannelStateManager] class is responsible for managing the state
 /// associated with a specific channel, such as messages, unread message count,
 /// and other channel-related events. It listens to events from the [Web3MQClient]
