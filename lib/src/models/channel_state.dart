@@ -16,6 +16,10 @@ class ChannelState {
   /// A paginated list of channel members
   final List<Member>? members;
 
+  /// The last message in the channel
+  Message? get lastMessage =>
+      messages?.isNotEmpty == true ? messages?.last : null;
+
   /// Create a new instance from a json
   static ChannelState fromJson(Map<String, dynamic> json) =>
       _$ChannelStateFromJson(json);

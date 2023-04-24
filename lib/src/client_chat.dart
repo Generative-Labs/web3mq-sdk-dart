@@ -1,40 +1,49 @@
 part of 'client.dart';
 
 extension ClientChat on Web3MQClient {
-  /// Requests channels with a given query from the Persistence client.
-  Future<List<ChannelModel>> queryChannelsOffline({
-    Pagination paginationParams = const Pagination(page: 1, size: 30),
+  ///
+  Future<List<ChannelModel>> fetchChannelsFromLocalDatabase({
+    Pagination paginationParams = const Pagination(page: 1, size: 50),
   }) async {
     final offlineChannels = (await _persistenceClient?.getChannelStates(
           paginationParams: paginationParams,
         )) ??
         [];
-
-    final channels =
-        offlineChannels.map((e) => e.channel).whereNotNull().toList();
-    final updatedData = _mapChannelListToState(channels, state.channels);
+    final updatedData =
+        _mapChannelStateToChannelModel(offlineChannels, state.channels);
     state.addChannels(updatedData.key);
     return updatedData.value;
   }
 
-  /// Requests channels with a given query from the server.
-  Future<List<ChannelModel>> queryChannelsOnline(
+  ///
+  Future<List<ChannelModel>> fetchChannelsFromServer(
       {Pagination paginationParams =
           const Pagination(page: 1, size: 50)}) async {
     final page = await _service.chat.queryChannels(paginationParams);
     final channels = page.result;
 
-    final updateData = _mapChannelListToState(channels, state.channels);
+    final persistenceClient = _persistenceClient;
+    if (null == persistenceClient) {
+      return channels;
+    }
 
-    await _persistenceClient
-        ?.updateChannelQueries(channels.map((e) => e.topic).toList());
+    List<ChannelState> states = [];
+    for (final channel in channels) {
+      final aState =
+          await persistenceClient.getChannelStateByTopic(channel.topic);
+      states.add(aState);
+    }
+
+    final updateData = _mapChannelStateToChannelModel(states, state.channels);
+    await persistenceClient
+        .updateChannelQueries(channels.map((e) => e.topic).toList());
 
     state.addChannels(updateData.key);
     return updateData.value;
   }
 
-  /// Requests channels with a given query.
-  Stream<List<ChannelModel>> queryChannels({
+  ///
+  Stream<List<ChannelModel>> fetchChannels({
     Pagination paginationParams = const Pagination(page: 1, size: 50),
   }) async* {
     final hash = generateHash([
@@ -43,13 +52,13 @@ extension ClientChat on Web3MQClient {
     if (_queryChannelsStreams.containsKey(hash)) {
       yield await _queryChannelsStreams[hash]!;
     } else {
-      final channels = await queryChannelsOffline(
+      final channels = await fetchChannelsFromLocalDatabase(
         paginationParams: paginationParams,
       );
       if (channels.isNotEmpty) yield channels;
 
       try {
-        final newQueryChannelsFuture = queryChannelsOnline(
+        final newQueryChannelsFuture = fetchChannelsFromServer(
           paginationParams: paginationParams,
         ).whenComplete(() {
           _queryChannelsStreams.remove(hash);
@@ -205,21 +214,44 @@ extension ClientChat on Web3MQClient {
   }
 
   MapEntry<Map<String, ChannelModel>, List<ChannelModel>>
-      _mapChannelListToState(
-    List<ChannelModel> channelModels,
+      _mapChannelStateToChannelModel(
+    List<ChannelState> channelStates,
     Map<String, ChannelModel> currentState,
   ) {
     final channels = {...currentState};
     final newChannels = <ChannelModel>[];
-    for (final channelModel in channelModels) {
-      final channel = channels[channelModel.topic];
+    for (final channelState in channelStates) {
+      final channel = channels[channelState.channel!.channelId];
       if (channel != null) {
+        // update state
+        // channel.updateFromState(channelState);
         newChannels.add(channel);
       } else {
-        channels[channelModel.topic] = channelModel;
-        newChannels.add(channelModel);
+        final newChannel = ChannelModel.fromState(channelState);
+        channels[newChannel.channelId] = newChannel;
+        newChannels.add(newChannel);
       }
     }
     return MapEntry(channels, newChannels);
+  }
+
+  Future<List<ChannelState>> _mapChannelModelToChannelState(
+    List<ChannelModel> channelModels,
+  ) async {
+    if (!persistenceEnabled) {
+      return channelModels.map((e) => ChannelState(channel: e)).toList();
+    }
+    final channels = <ChannelState>[];
+    for (final channelModel in channelModels) {
+      final channelState =
+          await _persistenceClient?.getChannelStateByTopic(channelModel.topic);
+      if (channelState != null) {
+        final channel = channelState.copyWith(channel: channelModel);
+        channels.add(channel);
+      } else {
+        channels.add(ChannelState(channel: channelModel));
+      }
+    }
+    return channels;
   }
 }

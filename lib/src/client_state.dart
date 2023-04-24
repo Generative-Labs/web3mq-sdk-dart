@@ -304,6 +304,7 @@ class ClientState {
 
   bool _countMessageAsUnread(Message message) {
     return message.sendingStatus == MessageSendingStatus.sent &&
+        message.from != currentUser?.userId &&
         message.messageStatus?.status != 'read';
   }
 

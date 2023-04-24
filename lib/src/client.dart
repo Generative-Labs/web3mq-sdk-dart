@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:intl/intl.dart';
@@ -15,6 +14,7 @@ import 'package:web3mq/src/api/responses.dart' as web3mq;
 import 'package:web3mq/src/api/web3mq_service.dart';
 import 'package:web3mq/src/error/error.dart';
 import 'package:web3mq/src/models/accounts.dart';
+import 'package:web3mq/src/models/channel_state.dart';
 import 'package:web3mq/src/persistence_client.dart';
 import 'package:web3mq/src/signer.dart';
 import 'package:web3mq/src/utils/sign_text_factory.dart';
@@ -322,7 +322,7 @@ class Web3MQClient {
     // we want to query the channels and sync the state
     if (currentState == ConnectionStatus.connected &&
         previousState != ConnectionStatus.connected) {
-      Stream<List<ChannelModel>> channels = queryChannels();
+      Stream<List<ChannelModel>> channels = fetchChannels();
       await for (List<ChannelModel> _ in channels) {}
       if (persistenceEnabled) {
         await sync();
