@@ -363,11 +363,7 @@ class ChannelModel {
 
   /// Create a channel client instance from a [ChannelState] object.
   factory ChannelModel.fromState(ChannelState channelState) {
-    assert(
-      channelState.channel != null,
-      'No channel found inside channel state',
-    );
-    return channelState.channel!;
+    return channelState.channel;
   }
 
   /// Creates a copy of [ChannelModel] with specified attributes overridden.

@@ -55,8 +55,8 @@ class ClientState {
     // sort by last message at
     List<MapEntry<String, ChannelState>> sortedChannels = newChannels.entries
         .toList()
-      ..sort((a, b) => (b.value.channel?.lastMessageAt ?? DateTime(0))
-          .compareTo(a.value.channel?.lastMessageAt ?? DateTime(0)));
+      ..sort((a, b) => (b.value.channel.lastMessageAt ?? DateTime(0))
+          .compareTo(a.value.channel.lastMessageAt ?? DateTime(0)));
     Map<String, ChannelState> sortedMap = Map.fromEntries(sortedChannels);
     _channelsController.add(sortedMap);
   }
@@ -205,7 +205,7 @@ class ClientState {
     if (channels.keys.contains(channelId)) {
       channelState = channels[channelId]!;
       if (_countMessageAsUnread(message)) {
-        channelState.channel?.unreadMessageCount += 1;
+        channelState.channel.unreadMessageCount += 1;
       }
     } else {
       final channelModel = _createChannelModelByMessage(message);
@@ -213,7 +213,7 @@ class ClientState {
     }
 
     // update the last message
-    channelState.channel?.lastMessageAt = DateTime.fromMillisecondsSinceEpoch(
+    channelState.channel.lastMessageAt = DateTime.fromMillisecondsSinceEpoch(
       message.timestamp,
     );
 

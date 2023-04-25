@@ -8,6 +8,5 @@ part of 'channel_dao.dart';
 
 mixin _$ChannelDaoMixin on DatabaseAccessor<DriftChatDatabase> {
   $ChannelsTable get channels => attachedDatabase.channels;
-
   $UsersTable get users => attachedDatabase.users;
 }

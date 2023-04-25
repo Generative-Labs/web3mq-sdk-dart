@@ -7,9 +7,7 @@ part of 'channel_state.dart';
 // **************************************************************************
 
 ChannelState _$ChannelStateFromJson(Map<String, dynamic> json) => ChannelState(
-      channel: json['channel'] == null
-          ? null
-          : ChannelModel.fromJson(json['channel'] as Map<String, dynamic>),
+      channel: ChannelModel.fromJson(json['channel'] as Map<String, dynamic>),
       messages: (json['messages'] as List<dynamic>?)
           ?.map((e) => Message.fromJson(e as Map<String, dynamic>))
           .toList(),

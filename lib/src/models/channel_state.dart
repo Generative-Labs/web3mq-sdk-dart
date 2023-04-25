@@ -8,7 +8,7 @@ part 'channel_state.g.dart';
 @JsonSerializable()
 class ChannelState {
   /// The channel to which this state belongs
-  final ChannelModel? channel;
+  final ChannelModel channel;
 
   /// A paginated list of channel messages
   final List<Message>? messages;
@@ -38,5 +38,5 @@ class ChannelState {
           members: members ?? this.members);
 
   /// Constructor used for json serialization
-  ChannelState({this.channel, this.messages, this.members});
+  ChannelState({required this.channel, this.messages, this.members});
 }

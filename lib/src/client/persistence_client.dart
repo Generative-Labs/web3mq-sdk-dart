@@ -44,16 +44,18 @@ abstract class PersistenceClient {
   });
 
   /// Get [ChannelState] data by providing channel [topic]
-  Future<ChannelState> getChannelStateByTopic(String topic,
+  Future<ChannelState?> getChannelStateByTopic(String topic,
       {Pagination? messagePagination}) async {
     final data = await Future.wait([
       getMembersByTopic(topic),
       getChannelByTopic(topic),
       getMessagesByTopic(topic, messagePagination: messagePagination),
     ]);
+    final channel = data[1] as ChannelModel?;
+    if (channel == null) return null;
     return ChannelState(
       members: data[0] as List<Member>?,
-      channel: data[1] as ChannelModel?,
+      channel: channel,
       messages: data[2] as List<Message>?,
     );
   }
@@ -137,21 +139,19 @@ abstract class PersistenceClient {
 
     for (final state in channelStates) {
       final channel = state.channel;
-      if (channel != null) {
-        channels.add(channel);
+      channels.add(channel);
 
-        final topic = channel.topic;
-        final members = state.members;
-        final Iterable<Message>? messages;
-        messages = state.messages;
+      final topic = channel.topic;
+      final members = state.members;
+      final Iterable<Message>? messages;
+      messages = state.messages;
 
-        // Preparing deletion data
-        membersToDelete.add(topic);
+      // Preparing deletion data
+      membersToDelete.add(topic);
 
-        // preparing addition data
-        channelWithMembers[topic] = members;
-        channelWithMessages[topic] = messages?.toList();
-      }
+      // preparing addition data
+      channelWithMembers[topic] = members;
+      channelWithMessages[topic] = messages?.toList();
     }
 
     // Removing old members data as they may have

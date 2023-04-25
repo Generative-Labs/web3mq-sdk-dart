@@ -4,7 +4,6 @@ import 'package:mutex/mutex.dart';
 
 import '../../web3mq.dart';
 import '../client/persistence_client.dart';
-import '../models/channel_state.dart';
 import 'db/drift_chat_database.dart';
 import 'db/shared/native_db.dart';
 
@@ -243,23 +242,17 @@ class Web3MQPersistenceClient extends PersistenceClient {
       () async {
         final channels = await db!.channelQueryDao.getChannels();
 
-        final channelStates = await Future.wait(
+        List<ChannelState> channelStates = (await Future.wait(
           channels.map((e) => getChannelStateByTopic(e.topic)),
-        );
+        ))
+            .where((state) => state != null)
+            .map((state) => state!)
+            .toList();
 
         chainedComparator(ChannelState a, ChannelState b) {
-          final dateA = a.channel?.lastMessageAt ?? a.channel?.createdAt;
-          final dateB = b.channel?.lastMessageAt ?? b.channel?.createdAt;
-
-          if (dateA == null && dateB == null) {
-            return 0;
-          } else if (dateA == null) {
-            return 1;
-          } else if (dateB == null) {
-            return -1;
-          } else {
-            return dateB.compareTo(dateA);
-          }
+          final dateA = a.channel.lastMessageAt ?? a.channel.createdAt;
+          final dateB = b.channel.lastMessageAt ?? b.channel.createdAt;
+          return dateB.compareTo(dateA);
         }
 
         channelStates.sort(chainedComparator);

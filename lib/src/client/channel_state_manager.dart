@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:web3mq/src/models/channel_state.dart';
 import 'package:web3mq/src/ws/models/pb/message.pb.dart';
 import 'package:web3mq/web3mq.dart';
 
@@ -103,7 +102,7 @@ class ChannelStateManager {
     }
     _channelState = _channelState.copyWith(
       messages: newMessages..sort(_sortByCreatedAt),
-      channel: _channelState.channel?.copyWith(
+      channel: _channelState.channel.copyWith(
         lastMessageAt: message.createdAt,
       ),
     );
@@ -130,5 +129,5 @@ class ChannelStateManager {
             eventType3,
             eventType4,
           )
-          .where((e) => e.topicId == _channelState.channel?.channelId);
+          .where((e) => e.topicId == _channelState.channel.channelId);
 }

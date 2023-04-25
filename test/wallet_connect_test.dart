@@ -1,6 +1,4 @@
 import 'package:test/test.dart';
-import 'package:web3mq/src/utils/wallet_connector.dart';
-
 import 'mocks.dart';
 
 void main() {

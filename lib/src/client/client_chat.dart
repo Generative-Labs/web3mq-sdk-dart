@@ -31,13 +31,17 @@ extension ClientChat on Web3MQClient {
     for (final channel in channels) {
       final aState =
           await persistenceClient.getChannelStateByTopic(channel.topic);
-      states.add(aState);
+      if (aState != null) {
+        states.add(aState.copyWith(channel: channel));
+      } else {
+        states.add(ChannelState(channel: channel));
+      }
     }
 
     final updateData = _mapChannelStateToChannelModel(states, state.channels);
-    await persistenceClient
+    persistenceClient
         .updateChannelQueries(channels.map((e) => e.topic).toList());
-
+    persistenceClient.updateChannels(channels);
     state.addChannels(updateData.key);
     return updateData.value;
   }
@@ -221,16 +225,14 @@ extension ClientChat on Web3MQClient {
     final channels = {...currentState};
     final newChannels = <ChannelState>[];
     for (final channelState in channelStates) {
-      final channel = channels[channelState.channel!.channelId];
+      final channel = channels[channelState.channel.channelId];
       if (channel != null) {
-        newChannels.add(channel);
+        newChannels.add(channelState);
       } else {
         final newChannel = channelState;
-        final channelId = newChannel.channel?.channelId;
-        if (channelId != null) {
-          channels[channelId] = newChannel;
-          newChannels.add(newChannel);
-        }
+        final channelId = newChannel.channel.channelId;
+        channels[channelId] = newChannel;
+        newChannels.add(newChannel);
       }
     }
     return MapEntry(channels, newChannels);
