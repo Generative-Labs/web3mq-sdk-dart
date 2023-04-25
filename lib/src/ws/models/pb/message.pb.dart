@@ -99,6 +99,16 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
             ? ''
             : 'validatePubKey',
         protoName: 'validatePubKey')
+    ..m<$core.String, $core.String>(
+        14,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'extraData',
+        protoName: 'extraData',
+        entryClassName: 'Web3MQRequestMessage.ExtraDataEntry',
+        keyFieldType: $pb.PbFieldType.OS,
+        valueFieldType: $pb.PbFieldType.OS,
+        packageName: const $pb.PackageName('pb'))
     ..aOS(
         15,
         const $core.bool.fromEnvironment('protobuf.omit_field_names')
@@ -108,7 +118,6 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   Web3MQRequestMessage._() : super();
-
   factory Web3MQRequestMessage({
     $core.List<$core.int>? payload,
     $core.String? contentTopic,
@@ -123,6 +132,7 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
     $core.String? messageType,
     $core.String? nodeId,
     $core.String? validatePubKey,
+    $core.Map<$core.String, $core.String>? extraData,
     $core.String? threadId,
   }) {
     final _result = create();
@@ -165,26 +175,25 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
     if (validatePubKey != null) {
       _result.validatePubKey = validatePubKey;
     }
+    if (extraData != null) {
+      _result.extraData.addAll(extraData);
+    }
     if (threadId != null) {
       _result.threadId = threadId;
     }
     return _result;
   }
-
   factory Web3MQRequestMessage.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
-
   factory Web3MQRequestMessage.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
-
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
       'Will be removed in next major version')
   Web3MQRequestMessage clone() =>
       Web3MQRequestMessage()..mergeFromMessage(this);
-
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
       'Will be removed in next major version')
@@ -192,15 +201,11 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
       super.copyWith((message) => updates(message as Web3MQRequestMessage))
           as Web3MQRequestMessage; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static Web3MQRequestMessage create() => Web3MQRequestMessage._();
-
   Web3MQRequestMessage createEmptyInstance() => create();
-
   static $pb.PbList<Web3MQRequestMessage> createRepeated() =>
       $pb.PbList<Web3MQRequestMessage>();
-
   @$core.pragma('dart2js:noInline')
   static Web3MQRequestMessage getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<Web3MQRequestMessage>(create);
@@ -208,7 +213,6 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get payload => $_getN(0);
-
   @$pb.TagNumber(1)
   set payload($core.List<$core.int> v) {
     $_setBytes(0, v);
@@ -216,13 +220,11 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.bool hasPayload() => $_has(0);
-
   @$pb.TagNumber(1)
   void clearPayload() => clearField(1);
 
   @$pb.TagNumber(2)
   $core.String get contentTopic => $_getSZ(1);
-
   @$pb.TagNumber(2)
   set contentTopic($core.String v) {
     $_setString(1, v);
@@ -230,13 +232,11 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(2)
   $core.bool hasContentTopic() => $_has(1);
-
   @$pb.TagNumber(2)
   void clearContentTopic() => clearField(2);
 
   @$pb.TagNumber(3)
   $core.int get version => $_getIZ(2);
-
   @$pb.TagNumber(3)
   set version($core.int v) {
     $_setUnsignedInt32(2, v);
@@ -244,13 +244,11 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(3)
   $core.bool hasVersion() => $_has(2);
-
   @$pb.TagNumber(3)
   void clearVersion() => clearField(3);
 
   @$pb.TagNumber(4)
   $core.String get comeFrom => $_getSZ(3);
-
   @$pb.TagNumber(4)
   set comeFrom($core.String v) {
     $_setString(3, v);
@@ -258,13 +256,11 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(4)
   $core.bool hasComeFrom() => $_has(3);
-
   @$pb.TagNumber(4)
   void clearComeFrom() => clearField(4);
 
   @$pb.TagNumber(5)
   $core.String get fromSign => $_getSZ(4);
-
   @$pb.TagNumber(5)
   set fromSign($core.String v) {
     $_setString(4, v);
@@ -272,13 +268,11 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(5)
   $core.bool hasFromSign() => $_has(4);
-
   @$pb.TagNumber(5)
   void clearFromSign() => clearField(5);
 
   @$pb.TagNumber(6)
   $core.String get payloadType => $_getSZ(5);
-
   @$pb.TagNumber(6)
   set payloadType($core.String v) {
     $_setString(5, v);
@@ -286,13 +280,11 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(6)
   $core.bool hasPayloadType() => $_has(5);
-
   @$pb.TagNumber(6)
   void clearPayloadType() => clearField(6);
 
   @$pb.TagNumber(7)
   $core.String get cipherSuite => $_getSZ(6);
-
   @$pb.TagNumber(7)
   set cipherSuite($core.String v) {
     $_setString(6, v);
@@ -300,13 +292,11 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(7)
   $core.bool hasCipherSuite() => $_has(6);
-
   @$pb.TagNumber(7)
   void clearCipherSuite() => clearField(7);
 
   @$pb.TagNumber(8)
   $core.bool get needStore => $_getBF(7);
-
   @$pb.TagNumber(8)
   set needStore($core.bool v) {
     $_setBool(7, v);
@@ -314,13 +304,11 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(8)
   $core.bool hasNeedStore() => $_has(7);
-
   @$pb.TagNumber(8)
   void clearNeedStore() => clearField(8);
 
   @$pb.TagNumber(9)
   $fixnum.Int64 get timestamp => $_getI64(8);
-
   @$pb.TagNumber(9)
   set timestamp($fixnum.Int64 v) {
     $_setInt64(8, v);
@@ -328,13 +316,11 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(9)
   $core.bool hasTimestamp() => $_has(8);
-
   @$pb.TagNumber(9)
   void clearTimestamp() => clearField(9);
 
   @$pb.TagNumber(10)
   $core.String get messageId => $_getSZ(9);
-
   @$pb.TagNumber(10)
   set messageId($core.String v) {
     $_setString(9, v);
@@ -342,13 +328,11 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(10)
   $core.bool hasMessageId() => $_has(9);
-
   @$pb.TagNumber(10)
   void clearMessageId() => clearField(10);
 
   @$pb.TagNumber(11)
   $core.String get messageType => $_getSZ(10);
-
   @$pb.TagNumber(11)
   set messageType($core.String v) {
     $_setString(10, v);
@@ -356,13 +340,11 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(11)
   $core.bool hasMessageType() => $_has(10);
-
   @$pb.TagNumber(11)
   void clearMessageType() => clearField(11);
 
   @$pb.TagNumber(12)
   $core.String get nodeId => $_getSZ(11);
-
   @$pb.TagNumber(12)
   set nodeId($core.String v) {
     $_setString(11, v);
@@ -370,13 +352,11 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(12)
   $core.bool hasNodeId() => $_has(11);
-
   @$pb.TagNumber(12)
   void clearNodeId() => clearField(12);
 
   @$pb.TagNumber(13)
   $core.String get validatePubKey => $_getSZ(12);
-
   @$pb.TagNumber(13)
   set validatePubKey($core.String v) {
     $_setString(12, v);
@@ -384,21 +364,21 @@ class Web3MQRequestMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(13)
   $core.bool hasValidatePubKey() => $_has(12);
-
   @$pb.TagNumber(13)
   void clearValidatePubKey() => clearField(13);
 
-  @$pb.TagNumber(15)
-  $core.String get threadId => $_getSZ(13);
+  @$pb.TagNumber(14)
+  $core.Map<$core.String, $core.String> get extraData => $_getMap(13);
 
   @$pb.TagNumber(15)
+  $core.String get threadId => $_getSZ(14);
+  @$pb.TagNumber(15)
   set threadId($core.String v) {
-    $_setString(13, v);
+    $_setString(14, v);
   }
 
   @$pb.TagNumber(15)
-  $core.bool hasThreadId() => $_has(13);
-
+  $core.bool hasThreadId() => $_has(14);
   @$pb.TagNumber(15)
   void clearThreadId() => clearField(15);
 }
@@ -458,7 +438,6 @@ class Web3MQMessageStatusResp extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   Web3MQMessageStatusResp._() : super();
-
   factory Web3MQMessageStatusResp({
     $core.String? messageId,
     $core.String? contentTopic,
@@ -492,21 +471,17 @@ class Web3MQMessageStatusResp extends $pb.GeneratedMessage {
     }
     return _result;
   }
-
   factory Web3MQMessageStatusResp.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
-
   factory Web3MQMessageStatusResp.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
-
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
       'Will be removed in next major version')
   Web3MQMessageStatusResp clone() =>
       Web3MQMessageStatusResp()..mergeFromMessage(this);
-
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
       'Will be removed in next major version')
@@ -515,15 +490,11 @@ class Web3MQMessageStatusResp extends $pb.GeneratedMessage {
       super.copyWith((message) => updates(message as Web3MQMessageStatusResp))
           as Web3MQMessageStatusResp; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static Web3MQMessageStatusResp create() => Web3MQMessageStatusResp._();
-
   Web3MQMessageStatusResp createEmptyInstance() => create();
-
   static $pb.PbList<Web3MQMessageStatusResp> createRepeated() =>
       $pb.PbList<Web3MQMessageStatusResp>();
-
   @$core.pragma('dart2js:noInline')
   static Web3MQMessageStatusResp getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<Web3MQMessageStatusResp>(create);
@@ -531,7 +502,6 @@ class Web3MQMessageStatusResp extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.String get messageId => $_getSZ(0);
-
   @$pb.TagNumber(1)
   set messageId($core.String v) {
     $_setString(0, v);
@@ -539,13 +509,11 @@ class Web3MQMessageStatusResp extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.bool hasMessageId() => $_has(0);
-
   @$pb.TagNumber(1)
   void clearMessageId() => clearField(1);
 
   @$pb.TagNumber(2)
   $core.String get contentTopic => $_getSZ(1);
-
   @$pb.TagNumber(2)
   set contentTopic($core.String v) {
     $_setString(1, v);
@@ -553,13 +521,11 @@ class Web3MQMessageStatusResp extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(2)
   $core.bool hasContentTopic() => $_has(1);
-
   @$pb.TagNumber(2)
   void clearContentTopic() => clearField(2);
 
   @$pb.TagNumber(3)
   $core.String get messageStatus => $_getSZ(2);
-
   @$pb.TagNumber(3)
   set messageStatus($core.String v) {
     $_setString(2, v);
@@ -567,13 +533,11 @@ class Web3MQMessageStatusResp extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(3)
   $core.bool hasMessageStatus() => $_has(2);
-
   @$pb.TagNumber(3)
   void clearMessageStatus() => clearField(3);
 
   @$pb.TagNumber(4)
   $core.String get version => $_getSZ(3);
-
   @$pb.TagNumber(4)
   set version($core.String v) {
     $_setString(3, v);
@@ -581,13 +545,11 @@ class Web3MQMessageStatusResp extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(4)
   $core.bool hasVersion() => $_has(3);
-
   @$pb.TagNumber(4)
   void clearVersion() => clearField(4);
 
   @$pb.TagNumber(5)
   $core.String get comeFrom => $_getSZ(4);
-
   @$pb.TagNumber(5)
   set comeFrom($core.String v) {
     $_setString(4, v);
@@ -595,13 +557,11 @@ class Web3MQMessageStatusResp extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(5)
   $core.bool hasComeFrom() => $_has(4);
-
   @$pb.TagNumber(5)
   void clearComeFrom() => clearField(5);
 
   @$pb.TagNumber(6)
   $core.String get fromSign => $_getSZ(5);
-
   @$pb.TagNumber(6)
   set fromSign($core.String v) {
     $_setString(5, v);
@@ -609,13 +569,11 @@ class Web3MQMessageStatusResp extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(6)
   $core.bool hasFromSign() => $_has(5);
-
   @$pb.TagNumber(6)
   void clearFromSign() => clearField(6);
 
   @$pb.TagNumber(7)
   $fixnum.Int64 get timestamp => $_getI64(6);
-
   @$pb.TagNumber(7)
   set timestamp($fixnum.Int64 v) {
     $_setInt64(6, v);
@@ -623,7 +581,6 @@ class Web3MQMessageStatusResp extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(7)
   $core.bool hasTimestamp() => $_has(6);
-
   @$pb.TagNumber(7)
   void clearTimestamp() => clearField(7);
 }
@@ -683,7 +640,6 @@ class Web3MQChangeMessageStatus extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   Web3MQChangeMessageStatus._() : super();
-
   factory Web3MQChangeMessageStatus({
     $core.String? messageId,
     $core.String? contentTopic,
@@ -717,21 +673,17 @@ class Web3MQChangeMessageStatus extends $pb.GeneratedMessage {
     }
     return _result;
   }
-
   factory Web3MQChangeMessageStatus.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
-
   factory Web3MQChangeMessageStatus.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
-
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
       'Will be removed in next major version')
   Web3MQChangeMessageStatus clone() =>
       Web3MQChangeMessageStatus()..mergeFromMessage(this);
-
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
       'Will be removed in next major version')
@@ -740,15 +692,11 @@ class Web3MQChangeMessageStatus extends $pb.GeneratedMessage {
       super.copyWith((message) => updates(message as Web3MQChangeMessageStatus))
           as Web3MQChangeMessageStatus; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static Web3MQChangeMessageStatus create() => Web3MQChangeMessageStatus._();
-
   Web3MQChangeMessageStatus createEmptyInstance() => create();
-
   static $pb.PbList<Web3MQChangeMessageStatus> createRepeated() =>
       $pb.PbList<Web3MQChangeMessageStatus>();
-
   @$core.pragma('dart2js:noInline')
   static Web3MQChangeMessageStatus getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<Web3MQChangeMessageStatus>(create);
@@ -756,7 +704,6 @@ class Web3MQChangeMessageStatus extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.String get messageId => $_getSZ(0);
-
   @$pb.TagNumber(1)
   set messageId($core.String v) {
     $_setString(0, v);
@@ -764,13 +711,11 @@ class Web3MQChangeMessageStatus extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.bool hasMessageId() => $_has(0);
-
   @$pb.TagNumber(1)
   void clearMessageId() => clearField(1);
 
   @$pb.TagNumber(2)
   $core.String get contentTopic => $_getSZ(1);
-
   @$pb.TagNumber(2)
   set contentTopic($core.String v) {
     $_setString(1, v);
@@ -778,13 +723,11 @@ class Web3MQChangeMessageStatus extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(2)
   $core.bool hasContentTopic() => $_has(1);
-
   @$pb.TagNumber(2)
   void clearContentTopic() => clearField(2);
 
   @$pb.TagNumber(3)
   $core.String get messageStatus => $_getSZ(2);
-
   @$pb.TagNumber(3)
   set messageStatus($core.String v) {
     $_setString(2, v);
@@ -792,13 +735,11 @@ class Web3MQChangeMessageStatus extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(3)
   $core.bool hasMessageStatus() => $_has(2);
-
   @$pb.TagNumber(3)
   void clearMessageStatus() => clearField(3);
 
   @$pb.TagNumber(4)
   $core.String get version => $_getSZ(3);
-
   @$pb.TagNumber(4)
   set version($core.String v) {
     $_setString(3, v);
@@ -806,13 +747,11 @@ class Web3MQChangeMessageStatus extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(4)
   $core.bool hasVersion() => $_has(3);
-
   @$pb.TagNumber(4)
   void clearVersion() => clearField(4);
 
   @$pb.TagNumber(5)
   $core.String get comeFrom => $_getSZ(4);
-
   @$pb.TagNumber(5)
   set comeFrom($core.String v) {
     $_setString(4, v);
@@ -820,13 +759,11 @@ class Web3MQChangeMessageStatus extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(5)
   $core.bool hasComeFrom() => $_has(4);
-
   @$pb.TagNumber(5)
   void clearComeFrom() => clearField(5);
 
   @$pb.TagNumber(6)
   $core.String get fromSign => $_getSZ(5);
-
   @$pb.TagNumber(6)
   set fromSign($core.String v) {
     $_setString(5, v);
@@ -834,13 +771,11 @@ class Web3MQChangeMessageStatus extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(6)
   $core.bool hasFromSign() => $_has(5);
-
   @$pb.TagNumber(6)
   void clearFromSign() => clearField(6);
 
   @$pb.TagNumber(7)
   $fixnum.Int64 get timestamp => $_getI64(6);
-
   @$pb.TagNumber(7)
   set timestamp($fixnum.Int64 v) {
     $_setInt64(6, v);
@@ -848,7 +783,6 @@ class Web3MQChangeMessageStatus extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(7)
   $core.bool hasTimestamp() => $_has(6);
-
   @$pb.TagNumber(7)
   void clearTimestamp() => clearField(7);
 }
@@ -934,7 +868,6 @@ class MessageItem extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   MessageItem._() : super();
-
   factory MessageItem({
     $core.String? messageId,
     $core.int? version,
@@ -984,20 +917,16 @@ class MessageItem extends $pb.GeneratedMessage {
     }
     return _result;
   }
-
   factory MessageItem.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
-
   factory MessageItem.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
-
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
       'Will be removed in next major version')
   MessageItem clone() => MessageItem()..mergeFromMessage(this);
-
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
       'Will be removed in next major version')
@@ -1005,14 +934,10 @@ class MessageItem extends $pb.GeneratedMessage {
       super.copyWith((message) => updates(message as MessageItem))
           as MessageItem; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static MessageItem create() => MessageItem._();
-
   MessageItem createEmptyInstance() => create();
-
   static $pb.PbList<MessageItem> createRepeated() => $pb.PbList<MessageItem>();
-
   @$core.pragma('dart2js:noInline')
   static MessageItem getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<MessageItem>(create);
@@ -1020,7 +945,6 @@ class MessageItem extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.String get messageId => $_getSZ(0);
-
   @$pb.TagNumber(1)
   set messageId($core.String v) {
     $_setString(0, v);
@@ -1028,13 +952,11 @@ class MessageItem extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.bool hasMessageId() => $_has(0);
-
   @$pb.TagNumber(1)
   void clearMessageId() => clearField(1);
 
   @$pb.TagNumber(2)
   $core.int get version => $_getIZ(1);
-
   @$pb.TagNumber(2)
   set version($core.int v) {
     $_setUnsignedInt32(1, v);
@@ -1042,13 +964,11 @@ class MessageItem extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(2)
   $core.bool hasVersion() => $_has(1);
-
   @$pb.TagNumber(2)
   void clearVersion() => clearField(2);
 
   @$pb.TagNumber(3)
   $core.List<$core.int> get payload => $_getN(2);
-
   @$pb.TagNumber(3)
   set payload($core.List<$core.int> v) {
     $_setBytes(2, v);
@@ -1056,13 +976,11 @@ class MessageItem extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(3)
   $core.bool hasPayload() => $_has(2);
-
   @$pb.TagNumber(3)
   void clearPayload() => clearField(3);
 
   @$pb.TagNumber(4)
   $core.String get payloadType => $_getSZ(3);
-
   @$pb.TagNumber(4)
   set payloadType($core.String v) {
     $_setString(3, v);
@@ -1070,13 +988,11 @@ class MessageItem extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(4)
   $core.bool hasPayloadType() => $_has(3);
-
   @$pb.TagNumber(4)
   void clearPayloadType() => clearField(4);
 
   @$pb.TagNumber(5)
   $core.String get comeFrom => $_getSZ(4);
-
   @$pb.TagNumber(5)
   set comeFrom($core.String v) {
     $_setString(4, v);
@@ -1084,13 +1000,11 @@ class MessageItem extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(5)
   $core.bool hasComeFrom() => $_has(4);
-
   @$pb.TagNumber(5)
   void clearComeFrom() => clearField(5);
 
   @$pb.TagNumber(6)
   $core.String get fromSign => $_getSZ(5);
-
   @$pb.TagNumber(6)
   set fromSign($core.String v) {
     $_setString(5, v);
@@ -1098,13 +1012,11 @@ class MessageItem extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(6)
   $core.bool hasFromSign() => $_has(5);
-
   @$pb.TagNumber(6)
   void clearFromSign() => clearField(6);
 
   @$pb.TagNumber(7)
   $core.String get contentTopic => $_getSZ(6);
-
   @$pb.TagNumber(7)
   set contentTopic($core.String v) {
     $_setString(6, v);
@@ -1112,13 +1024,11 @@ class MessageItem extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(7)
   $core.bool hasContentTopic() => $_has(6);
-
   @$pb.TagNumber(7)
   void clearContentTopic() => clearField(7);
 
   @$pb.TagNumber(8)
   $core.String get cipherSuite => $_getSZ(7);
-
   @$pb.TagNumber(8)
   set cipherSuite($core.String v) {
     $_setString(7, v);
@@ -1126,13 +1036,11 @@ class MessageItem extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(8)
   $core.bool hasCipherSuite() => $_has(7);
-
   @$pb.TagNumber(8)
   void clearCipherSuite() => clearField(8);
 
   @$pb.TagNumber(9)
   $fixnum.Int64 get timestamp => $_getI64(8);
-
   @$pb.TagNumber(9)
   set timestamp($fixnum.Int64 v) {
     $_setInt64(8, v);
@@ -1140,13 +1048,11 @@ class MessageItem extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(9)
   $core.bool hasTimestamp() => $_has(8);
-
   @$pb.TagNumber(9)
   void clearTimestamp() => clearField(9);
 
   @$pb.TagNumber(10)
   $core.bool get read => $_getBF(9);
-
   @$pb.TagNumber(10)
   set read($core.bool v) {
     $_setBool(9, v);
@@ -1154,13 +1060,11 @@ class MessageItem extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(10)
   $core.bool hasRead() => $_has(9);
-
   @$pb.TagNumber(10)
   void clearRead() => clearField(10);
 
   @$pb.TagNumber(11)
   $fixnum.Int64 get readTimestamp => $_getI64(10);
-
   @$pb.TagNumber(11)
   set readTimestamp($fixnum.Int64 v) {
     $_setInt64(10, v);
@@ -1168,7 +1072,6 @@ class MessageItem extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(11)
   $core.bool hasReadTimestamp() => $_has(10);
-
   @$pb.TagNumber(11)
   void clearReadTimestamp() => clearField(11);
 }
@@ -1193,7 +1096,6 @@ class Web3MQMessageListResponse extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   Web3MQMessageListResponse._() : super();
-
   factory Web3MQMessageListResponse({
     $core.Iterable<MessageItem>? data,
   }) {
@@ -1203,21 +1105,17 @@ class Web3MQMessageListResponse extends $pb.GeneratedMessage {
     }
     return _result;
   }
-
   factory Web3MQMessageListResponse.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
-
   factory Web3MQMessageListResponse.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
-
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
       'Will be removed in next major version')
   Web3MQMessageListResponse clone() =>
       Web3MQMessageListResponse()..mergeFromMessage(this);
-
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
       'Will be removed in next major version')
@@ -1226,15 +1124,11 @@ class Web3MQMessageListResponse extends $pb.GeneratedMessage {
       super.copyWith((message) => updates(message as Web3MQMessageListResponse))
           as Web3MQMessageListResponse; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static Web3MQMessageListResponse create() => Web3MQMessageListResponse._();
-
   Web3MQMessageListResponse createEmptyInstance() => create();
-
   static $pb.PbList<Web3MQMessageListResponse> createRepeated() =>
       $pb.PbList<Web3MQMessageListResponse>();
-
   @$core.pragma('dart2js:noInline')
   static Web3MQMessageListResponse getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<Web3MQMessageListResponse>(create);
@@ -1282,7 +1176,6 @@ class GetHistoryMessagesRequest extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   GetHistoryMessagesRequest._() : super();
-
   factory GetHistoryMessagesRequest({
     $core.String? comeFrom,
     $core.String? fromSign,
@@ -1304,21 +1197,17 @@ class GetHistoryMessagesRequest extends $pb.GeneratedMessage {
     }
     return _result;
   }
-
   factory GetHistoryMessagesRequest.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
-
   factory GetHistoryMessagesRequest.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
-
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
       'Will be removed in next major version')
   GetHistoryMessagesRequest clone() =>
       GetHistoryMessagesRequest()..mergeFromMessage(this);
-
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
       'Will be removed in next major version')
@@ -1327,15 +1216,11 @@ class GetHistoryMessagesRequest extends $pb.GeneratedMessage {
       super.copyWith((message) => updates(message as GetHistoryMessagesRequest))
           as GetHistoryMessagesRequest; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static GetHistoryMessagesRequest create() => GetHistoryMessagesRequest._();
-
   GetHistoryMessagesRequest createEmptyInstance() => create();
-
   static $pb.PbList<GetHistoryMessagesRequest> createRepeated() =>
       $pb.PbList<GetHistoryMessagesRequest>();
-
   @$core.pragma('dart2js:noInline')
   static GetHistoryMessagesRequest getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<GetHistoryMessagesRequest>(create);
@@ -1343,7 +1228,6 @@ class GetHistoryMessagesRequest extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.String get comeFrom => $_getSZ(0);
-
   @$pb.TagNumber(1)
   set comeFrom($core.String v) {
     $_setString(0, v);
@@ -1351,13 +1235,11 @@ class GetHistoryMessagesRequest extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.bool hasComeFrom() => $_has(0);
-
   @$pb.TagNumber(1)
   void clearComeFrom() => clearField(1);
 
   @$pb.TagNumber(2)
   $core.String get fromSign => $_getSZ(1);
-
   @$pb.TagNumber(2)
   set fromSign($core.String v) {
     $_setString(1, v);
@@ -1365,13 +1247,11 @@ class GetHistoryMessagesRequest extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(2)
   $core.bool hasFromSign() => $_has(1);
-
   @$pb.TagNumber(2)
   void clearFromSign() => clearField(2);
 
   @$pb.TagNumber(3)
   $core.int get version => $_getIZ(2);
-
   @$pb.TagNumber(3)
   set version($core.int v) {
     $_setUnsignedInt32(2, v);
@@ -1379,13 +1259,11 @@ class GetHistoryMessagesRequest extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(3)
   $core.bool hasVersion() => $_has(2);
-
   @$pb.TagNumber(3)
   void clearVersion() => clearField(3);
 
   @$pb.TagNumber(4)
   $fixnum.Int64 get timestamp => $_getI64(3);
-
   @$pb.TagNumber(4)
   set timestamp($fixnum.Int64 v) {
     $_setInt64(3, v);
@@ -1393,7 +1271,6 @@ class GetHistoryMessagesRequest extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(4)
   $core.bool hasTimestamp() => $_has(3);
-
   @$pb.TagNumber(4)
   void clearTimestamp() => clearField(4);
 }

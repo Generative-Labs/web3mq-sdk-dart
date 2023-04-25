@@ -596,6 +596,9 @@ class Message {
   @JsonKey(name: "threadid")
   final String? threadId;
 
+  /// The extra data.
+  final Map<String, String>? extraData;
+
   /// The status of this message
   final MessageStatus? messageStatus;
 
@@ -640,6 +643,7 @@ class Message {
       this.text,
       this.threadId,
       this.messageType,
+      this.extraData,
       {DateTime? createdAt,
       DateTime? updatedAt,
       MessageSendingStatus? sendingStatus,
@@ -652,17 +656,13 @@ class Message {
   factory Message.fromJson(Map<String, dynamic> json) {
     final message = _$MessageFromJson(json)
         .copyWith(sendingStatus: MessageSendingStatus.sent);
-    // final topic =
-    //     _getTopicIdByRawTopicAndUserId(message.topic, message.from, true);
-    final text = _generateTextFromPayload(message.payload);
+    final text = _decodeTextFromPayload(message.payload);
     return message.copyWith(text: text);
   }
 
   /// Creates a new instance form [WSMessage]
   factory Message.fromWSMessage(WSMessage message) {
     final text = utf8.decode(message.payload);
-    // final topic = _getTopicIdByRawTopicAndUserId(
-    //     message.topicId, message.userId, fromOthers);
     return Message(
         message.topicId,
         message.userId,
@@ -673,14 +673,13 @@ class Message {
         null,
         text,
         message.threadId,
-        message.messageType);
+        message.messageType,
+        message.extraData);
   }
 
   /// Creates a new instance form [Web3MQRequestMessage]
   factory Message.fromProtobufMessage(Web3MQRequestMessage message) {
     final text = utf8.decode(message.payload);
-    // final topic = _getTopicIdByRawTopicAndUserId(
-    //     message.contentTopic, message.comeFrom, fromOthers);
     return Message(
         message.contentTopic,
         message.comeFrom,
@@ -691,7 +690,8 @@ class Message {
         null,
         text,
         message.threadId,
-        message.messageType);
+        message.messageType,
+        message.extraData);
   }
 
   Message copyWith({
@@ -705,6 +705,7 @@ class Message {
     String? text,
     String? threadId,
     String? messageType,
+    Map<String, String>? extraData,
     DateTime? createdAt,
     DateTime? updatedAt,
     MessageSendingStatus? sendingStatus,
@@ -721,6 +722,7 @@ class Message {
       text ?? this.text,
       threadId ?? this.threadId,
       messageType ?? this.messageType,
+      extraData ?? this.extraData,
       createdAt: createdAt ?? _createdAt,
       updatedAt: updatedAt ?? _updatedAt,
       sendingStatus: sendingStatus ?? _sendingStatus,
@@ -728,17 +730,7 @@ class Message {
     );
   }
 
-  // static String _getTopicIdByRawTopicAndUserId(
-  //     String topicId, String userId, bool fromOthers) {
-  //   if (!fromOthers) return topicId;
-  //   if (topicId.contains('user:')) {
-  //     return userId;
-  //   } else {
-  //     return topicId;
-  //   }
-  // }
-
-  static String? _generateTextFromPayload(String? payload) {
+  static String? _decodeTextFromPayload(String? payload) {
     if (null == payload) return null;
     final bytes = base64Decode(payload);
     return utf8.decode(bytes);

@@ -257,7 +257,8 @@ class Web3MQPersistenceClient extends PersistenceClient {
 
         channelStates.sort(chainedComparator);
         if (paginationParams != null) {
-          int startIndex = (paginationParams.page - 1) * paginationParams.size;
+          int startIndex =
+              ((paginationParams.page ?? 1) - 1) * paginationParams.size;
           return channelStates
               .skip(startIndex)
               .take(paginationParams.size)

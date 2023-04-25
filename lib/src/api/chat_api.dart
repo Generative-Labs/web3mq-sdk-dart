@@ -15,15 +15,15 @@ class ChatApi {
 
   /// Queries messages from remote
   Future<Page<Message>> queryMessagesByTopic(
-      String topic, Pagination pagination,
+      String topic, TimestampPagination pagination,
       {String? threadId}) async {
     final signResult = await _signer.signatureForRequest(topic);
     final response =
         await _client.get("/api/messages/history/", queryParameters: {
       'threadid': threadId,
       'topic': topic,
-      'page': pagination.page,
-      'size': pagination.size,
+      'before_timestamp': pagination.timestampBefore,
+      'size': pagination.limit,
       'userid': signResult.userId,
       'web3mq_signature': signResult.signature,
       'timestamp': signResult.time.millisecondsSinceEpoch

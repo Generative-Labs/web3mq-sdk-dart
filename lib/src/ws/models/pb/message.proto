@@ -17,6 +17,7 @@ message Web3MQRequestMessage {
   string nodeId = 12;
 
   string validatePubKey = 13; // base64 encode
+  map<string, string> extraData = 14;
   string threadId = 15;
 }
 

@@ -15,6 +15,7 @@ extension MessageEntityX on MessageEntity {
         messageText,
         threadId,
         messageType,
+        extraData,
         sendingStatus: status,
       );
 }
@@ -34,5 +35,6 @@ extension MessageX on Message {
       channelTopic: topic,
       cipherSuite: cipherSuite,
       threadId: threadId,
-      read: messageStatus?.status == 'read');
+      read: messageStatus?.status == 'read',
+      extraData: extraData);
 }

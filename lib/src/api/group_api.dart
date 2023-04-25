@@ -157,7 +157,7 @@ class GroupApi {
   }
 
   /// Quits a group with the specified group ID.
-  Future<void> quitGroup(String groupId) async {
+  Future<void> leaveGroup(String groupId) async {
     final signResult = await _signer.signatureForRequest(groupId);
     final response = await _client.post("/api/quit_group/", data: {
       'groupid': groupId,

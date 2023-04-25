@@ -85,13 +85,11 @@ extension ClientChat on Web3MQClient {
   }
 
   /// Sends text message to the given topic.
-  Future<Message> sendText(
-    String text,
-    String topic, {
-    String? threadId,
-    String cipherSuite = 'NONE',
-    bool needStore = true,
-  }) async {
+  Future<Message> sendText(String text, String topic,
+      {String? threadId,
+      String cipherSuite = 'NONE',
+      bool needStore = true,
+      Map<String, String>? extraData}) async {
     final user = state.currentUser;
     final nodeId = state.currentNodeId;
     if (user == null || nodeId == null) {
@@ -99,7 +97,10 @@ extension ClientChat on Web3MQClient {
     }
     final chatMessage = await MessageFactory.fromText(
         text, topic, user.userId, user.sessionKey, nodeId,
-        threadId: threadId, needStore: needStore, cipherSuite: cipherSuite);
+        threadId: threadId,
+        needStore: needStore,
+        cipherSuite: cipherSuite,
+        extraData: extraData);
     _ws.send(chatMessage);
     _eventController.add(Event.fromMessageSending(chatMessage.message));
     return Message.fromProtobufMessage(chatMessage.message);
@@ -112,11 +113,9 @@ extension ClientChat on Web3MQClient {
 
   /// Query for the messages in the given topic.
   Future<Page<Message>> queryMessagesByTopic(
-      String topic, Pagination pagination,
-      {String? threadId}) async {
-    return await _service.chat
-        .queryMessagesByTopic(topic, pagination, threadId: threadId);
-  }
+          String topic, TimestampPagination pagination,
+          {String? threadId}) =>
+      _service.chat.queryMessagesByTopic(topic, pagination, threadId: threadId);
 
   /// Creates a thread in the given topic and message id.
   Future<void> createThread(

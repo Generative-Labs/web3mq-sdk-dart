@@ -42,17 +42,22 @@ class MessageFactory {
       String senderUserId, String privateKey, String nodeId,
       {bool needStore = true,
       String cipherSuite = "NONE",
-      String? threadId}) async {
-    var message = Web3MQRequestMessage();
+      String? threadId,
+      Map<String, String>? extraData}) async {
+    var message = Web3MQRequestMessage(
+        version: 1,
+        payloadType: PayloadType.text.value,
+        comeFrom: senderUserId,
+        contentTopic: topic,
+        cipherSuite: cipherSuite,
+        needStore: needStore,
+        extraData: extraData);
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     final payload = utf8.encode(text);
     final messageId = MessageIdGenerator.generate(
         senderUserId, topic, timestamp, Uint8List.fromList(payload));
     message.messageId = messageId;
-    message.version = 1;
     message.payload = payload;
-    message.payloadType = PayloadType.text.value;
-    message.comeFrom = senderUserId;
     message.messageType =
         threadId != null ? MessageType.thread : MessageType.common;
     final ed25519 = Ed25519();
@@ -61,11 +66,7 @@ class MessageFactory {
     final signature =
         await ed25519.sign(utf8.encode(content), keyPair: keyPair);
     message.fromSign = base64Encode(signature.bytes);
-    print("debug:contentTopic:$topic");
-    message.contentTopic = topic;
-    message.cipherSuite = cipherSuite;
     message.timestamp = Int64(timestamp);
-    message.needStore = needStore;
     final privateKeyBytes = await keyPair.extractPrivateKeyBytes();
     message.validatePubKey = base64Encode(privateKeyBytes);
     return ChatMessage(message);
