@@ -100,11 +100,9 @@ extension ClientChat on Web3MQClient {
 
   /// Query for the messages in the given topic.
   Future<Page<Message>> queryMessagesByTopic(
-      String topic, Pagination pagination,
-      {String? threadId}) async {
-    return await _service.chat
-        .queryMessagesByTopic(topic, pagination, threadId: threadId);
-  }
+          String topic, TimestampPagination pagination,
+          {String? threadId}) =>
+      _service.chat.queryMessagesByTopic(topic, pagination, threadId: threadId);
 
   /// Creates a thread in the given topic and message id.
   Future<void> createThread(

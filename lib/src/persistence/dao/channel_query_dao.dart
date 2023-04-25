@@ -77,8 +77,9 @@ class ChannelQueryDao extends DatabaseAccessor<DriftChatDatabase>
     cachedChannels.sort(chainedComparator);
 
     if (null != paginationParams) {
-      int startIndex = (paginationParams.page - 1) * paginationParams.size;
-      int endIndex = paginationParams.page * paginationParams.size;
+      int startIndex =
+          ((paginationParams.page ?? 1) - 1) * paginationParams.size;
+      int endIndex = (paginationParams.page ?? 1) * paginationParams.size;
       List selectedChannels = cachedChannels.sublist(startIndex, endIndex);
       return selectedChannels as List<ChannelModel>;
     }
