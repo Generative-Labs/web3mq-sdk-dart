@@ -20,12 +20,12 @@ Map<String, dynamic> _$PaginationToJson(Pagination instance) =>
 TimestampPagination _$TimestampPaginationFromJson(Map<String, dynamic> json) =>
     TimestampPagination(
       limit: json['limit'] as int,
-      timestampBeforeOrEqual: json['timestampBeforeOrEqual'] as int,
+      timestampBefore: json['timestampBefore'] as int?,
     );
 
 Map<String, dynamic> _$TimestampPaginationToJson(
         TimestampPagination instance) =>
     <String, dynamic>{
-      'timestampBeforeOrEqual': instance.timestampBeforeOrEqual,
+      'timestampBefore': instance.timestampBefore,
       'limit': instance.limit,
     };

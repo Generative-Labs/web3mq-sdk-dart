@@ -22,7 +22,7 @@ class ChatApi {
         await _client.get("/api/messages/history/", queryParameters: {
       'threadid': threadId,
       'topic': topic,
-      'before_timestamp': pagination.timestampBeforeOrEqual,
+      'before_timestamp': pagination.timestampBefore,
       'size': pagination.limit,
       'userid': signResult.userId,
       'web3mq_signature': signResult.signature,

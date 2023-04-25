@@ -27,8 +27,8 @@ class Pagination extends Equatable {
 
 @JsonSerializable()
 class TimestampPagination extends Pagination {
-  /// Filter on timestamp smaller than or equal the given value, in milliseconds.
-  final int timestampBeforeOrEqual;
+  /// Filter on timestamp smaller than the given value, in milliseconds.
+  final int timestampBefore;
 
   int get limit {
     return size;
@@ -36,9 +36,9 @@ class TimestampPagination extends Pagination {
 
   TimestampPagination({
     required int limit,
-    int? timestampBeforeOrEqual,
-  })  : timestampBeforeOrEqual =
-            timestampBeforeOrEqual ?? DateTime.now().millisecondsSinceEpoch,
+    int? timestampBefore,
+  })  : timestampBefore =
+            timestampBefore ?? DateTime.now().millisecondsSinceEpoch,
         super(page: null, size: limit);
 
   static TimestampPagination fromJson(Map<String, dynamic> json) =>
@@ -48,5 +48,5 @@ class TimestampPagination extends Pagination {
   Map<String, dynamic> toJson() => _$TimestampPaginationToJson(this);
 
   @override
-  List<Object?> get props => [page, size, timestampBeforeOrEqual];
+  List<Object?> get props => [page, size, timestampBefore];
 }
