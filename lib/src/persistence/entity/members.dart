@@ -8,7 +8,7 @@ class Members extends Table {
   /// The interested user id
   TextColumn get userId => text()();
 
-  /// The channel cid of which this user is part of
+  /// The channel topic of which this user is part of
   TextColumn get channelTopic =>
       text().customConstraint('REFERENCES channels(topic) ON DELETE CASCADE')();
 

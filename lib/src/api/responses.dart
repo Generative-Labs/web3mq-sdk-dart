@@ -341,6 +341,9 @@ class ChannelModel {
   factory ChannelModel.fromJson(Map<String, dynamic> json) =>
       _$ChannelModelFromJson(json);
 
+  /// Serialize to json
+  Map<String, dynamic> toJson() => _$ChannelModelToJson(this);
+
   /// The date of the last message
   @JsonKey(includeIfNull: false, toJson: Serializer.readOnly)
   DateTime? lastMessageAt;

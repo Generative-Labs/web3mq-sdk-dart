@@ -18,7 +18,7 @@ extension ChannelEntityX on ChannelEntity {
 extension ChannelModelX on ChannelModel {
   /// Maps a [ChannelModel] into [ChannelEntity]
   ChannelEntity toEntity() => ChannelEntity(
-      id: topic,
+      id: channelId,
       name: name,
       topic: topic,
       topicType: topicType,
