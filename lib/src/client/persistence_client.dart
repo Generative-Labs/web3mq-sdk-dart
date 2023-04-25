@@ -154,7 +154,7 @@ abstract class PersistenceClient {
       }
     }
 
-    // Removing old members and reactions data as they may have
+    // Removing old members data as they may have
     // changes over the time.
     await Future.wait([
       deleteMembersByTopics(membersToDelete),
@@ -162,7 +162,6 @@ abstract class PersistenceClient {
 
     // Updating first as does not depend on any other table.
     await Future.wait([
-      // updateUsers(users.toList(growable: false)),
       updateChannels(channels.toList(growable: false)),
     ]);
 

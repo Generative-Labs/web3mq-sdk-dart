@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:rxdart/rxdart.dart';
 import 'package:web3mq/src/api/responses.dart';
+import 'package:web3mq/src/models/channel_state.dart';
 
 import '../utils/signer.dart';
 import '../ws/models/pb/message.pb.dart';
@@ -31,11 +32,11 @@ class ClientState {
   Stream<int> get totalUnreadCountStream => _totalUnreadCountController.stream;
 
   /// The current list of channels in memory as a stream
-  Stream<Map<String, ChannelModel>> get channelsStream =>
+  Stream<Map<String, ChannelState>> get channelsStream =>
       _channelsController.stream;
 
   /// The current list of channels in memory
-  Map<String, ChannelModel> get channels => _channelsController.value;
+  Map<String, ChannelState> get channels => _channelsController.value;
 
   /// The current user as a stream
   Stream<User?> get currentUserStream => _currentUserController.stream;
@@ -50,18 +51,18 @@ class ClientState {
     _unreadChannelsController.add(unreadChannelsCount);
   }
 
-  set channels(Map<String, ChannelModel> newChannels) {
+  set channels(Map<String, ChannelState> newChannels) {
     // sort by last message at
-    List<MapEntry<String, ChannelModel>> sortedChannels = newChannels.entries
+    List<MapEntry<String, ChannelState>> sortedChannels = newChannels.entries
         .toList()
-      ..sort((a, b) => (b.value.lastMessageAt ?? DateTime(0))
-          .compareTo(a.value.lastMessageAt ?? DateTime(0)));
-    Map<String, ChannelModel> sortedMap = Map.fromEntries(sortedChannels);
+      ..sort((a, b) => (b.value.channel?.lastMessageAt ?? DateTime(0))
+          .compareTo(a.value.channel?.lastMessageAt ?? DateTime(0)));
+    Map<String, ChannelState> sortedMap = Map.fromEntries(sortedChannels);
     _channelsController.add(sortedMap);
   }
 
   /// Adds a list of channels to the current list of cached channels
-  void addChannels(Map<String, ChannelModel> channelMap) {
+  void addChannels(Map<String, ChannelState> channelMap) {
     final newChannels = {
       ...channels,
       ...channelMap,
@@ -198,32 +199,29 @@ class ClientState {
 
   void _updateByMessageIfNeeded(Message message) {
     // if there's no channel exist for this message, create a new one
-
     final channelId = message.topic;
 
-    ChannelModel channelModel;
+    ChannelState channelState;
     if (channels.keys.contains(channelId)) {
-      channelModel = channels[channelId]!;
+      channelState = channels[channelId]!;
       if (_countMessageAsUnread(message)) {
-        channelModel.unreadMessageCount += 1;
+        channelState.channel?.unreadMessageCount += 1;
       }
     } else {
-      channelModel = _createChannelByMessage(message);
+      final channelModel = _createChannelModelByMessage(message);
+      channelState = ChannelState(channel: channelModel, messages: [message]);
     }
 
     // update the last message
-    channelModel.lastMessageAt = DateTime.fromMillisecondsSinceEpoch(
+    channelState.channel?.lastMessageAt = DateTime.fromMillisecondsSinceEpoch(
       message.timestamp,
     );
 
     // add the channel to the channel list
-    addChannels({channelId: channelModel});
+    addChannels({channelId: channelState});
 
     // update the channel persistence if needed
-    _client.persistenceClient?.updateChannels([channelModel]);
-
-    // update the message persistence if needed
-    _client.persistenceClient?.updateMessages(channelId, [message]);
+    _client.persistenceClient?.updateChannelState(channelState);
   }
 
   String _channelTypeByTopic(String topic) {
@@ -234,7 +232,7 @@ class ClientState {
             : 'topic';
   }
 
-  ChannelModel _createChannelByMessage(Message message) {
+  ChannelModel _createChannelModelByMessage(Message message) {
     final channelId = message.topic;
     final channelType = _channelTypeByTopic(message.topic);
     final channelName = channelId;
@@ -295,7 +293,7 @@ class ClientState {
   }
 
   final _channelsController =
-      BehaviorSubject<Map<String, ChannelModel>>.seeded({});
+      BehaviorSubject<Map<String, ChannelState>>.seeded({});
   final _currentUserController = BehaviorSubject<User?>();
   final _unreadChannelsController = BehaviorSubject<int>.seeded(0);
   final _totalUnreadCountController = BehaviorSubject<int>.seeded(0);

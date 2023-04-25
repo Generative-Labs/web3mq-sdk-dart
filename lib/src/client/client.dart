@@ -182,7 +182,7 @@ class Web3MQClient {
   Stream<ConnectionStatus> get wsConnectionStatusStream =>
       _wsConnectionStatusController.stream.distinct();
 
-  final _queryChannelsStreams = <String, Future<List<ChannelModel>>>{};
+  final _queryChannelsStreams = <String, Future<List<ChannelState>>>{};
 
   ///
   final Level logLevel;
@@ -322,8 +322,8 @@ class Web3MQClient {
     // we want to query the channels and sync the state
     if (currentState == ConnectionStatus.connected &&
         previousState != ConnectionStatus.connected) {
-      Stream<List<ChannelModel>> channels = fetchChannels();
-      await for (List<ChannelModel> _ in channels) {}
+      Stream<List<ChannelState>> channels = fetchChannels();
+      await for (List<ChannelState> _ in channels) {}
       if (persistenceEnabled) {
         await sync();
       }
