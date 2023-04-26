@@ -56,7 +56,7 @@ abstract class PersistenceClient {
     return ChannelState(
       members: data[0] as List<Member>?,
       channel: channel,
-      messages: data[2] as List<Message>?,
+      messages: data[2] as List<Message>? ?? [],
     );
   }
 
@@ -143,15 +143,14 @@ abstract class PersistenceClient {
 
       final topic = channel.topic;
       final members = state.members;
-      final Iterable<Message>? messages;
-      messages = state.messages;
+      final Iterable<Message> messages = state.messages;
 
       // Preparing deletion data
       membersToDelete.add(topic);
 
       // preparing addition data
       channelWithMembers[topic] = members;
-      channelWithMessages[topic] = messages?.toList();
+      channelWithMessages[topic] = messages.toList();
     }
 
     // Removing old members data as they may have

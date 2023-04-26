@@ -11,14 +11,14 @@ class ChannelState {
   final ChannelModel channel;
 
   /// A paginated list of channel messages
-  final List<Message>? messages;
+  final List<Message> messages;
 
   /// A paginated list of channel members
   final List<Member>? members;
 
   /// The last message in the channel
   Message? get lastMessage =>
-      messages?.isNotEmpty == true ? messages?.last : null;
+      messages.isNotEmpty == true ? messages.last : null;
 
   /// Create a new instance from a json
   static ChannelState fromJson(Map<String, dynamic> json) =>
@@ -38,5 +38,5 @@ class ChannelState {
           members: members ?? this.members);
 
   /// Constructor used for json serialization
-  ChannelState({required this.channel, this.messages, this.members});
+  ChannelState({required this.channel, required this.messages, this.members});
 }

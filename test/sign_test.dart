@@ -7,7 +7,6 @@ import 'package:test/test.dart';
 
 void main() {
   group('A group of signer tests', () {
-
     test('KeyPair Generation Test', () async {
       final alg = Ed25519();
       final keyPair = await alg.newKeyPair();
@@ -26,7 +25,8 @@ void main() {
     });
 
     test("description", () async {
-      final raw = "\$web3mqeth:0xb0597dee2c652b6cd194e444cdff0476bcb543731123web3mq\$";
+      final raw =
+          "\$web3mqeth:0xb0597dee2c652b6cd194e444cdff0476bcb543731123web3mq\$";
       final rawBytes = utf8.encode(raw);
       print("raw bytes: $rawBytes");
 

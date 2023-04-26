@@ -608,7 +608,7 @@ class Message {
   @JsonKey(includeIfNull: false, toJson: Serializer.readOnly)
   MessageSendingStatus get sendingStatus =>
       _sendingStatus ??
-      (messageStatus?.status == 'received'
+      ((messageStatus?.status == 'received' || messageStatus?.status == 'read')
           ? MessageSendingStatus.sent
           : MessageSendingStatus.failed);
 

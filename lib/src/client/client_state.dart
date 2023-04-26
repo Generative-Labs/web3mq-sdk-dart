@@ -55,8 +55,10 @@ class ClientState {
     // sort by last message at
     List<MapEntry<String, ChannelState>> sortedChannels = newChannels.entries
         .toList()
-      ..sort((a, b) => (b.value.channel.lastMessageAt ?? DateTime(0))
-          .compareTo(a.value.channel.lastMessageAt ?? DateTime(0)));
+      ..sort((a, b) => (DateTime.fromMillisecondsSinceEpoch(
+              b.value.lastMessage?.timestamp ?? 0))
+          .compareTo(DateTime.fromMillisecondsSinceEpoch(
+              a.value.lastMessage?.timestamp ?? 0)));
     Map<String, ChannelState> sortedMap = Map.fromEntries(sortedChannels);
     _channelsController.add(sortedMap);
   }
@@ -158,7 +160,7 @@ class ClientState {
         if (null == wsMessage) return;
         final message = Message.fromWSMessage(wsMessage)
             .copyWith(sendingStatus: MessageSendingStatus.sent);
-        _updateByMessageIfNeeded(message);
+        updateStateByMessagesIfNeeded([message]);
         _updateLastSync(message.timestamp);
       }),
     );
@@ -168,7 +170,7 @@ class ClientState {
         if (null == wsMessage) return;
         final message = Message.fromWSMessage(wsMessage)
             .copyWith(sendingStatus: MessageSendingStatus.sending);
-        _updateByMessageIfNeeded(message);
+        updateStateByMessagesIfNeeded([message]);
       }),
     );
   }
@@ -183,7 +185,7 @@ class ClientState {
         final finalMessage = value.copyWith(
             sendingStatus: convertMessageStatusToSendingStatus(status));
         //
-        _updateByMessageIfNeeded(finalMessage);
+        updateStateByMessagesIfNeeded([finalMessage]);
       });
     }));
   }
@@ -197,32 +199,60 @@ class ClientState {
     }
   }
 
-  void _updateByMessageIfNeeded(Message message) {
-    // if there's no channel exist for this message, create a new one
-    final channelId = message.topic;
+  void updateStateByMessagesIfNeeded(List<Message> messages) async {
+    if (messages.isEmpty) return;
 
-    ChannelState channelState;
-    if (channels.keys.contains(channelId)) {
-      channelState = channels[channelId]!;
-      if (_countMessageAsUnread(message)) {
-        channelState.channel.unreadMessageCount += 1;
+    messages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+    // if there's no channel exist for this message, create a new one
+    Map<String, ChannelState> channelMap = {};
+    List<ChannelState> channelStates = [];
+    for (final message in messages) {
+      final channelId = message.topic;
+      ChannelState channelState;
+      if (channels.containsKey(channelId)) {
+        channelState = channels[channelId]!;
+        if (_shouldCountMessageAsUnread(message)) {
+          channelState.channel.unreadMessageCount += 1;
+        }
+        // insert message to the right position or replace if the same id exists
+        int index = channelState.messages
+            .indexWhere((m) => m.messageId == message.messageId);
+        if (index != -1) {
+          channelState.messages[index] = message;
+        } else {
+          index = channelState.messages
+              .indexWhere((m) => m.timestamp > message.timestamp);
+          if (index != -1) {
+            channelState.messages.insert(index, message);
+          } else {
+            channelState.messages.add(message);
+          }
+        }
+      } else {
+        final channelModel = _createChannelModelByMessage(message);
+        channelState = ChannelState(channel: channelModel, messages: [message]);
       }
-    } else {
-      final channelModel = _createChannelModelByMessage(message);
-      channelState = ChannelState(channel: channelModel, messages: [message]);
+      channelMap[channelId] = channelState;
+      channelStates.add(channelState);
     }
 
-    // update the last message
-    channelState.channel.lastMessageAt = DateTime.fromMillisecondsSinceEpoch(
-      message.timestamp,
-    );
-
     // add the channel to the channel list
-    addChannels({channelId: channelState});
+    addChannels(channelMap);
 
     // update the channel persistence if needed
-    _client.persistenceClient?.updateChannelState(channelState);
+    _client.persistenceClient?.updateChannelStates(channelStates);
   }
+
+  // int _getMessageInsertionIndex(
+  //     List<Message> messages, Message messageToInsert) {
+  //   for (int i = 0; i < messages.length; i++) {
+  //     if (messages[i].timestamp > messageToInsert.timestamp) {
+  //       return i;
+  //     }
+  //   }
+  //   return messages.length;
+  // }
 
   String _channelTypeByTopic(String topic) {
     return topic.contains('user')
@@ -238,7 +268,7 @@ class ClientState {
     final channelName = channelId;
 
     /// count unread count
-    final unreadCount = _countMessageAsUnread(message) ? 1 : 0;
+    final unreadCount = _shouldCountMessageAsUnread(message) ? 1 : 0;
 
     // update channel(optional)
     _client.addChannel(channelId, channelType, channelId, channelType);
@@ -298,7 +328,7 @@ class ClientState {
   final _unreadChannelsController = BehaviorSubject<int>.seeded(0);
   final _totalUnreadCountController = BehaviorSubject<int>.seeded(0);
 
-  bool _countMessageAsUnread(Message message) {
+  bool _shouldCountMessageAsUnread(Message message) {
     return message.sendingStatus == MessageSendingStatus.sent &&
         message.from != currentUser?.userId &&
         message.messageStatus?.status != 'read';

@@ -90,12 +90,13 @@ class MessageDao extends DatabaseAccessor<DriftChatDatabase>
     ])
           ..where(messages.channelTopic.equals(topic))
           ..where(
-            messages.threadId.isNull() | messages.showInChannel.equals(true),
+            messages.threadId.isNull() |
+                messages.threadId.equals('') |
+                messages.showInChannel.equals(true),
           )
-          ..orderBy([OrderingTerm.asc(messages.createdAt)]))
+          ..orderBy([OrderingTerm.asc(messages.timestamp)]))
         .map(_messageFromJoinRow)
         .get());
-
     return msgList;
   }
 

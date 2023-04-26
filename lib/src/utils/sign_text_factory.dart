@@ -29,10 +29,8 @@ Issued At: $formattedDateString
     final keyIndex = 1;
     final keyMSG = "$walletType:$walletAddress$keyIndex$password";
     final magicString = "\$web3mq${keyMSG}web3mq\$";
-    print("magicString:$magicString");
     final sha224 = Digest("SHA3-224");
     final hashed = sha224.process(Uint8List.fromList(utf8.encode(magicString)));
-    print("hashed: $hashed");
     final hashedMagicString = base64Encode(hashed);
     return """
 Signing this message will allow this app to decrypt messages in the Web3MQ protocol for the following address: $walletAddress. This won’t cost you anything.

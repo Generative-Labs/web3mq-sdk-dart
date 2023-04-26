@@ -68,7 +68,8 @@ class Web3MQPersistenceClient extends PersistenceClient {
   bool get _debugIsConnected {
     assert(() {
       if (db == null) {
-        throw StateError('''
+        throw StateError(
+            '''
         $runtimeType hasn't been connected yet or used after `disconnect` 
         was called. Consider calling `connect` to create a connection. 
           ''');
@@ -205,7 +206,7 @@ class Web3MQPersistenceClient extends PersistenceClient {
     Pagination? messagePagination,
   }) {
     assert(_debugIsConnected, '');
-    _logger.info('getMessagesByCid');
+    _logger.info('getMessagesByTopic');
     return _readProtected(
       () => db!.messageDao.getMessagesByTopic(
         topic,

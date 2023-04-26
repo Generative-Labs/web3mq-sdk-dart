@@ -24,7 +24,9 @@ extension ClientChat on Web3MQClient {
 
     final persistenceClient = _persistenceClient;
     if (null == persistenceClient) {
-      return channels.map((e) => ChannelState(channel: e)).toList();
+      return channels
+          .map((e) => ChannelState(channel: e, messages: []))
+          .toList();
     }
 
     List<ChannelState> states = [];
@@ -34,7 +36,7 @@ extension ClientChat on Web3MQClient {
       if (aState != null) {
         states.add(aState.copyWith(channel: channel));
       } else {
-        states.add(ChannelState(channel: channel));
+        states.add(ChannelState(channel: channel, messages: []));
       }
     }
 
@@ -113,9 +115,17 @@ extension ClientChat on Web3MQClient {
 
   /// Query for the messages in the given topic.
   Future<Page<Message>> queryMessagesByTopic(
-          String topic, TimestampPagination pagination,
-          {String? threadId}) =>
-      _service.chat.queryMessagesByTopic(topic, pagination, threadId: threadId);
+      String topic, TimestampPagination pagination,
+      {String? threadId}) async {
+    final completer = Completer<Page<Message>>();
+    _service.chat
+        .queryMessagesByTopic(topic, pagination, threadId: threadId)
+        .then((messages) {
+      completer.complete(messages);
+      state.updateStateByMessagesIfNeeded(messages.result);
+    });
+    return completer.future;
+  }
 
   /// Creates a thread in the given topic and message id.
   Future<void> createThread(
