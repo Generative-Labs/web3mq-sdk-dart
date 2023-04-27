@@ -120,12 +120,7 @@ class ClientState {
   void _listenAllChannelsRead() {
     _eventsSubscription?.add(
       _client.on(EventType.markRead).listen((event) {
-        if (event.topicId == null) {
-          // TODO: handle the channel read notification
-          // channels.forEach((key, value) {
-          //   // _unreadChannelsController.add(event)
-          // });
-        }
+        if (event.topicId == null) {}
       }),
     );
   }

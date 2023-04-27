@@ -15,6 +15,7 @@ class MessageDao extends DatabaseAccessor<DriftChatDatabase>
   /// Creates a new message dao instance
   MessageDao(this._db) : super(_db);
 
+  // ignore: unused_field
   final DriftChatDatabase _db;
 
   $UsersTable get _users => alias(users, 'users');

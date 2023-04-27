@@ -17,7 +17,7 @@ void main() {
   test("handle connector error", () async {
     final connector = MockFailedWalletConnector();
     try {
-      final wallet = await connector.connectWallet();
+      final _ = await connector.connectWallet();
     } catch (e) {
       expect(e, isNotNull);
     }

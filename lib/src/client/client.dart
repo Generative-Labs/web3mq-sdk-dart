@@ -112,6 +112,7 @@ class Web3MQClient {
   PersistenceClient? _originalPersistenceClient;
 
   /// Chat persistence client
+  // ignore: unnecessary_getters_setters
   PersistenceClient? get persistenceClient => _persistenceClient;
 
   PersistenceClient? _persistenceClient;

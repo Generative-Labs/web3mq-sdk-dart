@@ -16,27 +16,11 @@ Web3MQResponse<T> _$Web3MQResponseFromJson<T>(
       _$nullableGenericFromJson(json['data'], fromJsonT),
     );
 
-Map<String, dynamic> _$Web3MQResponseToJson<T>(
-  Web3MQResponse<T> instance,
-  Object? Function(T value) toJsonT,
-) =>
-    <String, dynamic>{
-      'code': instance.code,
-      'msg': instance.message,
-      'data': _$nullableGenericToJson(instance.data, toJsonT),
-    };
-
 T? _$nullableGenericFromJson<T>(
   Object? input,
   T Function(Object? json) fromJson,
 ) =>
     input == null ? null : fromJson(input);
-
-Object? _$nullableGenericToJson<T>(
-  T? input,
-  Object? Function(T value) toJson,
-) =>
-    input == null ? null : toJson(input);
 
 Page<T> _$PageFromJson<T>(
   Map<String, dynamic> json,
@@ -46,15 +30,6 @@ Page<T> _$PageFromJson<T>(
       json['total_count'] as int? ?? 0,
       (json['data_list'] as List<dynamic>?)?.map(fromJsonT).toList() ?? [],
     );
-
-Map<String, dynamic> _$PageToJson<T>(
-  Page<T> instance,
-  Object? Function(T value) toJsonT,
-) =>
-    <String, dynamic>{
-      'total_count': instance.total,
-      'data_list': instance.result.map(toJsonT).toList(),
-    };
 
 Web3MQListResponse<T> _$Web3MQListResponseFromJson<T>(
   Map<String, dynamic> json,
@@ -67,29 +42,12 @@ Web3MQListResponse<T> _$Web3MQListResponseFromJson<T>(
           json['data'] as Map<String, dynamic>, (value) => fromJsonT(value)),
     );
 
-Map<String, dynamic> _$Web3MQListResponseToJson<T>(
-  Web3MQListResponse<T> instance,
-  Object? Function(T value) toJsonT,
-) =>
-    <String, dynamic>{
-      'code': instance.code,
-      'msg': instance.message,
-      'data': instance.data,
-    };
-
 CommonResponse _$CommonResponseFromJson(Map<String, dynamic> json) =>
     CommonResponse(
       json['code'] as int,
       json['msg'] as String?,
       json['data'],
     );
-
-Map<String, dynamic> _$CommonResponseToJson(CommonResponse instance) =>
-    <String, dynamic>{
-      'code': instance.code,
-      'msg': instance.message,
-      'data': instance.data,
-    };
 
 ErrorResponse _$ErrorResponseFromJson(Map<String, dynamic> json) =>
     ErrorResponse(
@@ -115,14 +73,6 @@ MySubscribeTopicsResponse _$MySubscribeTopicsResponseFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$MySubscribeTopicsResponseToJson(
-        MySubscribeTopicsResponse instance) =>
-    <String, dynamic>{
-      'code': instance.code,
-      'msg': instance.message,
-      'data': instance.data,
-    };
-
 NotificationPayload _$NotificationPayloadFromJson(Map<String, dynamic> json) =>
     NotificationPayload(
       json['title'] as String,
@@ -131,16 +81,6 @@ NotificationPayload _$NotificationPayloadFromJson(Map<String, dynamic> json) =>
       json['version'] as int,
       _dateTimeFromJson(json['timestamp'] as int),
     );
-
-Map<String, dynamic> _$NotificationPayloadToJson(
-        NotificationPayload instance) =>
-    <String, dynamic>{
-      'title': instance.title,
-      'content': instance.content,
-      'type': instance.type,
-      'version': instance.version,
-      'timestamp': instance.timestamp.toIso8601String(),
-    };
 
 NotificationQueryResponse _$NotificationQueryResponseFromJson(
         Map<String, dynamic> json) =>
@@ -154,19 +94,6 @@ NotificationQueryResponse _$NotificationQueryResponseFromJson(
       json['status'] as String,
       json['topic'] as String,
     );
-
-Map<String, dynamic> _$NotificationQueryResponseToJson(
-        NotificationQueryResponse instance) =>
-    <String, dynamic>{
-      'cipher_suite': instance.cipherSuite,
-      'from': instance.from,
-      'from_sign': instance.fromSign,
-      'messageid': instance.messageId,
-      'payload': instance.payload,
-      'payload_type': instance.payloadType,
-      'status': instance.status,
-      'topic': instance.topic,
-    };
 
 Topic _$TopicFromJson(Map<String, dynamic> json) => Topic(
       json['topicid'] as String,
@@ -194,20 +121,6 @@ UserInfo _$UserInfoFromJson(Map<String, dynamic> json) => UserInfo(
       json['timestamp'] as int?,
     );
 
-Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{
-      'did_type': instance.didType,
-      'did_value': instance.didValue,
-      'userid': instance.userId,
-      'main_pubkey': instance.mainKey,
-      'pubkey': instance.pubKey,
-      'pubkey_type': instance.pubKeyType,
-      'wallet_address': instance.walletAddress,
-      'wallet_type': instance.walletType,
-      'signature_content': instance.signatureContent,
-      'did_signature': instance.didSignature,
-      'timestamp': instance.timestamp,
-    };
-
 UserRegisterResponse _$UserRegisterResponseFromJson(
         Map<String, dynamic> json) =>
     UserRegisterResponse(
@@ -216,27 +129,12 @@ UserRegisterResponse _$UserRegisterResponseFromJson(
       json['did_type'] as String,
     );
 
-Map<String, dynamic> _$UserRegisterResponseToJson(
-        UserRegisterResponse instance) =>
-    <String, dynamic>{
-      'userid': instance.userId,
-      'did_value': instance.didValue,
-      'did_type': instance.didType,
-    };
-
 UserLoginResponse _$UserLoginResponseFromJson(Map<String, dynamic> json) =>
     UserLoginResponse(
       json['userid'] as String,
       json['did_value'] as String,
       json['did_type'] as String,
     );
-
-Map<String, dynamic> _$UserLoginResponseToJson(UserLoginResponse instance) =>
-    <String, dynamic>{
-      'userid': instance.userId,
-      'did_value': instance.didValue,
-      'did_type': instance.didType,
-    };
 
 ChannelModel _$ChannelModelFromJson(Map<String, dynamic> json) => ChannelModel(
       json['topic'] as String,
@@ -286,14 +184,6 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
           ? null
           : DateTime.parse(json['updated_at'] as String),
     );
-
-Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
-      'userid': instance.userId,
-      'nickname': instance.nickname,
-      'avatar_url': instance.avatarUrl,
-      'created_at': readonly(instance.createdAt),
-      'updated_at': readonly(instance.updatedAt),
-    };
 
 Member _$MemberFromJson(Map<String, dynamic> json) => Member(
       json['userid'] as String,
@@ -416,13 +306,6 @@ SyncResponse _$SyncResponseFromJson(Map<String, dynamic> json) => SyncResponse(
       ),
     );
 
-Map<String, dynamic> _$SyncResponseToJson(SyncResponse instance) =>
-    <String, dynamic>{
-      'code': instance.code,
-      'msg': instance.message,
-      'data': instance.data,
-    };
-
 FollowUser _$FollowUserFromJson(Map<String, dynamic> json) => FollowUser(
       json['userid'] as String,
       json['follow_status'] as String,
@@ -431,16 +314,6 @@ FollowUser _$FollowUserFromJson(Map<String, dynamic> json) => FollowUser(
       json['avatar_url'] as String?,
       json['nickname'] as String?,
     );
-
-Map<String, dynamic> _$FollowUserToJson(FollowUser instance) =>
-    <String, dynamic>{
-      'userid': instance.userId,
-      'follow_status': instance.followStatus,
-      'wallet_address': instance.walletAddress,
-      'wallet_type': instance.walletType,
-      'avatar_url': instance.avatarUrl,
-      'nickname': instance.nickname,
-    };
 
 Thread _$ThreadFromJson(Map<String, dynamic> json) => Thread(
       json['threadid'] as String,
@@ -481,21 +354,8 @@ ThreadMessageListResponse _$ThreadMessageListResponseFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$ThreadMessageListResponseToJson(
-        ThreadMessageListResponse instance) =>
-    <String, dynamic>{
-      'total': instance.total,
-      'result': instance.result,
-    };
-
 Group _$GroupFromJson(Map<String, dynamic> json) => Group(
       json['groupid'] as String,
       json['avatar_url'] as String?,
       json['group_name'] as String?,
     );
-
-Map<String, dynamic> _$GroupToJson(Group instance) => <String, dynamic>{
-      'groupid': instance.groupId,
-      'avatar_url': instance.avatarUrl,
-      'group_name': instance.groupName,
-    };

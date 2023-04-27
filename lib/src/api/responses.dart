@@ -14,7 +14,7 @@ DateTime _dateTimeFromJson(int value) =>
     DateTime.fromMillisecondsSinceEpoch(value);
 
 ///
-@JsonSerializable(genericArgumentFactories: true)
+@JsonSerializable(genericArgumentFactories: true, createToJson: false)
 class Web3MQResponse<T> {
   /// The web3mq status code
   final int code;
@@ -33,7 +33,7 @@ class Web3MQResponse<T> {
       _$Web3MQResponseFromJson<T>(json, fromJsonT);
 }
 
-@JsonSerializable(genericArgumentFactories: true)
+@JsonSerializable(genericArgumentFactories: true, createToJson: false)
 class Page<T> {
   ///
   @JsonKey(name: "total_count", defaultValue: 0)
@@ -51,7 +51,7 @@ class Page<T> {
 }
 
 ///
-@JsonSerializable(genericArgumentFactories: true)
+@JsonSerializable(genericArgumentFactories: true, createToJson: false)
 class Web3MQListResponse<T> {
   /// The web3mq status code
   final int code;
@@ -72,7 +72,7 @@ class Web3MQListResponse<T> {
 }
 
 ///
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class CommonResponse extends Web3MQResponse {
   @override
   get data => null;
@@ -104,7 +104,7 @@ class ErrorResponse extends Web3MQResponse {
       'message: $message, ';
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class MySubscribeTopicsResponse {
   final int code;
 
@@ -121,7 +121,7 @@ class MySubscribeTopicsResponse {
       _$MySubscribeTopicsResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class NotificationPayload {
   ///
   String title;
@@ -147,7 +147,7 @@ class NotificationPayload {
       _$NotificationPayloadFromJson(json);
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, createToJson: false)
 class NotificationQueryResponse {
   String cipherSuite;
 
@@ -201,13 +201,16 @@ class Topic {
   @JsonKey(name: "create_at")
   final int? creationTime;
 
+  /// To json
+  Map<String, dynamic> toJson() => _$TopicToJson(this);
+
   /// Create a new instance from a json
   static Topic fromJson(Map<String, dynamic> json) => _$TopicFromJson(json);
 
   Topic(this.topicId, this.name, this.creationTime);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class UserInfo {
   @JsonKey(name: "did_type")
   final String didType;
@@ -259,7 +262,7 @@ class UserInfo {
       this.timestamp);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class UserRegisterResponse {
   @JsonKey(name: "userid")
   String userId;
@@ -277,7 +280,7 @@ class UserRegisterResponse {
   UserRegisterResponse(this.userId, this.didValue, this.didType);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class UserLoginResponse {
   @JsonKey(name: "userid")
   String userId;
@@ -393,7 +396,7 @@ class ChannelModel {
           deletedAt ?? this.deletedAt);
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, createToJson: false)
 class UserModel {
   /// The user if of this user
   @JsonKey(name: 'userid')
@@ -471,6 +474,9 @@ class Member extends Equatable {
 
   @override
   List<Object?> get props => [userId, nickName, avatarUrl];
+
+  /// To json
+  Map<String, dynamic> toJson() => _$MemberToJson(this);
 
   /// Create a new instance from a json
   factory Member.fromJson(Map<String, dynamic> json) => _$MemberFromJson(json);
@@ -562,6 +568,9 @@ class MessageStatus {
   ///
   MessageStatus(this.status, this.timestamp);
 
+  /// To json
+  Map<String, dynamic> toJson() => _$MessageStatusToJson(this);
+
   /// Create a new instance from a json
   factory MessageStatus.fromJson(Map<String, dynamic> json) =>
       _$MessageStatusFromJson(json);
@@ -652,6 +661,9 @@ class Message {
         _updatedAt = createdAt,
         _sendingStatus = sendingStatus;
 
+  /// Create a new instance from a json
+  Map<String, dynamic> toJson() => _$MessageToJson(this);
+
   /// Creates a new instance from a json
   factory Message.fromJson(Map<String, dynamic> json) {
     final message = _$MessageFromJson(json)
@@ -737,7 +749,7 @@ class Message {
   }
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class SyncResponse {
   final int code;
 
@@ -760,7 +772,7 @@ class FollowStatus {
   static final String empty = '';
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, createToJson: false)
 class FollowUser {
   @JsonKey(name: 'userid')
   final String userId;
@@ -810,6 +822,9 @@ class Thread {
   Thread(this.threadId, this.topicId, this.userId, this.threadName,
       this.timestamp);
 
+  /// To json
+  Map<String, dynamic> toJson() => _$ThreadToJson(this);
+
   /// Creates a new instance from a json
   factory Thread.fromJson(Map<String, dynamic> json) => _$ThreadFromJson(json);
 }
@@ -832,7 +847,7 @@ class ThreadListResponse {
       _$ThreadListResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class ThreadMessageListResponse {
   ///
   final int total;
@@ -848,7 +863,7 @@ class ThreadMessageListResponse {
       _$ThreadMessageListResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class Group {
   @JsonKey(name: 'groupid')
   final String groupId;

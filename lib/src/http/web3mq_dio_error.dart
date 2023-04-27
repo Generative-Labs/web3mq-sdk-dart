@@ -15,5 +15,6 @@ class Web3MQDioError extends DioError {
         );
 
   @override
+  // ignore: overridden_fields
   final Web3MQNetworkError error;
 }
