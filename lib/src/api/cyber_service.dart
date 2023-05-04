@@ -9,7 +9,7 @@ class CyberService {
   final String _endpoint = 'https://api.cyberconnect.dev/testnet/';
 
   /// Initialize a new CyberConnect service
-  CyberService(String? accessToken, {Logger? logger}) {
+  CyberService(this.accessToken, {Logger? logger}) {
     final httpLink =
         HttpLink(_endpoint, defaultHeaders: {'X-API-KEY': _apiKey});
 
@@ -19,6 +19,8 @@ class CyberService {
 
     _link = authLink.concat(httpLink);
   }
+
+  String? accessToken;
 
   ///
   late final Link _link;

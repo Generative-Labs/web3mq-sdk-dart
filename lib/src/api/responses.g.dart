@@ -119,7 +119,9 @@ UserInfo _$UserInfoFromJson(Map<String, dynamic> json) => UserInfo(
       json['signature_content'] as String?,
       json['did_signature'] as String?,
       json['timestamp'] as int?,
-    );
+    )..cyberProfile = json['cyberProfile'] == null
+        ? null
+        : CyberProfile.fromJson(json['cyberProfile'] as Map<String, dynamic>);
 
 UserRegisterResponse _$UserRegisterResponseFromJson(
         Map<String, dynamic> json) =>

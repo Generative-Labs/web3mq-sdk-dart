@@ -7,6 +7,7 @@ import 'package:cryptography/cryptography.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:pointycastle/api.dart' as pointycastle;
+import 'package:protobuf/protobuf.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:web3mq/src/api/contacts.api.dart';
 import 'package:web3mq/src/api/cyber_service.dart';
@@ -18,6 +19,7 @@ import 'package:web3mq/src/client/token_provider.dart';
 import 'package:web3mq/src/error/error.dart';
 import 'package:web3mq/src/models/accounts.dart';
 import 'package:web3mq/src/models/channel_state.dart';
+import 'package:web3mq/src/models/cyber_profile.dart';
 import 'package:web3mq/src/utils/sign_text_factory.dart';
 import 'package:web3mq/src/utils/utils.dart';
 import 'package:web3mq/src/ws/models/pb/message.pb.dart';
@@ -81,11 +83,6 @@ class Web3MQClient {
         _cyberService = cyberService;
       } else {
         _cyberService = CyberService(null);
-        CyberTokenProvider.fetchToken().then((value) {
-          if (null != value) {
-            _cyberService = CyberService(value);
-          }
-        });
       }
     }
 
@@ -115,7 +112,8 @@ class Web3MQClient {
   ///
   late final Web3MQService _service;
 
-  ///
+  /// Always be null if [_syncCyber] is false.
+  /// And always not be null if [_syncCyber] is true.
   CyberService? _cyberService;
 
   ///
@@ -249,6 +247,14 @@ class Web3MQClient {
     logger.info('setting user : ${user.userId}');
 
     state.currentUser = user;
+
+    if (_syncCyber) {
+      CyberTokenProvider(user.userId).fetchToken().then((value) {
+        if (null != value) {
+          _cyberService = CyberService(value);
+        }
+      });
+    }
 
     try {
       if (_originalPersistenceClient != null) {

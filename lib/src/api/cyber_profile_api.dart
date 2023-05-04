@@ -13,37 +13,43 @@ class CyberProfileApi {
 
   late final GraphQLClient _client;
 
-  Future<CyberProfile> getProfileByAddress(String address) async {
+  Future<CyberProfile?> getProfileByAddress(String address) async {
     final QueryOptions options = QueryOptions(
       document: gql(_getProfileByAddressQuery),
       variables: <String, dynamic>{'address': address},
     );
     final QueryResult result = await _client.query(options);
-    final Map<String, dynamic> repositories = result.data?['wallet']['profiles']
-        ['edges']['node'] as Map<String, dynamic>;
-    return CyberProfile.fromJson(repositories);
+    print('result.data: ${result.data}');
+    if (result.hasException) {
+      return null;
+    }
+    final profile = result.data?['address']['wallet']['primaryProfile']
+        as Map<String, dynamic>?;
+    if (null != profile) {
+      return CyberProfile.fromJson(profile);
+    } else {
+      return null;
+    }
   }
 
   final _getProfileByAddressQuery = r'''
-query getProfileByAddress($address: AddressEVM!) {
-      address(address: $address) {
-        wallet {
-          profiles {
-            edges {
-              node {
-                profileID
-                handle
-                avatar
-                isPrimary
-                metadataInfo {
-                  avatar
-                  displayName
-                }
-              }
-            }
+query ProfileByAddress($address: AddressEVM!) {
+    address(address: $address) {
+      wallet {
+        primaryProfile {
+          id
+          handle
+          owner {
+            address
+            chainID
+          }
+          metadataInfo {
+            avatar
+            coverImage
           }
         }
       }
     }
+  }
 ''';
 }

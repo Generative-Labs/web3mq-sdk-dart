@@ -18,6 +18,19 @@ class MetadataInfo {
   Map<String, dynamic> toJson() => _$MetadataInfoToJson(this);
 }
 
+@JsonSerializable()
+class Owner {
+  final String address;
+  final String chainID;
+  Owner(this.address, this.chainID);
+
+  /// Create a new instance from a json
+  factory Owner.fromJson(Map<String, dynamic> json) => _$OwnerFromJson(json);
+
+  /// Serialize to json
+  Map<String, dynamic> toJson() => _$OwnerToJson(this);
+}
+
 ///
 @JsonSerializable()
 class CyberProfile {
@@ -33,7 +46,11 @@ class CyberProfile {
   final MetadataInfo metadataInfo;
 
   ///
-  CyberProfile(this.id, this.avatar, this.isPrimary, this.metadataInfo);
+  final Owner owner;
+
+  ///
+  CyberProfile(
+      this.id, this.avatar, this.isPrimary, this.metadataInfo, this.owner);
 
   /// Create a new instance from a json
   factory CyberProfile.fromJson(Map<String, dynamic> json) =>

@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../models/channel_state.dart';
+import '../models/cyber_profile.dart';
 import '../utils/serializer.dart';
 import '../ws/models/pb/message.pb.dart';
 import '../ws/models/ws_message.dart';
@@ -245,7 +246,7 @@ class UserInfo {
   final int? timestamp;
 
   @JsonKey(includeIfNull: false, toJson: Serializer.readOnly)
-  Map<String, dynamic>? extra;
+  CyberProfile? cyberProfile;
 
   /// Create a new instance from a json
   static UserInfo fromJson(Map<String, dynamic> json) =>
@@ -262,8 +263,7 @@ class UserInfo {
       this.walletType,
       this.signatureContent,
       this.didSignature,
-      this.timestamp,
-      this.extra);
+      this.timestamp);
 }
 
 @JsonSerializable(createToJson: false)

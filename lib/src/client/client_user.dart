@@ -4,13 +4,19 @@ part of 'client.dart';
 extension RegisterExtension on Web3MQClient {
   ///
   Future<UserInfo?> userInfo(String didType, String didValue) async {
-    final userInfo = await _service.user.userInfo(didType, didValue);
-    final cyberUserInfo =
-        await _cyberService?.profile.getProfileByAddress(didValue);
-    if (null != cyberUserInfo) {
-      userInfo?.extra = {'cyber': cyberUserInfo};
+    final userInfoFuture = _service.user.userInfo(didType, didValue);
+    final List<Future> tasks = [userInfoFuture];
+    if (_syncCyber) {
+      await _authCyberIfNeeded();
+      final cyberUserInfoFuture =
+          _cyberService!.profile.getProfileByAddress(didValue);
+      tasks.add(cyberUserInfoFuture);
     }
-    return userInfo;
+    final List results = await Future.wait(tasks);
+    final user = results[0] as UserInfo?;
+    final cyberUserInfo = results[1] as CyberProfile?;
+    user?.cyberProfile = cyberUserInfo;
+    return user;
   }
 
   /// Gets your main private key.
@@ -135,13 +141,20 @@ extension RegisterExtension on Web3MQClient {
   }
 
   ///
-  Future<String> authCyber() async {
+  Future<String> _authCyberIfNeeded() async {
     if (null == walletConnector) {
       throw Web3MQError('WalletConnector did not setup');
     }
 
     if (null == state.currentUser) {
       throw Web3MQError('User did not setup');
+    }
+
+    final userId = state.currentUser!.userId;
+
+    final currentAccessToken = await CyberTokenProvider(userId).fetchToken();
+    if (null != currentAccessToken && currentAccessToken.isNotEmpty) {
+      return currentAccessToken;
     }
 
     if (null == _cyberService) {
@@ -153,12 +166,11 @@ extension RegisterExtension on Web3MQClient {
 
     final message = await _cyberService!.auth.loginGetMessage(domain, address);
     final signature = await walletConnector!.personalSign(message, address);
-
     final token =
         await _cyberService!.auth.loginVerify(domain, address, signature);
 
     // persistence token
-    CyberTokenProvider.saveToken(token);
+    CyberTokenProvider(userId).saveToken(token);
 
     // update cyber service
     _cyberService = CyberService(token);
