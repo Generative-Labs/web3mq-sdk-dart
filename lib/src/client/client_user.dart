@@ -128,6 +128,38 @@ extension RegisterExtension on Web3MQClient {
         hex.encode(await tempKeyPair.extractPrivateKeyBytes()));
   }
 
+  ///
+  Future<String> authCyber() async {
+    if (null == walletConnector) {
+      throw Web3MQError('WalletConnector did not setup');
+    }
+
+    if (null == state.currentUser) {
+      throw Web3MQError('User did not setup');
+    }
+
+    if (null == _cyberService) {
+      throw Web3MQError('Cyber service did not setup');
+    }
+
+    final domain = 'web3mq.com';
+    final address = state.currentUser!.did.value;
+
+    final message = await _cyberService!.auth.loginGetMessage(domain, address);
+    final signature = await walletConnector!.personalSign(message, address);
+
+    final token =
+        await _cyberService!.auth.loginVerify(domain, address, signature);
+
+    // persistence token
+    CyberTokenProvider.saveToken(token);
+
+    // update cyber service
+    _cyberService = CyberService(token);
+
+    return token;
+  }
+
   Future<String> _getOrGenerateUserId(String didType, String didValue) async {
     try {
       final user = await _service.user.userInfo(didType, didValue);

@@ -8,11 +8,14 @@ import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:pointycastle/api.dart' as pointycastle;
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web3mq/src/api/contacts.api.dart';
+import 'package:web3mq/src/api/cyber_service.dart';
 import 'package:web3mq/src/api/requests.dart';
 import 'package:web3mq/src/api/responses.dart' as web3mq;
 import 'package:web3mq/src/api/web3mq_service.dart';
 import 'package:web3mq/src/client/persistence_client.dart';
+import 'package:web3mq/src/client/token_provider.dart';
 import 'package:web3mq/src/error/error.dart';
 import 'package:web3mq/src/models/accounts.dart';
 import 'package:web3mq/src/models/channel_state.dart';
@@ -54,9 +57,12 @@ class Web3MQClient {
       Duration connectTimeout = const Duration(seconds: 15),
       Duration receiveTimeout = const Duration(seconds: 15),
       Web3MQService? apiService,
+      CyberService? cyberService,
+      bool syncCyber = false,
       Web3MQWebSocket? ws,
       Signer? signer,
-      WalletConnector? wc}) {
+      WalletConnector? wc})
+      : _syncCyber = syncCyber {
     logger.info('Initiating new Client');
 
     final options = Web3MQHttpClientOptions(
@@ -70,6 +76,19 @@ class Web3MQClient {
           options: options,
           logger: detachedLogger('🕸️'),
         );
+
+    if (syncCyber) {
+      if (null != cyberService) {
+        _cyberService = cyberService;
+      } else {
+        _cyberService = CyberService(null);
+        CyberTokenProvider.fetchToken().then((value) {
+          if (null != value) {
+            _cyberService = CyberService(value);
+          }
+        });
+      }
+    }
 
     _ws = ws ??
         Web3MQWebSocket(
@@ -96,6 +115,12 @@ class Web3MQClient {
 
   ///
   late final Web3MQService _service;
+
+  ///
+  CyberService? _cyberService;
+
+  ///
+  final bool _syncCyber;
 
   ///
   late final Signer _signer;

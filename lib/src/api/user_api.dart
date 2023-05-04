@@ -91,7 +91,4 @@ class UserApi {
     }
     throw Web3MQNetworkError.raw(code: res.code, message: res.message ?? "");
   }
-
-  /// Follow a user
-  Future<void> follow(String targetUserId, String message) async {}
 }
