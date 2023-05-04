@@ -4,7 +4,13 @@ part of 'client.dart';
 extension RegisterExtension on Web3MQClient {
   ///
   Future<UserInfo?> userInfo(String didType, String didValue) async {
-    return await _service.user.userInfo(didType, didValue);
+    final userInfo = await _service.user.userInfo(didType, didValue);
+    final cyberUserInfo =
+        await _cyberService?.profile.getProfileByAddress(didValue);
+    if (null != cyberUserInfo) {
+      userInfo?.extra = {'cyber': cyberUserInfo};
+    }
+    return userInfo;
   }
 
   /// Gets your main private key.

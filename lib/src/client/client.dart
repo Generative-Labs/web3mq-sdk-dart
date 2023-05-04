@@ -8,7 +8,6 @@ import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:pointycastle/api.dart' as pointycastle;
 import 'package:rxdart/rxdart.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web3mq/src/api/contacts.api.dart';
 import 'package:web3mq/src/api/cyber_service.dart';
 import 'package:web3mq/src/api/requests.dart';

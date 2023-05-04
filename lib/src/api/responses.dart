@@ -244,6 +244,9 @@ class UserInfo {
 
   final int? timestamp;
 
+  @JsonKey(includeIfNull: false, toJson: Serializer.readOnly)
+  Map<String, dynamic>? extra;
+
   /// Create a new instance from a json
   static UserInfo fromJson(Map<String, dynamic> json) =>
       _$UserInfoFromJson(json);
@@ -259,7 +262,8 @@ class UserInfo {
       this.walletType,
       this.signatureContent,
       this.didSignature,
-      this.timestamp);
+      this.timestamp,
+      this.extra);
 }
 
 @JsonSerializable(createToJson: false)
