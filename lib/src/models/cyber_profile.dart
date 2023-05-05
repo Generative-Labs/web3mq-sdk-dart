@@ -37,6 +37,10 @@ class CyberProfile {
   @JsonKey(name: 'profileID')
   final String id;
 
+  ///
+  final String handle;
+
+  ///
   final String avatar;
 
   ///
@@ -49,8 +53,8 @@ class CyberProfile {
   final Owner owner;
 
   ///
-  CyberProfile(
-      this.id, this.avatar, this.isPrimary, this.metadataInfo, this.owner);
+  CyberProfile(this.id, this.handle, this.avatar, this.isPrimary,
+      this.metadataInfo, this.owner);
 
   /// Create a new instance from a json
   factory CyberProfile.fromJson(Map<String, dynamic> json) =>

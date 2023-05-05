@@ -29,6 +29,7 @@ Map<String, dynamic> _$OwnerToJson(Owner instance) => <String, dynamic>{
 
 CyberProfile _$CyberProfileFromJson(Map<String, dynamic> json) => CyberProfile(
       json['profileID'] as String,
+      json['handle'] as String,
       json['avatar'] as String,
       json['isPrimary'] as bool,
       MetadataInfo.fromJson(json['metadataInfo'] as Map<String, dynamic>),
@@ -38,6 +39,7 @@ CyberProfile _$CyberProfileFromJson(Map<String, dynamic> json) => CyberProfile(
 Map<String, dynamic> _$CyberProfileToJson(CyberProfile instance) =>
     <String, dynamic>{
       'profileID': instance.id,
+      'handle': instance.handle,
       'avatar': instance.avatar,
       'isPrimary': instance.isPrimary,
       'metadataInfo': instance.metadataInfo,

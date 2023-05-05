@@ -33,6 +33,14 @@ class Web3MQContactsError extends Web3MQError {
   factory Web3MQContactsError.userNotExist() {
     return Web3MQContactsError("ContactsError: User Not Exist");
   }
+
+  factory Web3MQContactsError.syncCyberDisabled() {
+    return Web3MQContactsError("ContactsError: Sync Cyber is disabled");
+  }
+
+  factory Web3MQContactsError.cyberUserNotFound() {
+    return Web3MQContactsError("ContactsError: Cyber user not found");
+  }
 }
 
 /// Error when sign failed.

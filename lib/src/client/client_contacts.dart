@@ -18,6 +18,32 @@ extension ContactsExtension on Web3MQClient {
     await _doFollow(FollowAction.follow, userId, message);
   }
 
+  /// Follows cyber profile
+  Future<String> cyberFollow(String targetAddress) async {
+    if (!_syncCyber) {
+      throw Web3MQContactsError.syncCyberDisabled;
+    }
+    if (null == walletConnector) {
+      throw Web3MQContactsError.walletConnectorNotSet;
+    }
+
+    final user =
+        await _cyberService!.profile.getProfileByAddress(targetAddress);
+
+    if (null == user) {
+      throw Web3MQContactsError.cyberUserNotFound;
+    }
+
+    final address = state.currentUser?.did.value ?? '';
+    final handle = user.handle;
+    final message = await _cyberService!.connection
+        .followGetMessage("FOLLOW", address, handle);
+    final signature = await walletConnector!.personalSign(message, address);
+    // TODO: signingKey concept
+    return await _cyberService!.connection
+        .follow(address, user.handle, signature, '');
+  }
+
   /// Unfollow user
   Future<void> unfollow(String userId) async {
     await _doFollow(FollowAction.unfollow, userId, null);

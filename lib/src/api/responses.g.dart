@@ -315,7 +315,10 @@ FollowUser _$FollowUserFromJson(Map<String, dynamic> json) => FollowUser(
       json['wallet_type'] as String?,
       json['avatar_url'] as String?,
       json['nickname'] as String?,
-    );
+    )..cyberStatus = json['cyber_status'] == null
+        ? null
+        : CyberFollowStatus.fromJson(
+            json['cyber_status'] as Map<String, dynamic>);
 
 Thread _$ThreadFromJson(Map<String, dynamic> json) => Thread(
       json['threadid'] as String,

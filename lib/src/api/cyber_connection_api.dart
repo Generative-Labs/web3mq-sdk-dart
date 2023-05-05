@@ -45,6 +45,66 @@ class CyberConnectionApi {
     }
   }
 
+  /// FOLLOW, UNFOLLOW
+  Future<String> followGetMessage(
+      String operation, String address, String handle) async {
+    final MutationOptions options = MutationOptions(
+      document: gql(_followMessageMutation),
+      variables: <String, dynamic>{
+        'operation': operation,
+        'address': address,
+        'handle': handle
+      },
+    );
+
+    final QueryResult result = await _client.mutate(options);
+    if (result.hasException) {
+      throw result.exception!;
+    }
+
+    final String message =
+        result.data?['createFollowTypedMessage']['message'] as String;
+    return message;
+  }
+
+  /// SUCCESS
+  /// INVALID_PARAMS
+  /// HANDLE_NOT_FOUND
+  /// INVALID_MESSAGE
+  /// MESSAGE_EXPIRED
+  /// INVALID_SIGNATURE
+  /// RATE_LIMITED
+  /// ALREADY_DONE
+  /// EXPIRED_SIGNING_KEY
+  Future<String> follow(String address, String handle, String signature,
+      String signingKey) async {
+    final MutationOptions options = MutationOptions(
+      document: gql(_followMutation),
+      variables: <String, dynamic>{
+        'address': address,
+        'handle': handle,
+        'signature': signature,
+        'signingKey': signingKey
+      },
+    );
+    final QueryResult result = await _client.mutate(options);
+    if (result.hasException) {
+      throw result.exception!;
+    }
+    return result.data?['status'] as String;
+  }
+
+  final String _followMutation =
+      r'''
+mutation Follow($address: AddressEVM!, $handle: String!, $message: String!, $signature: String!, $signingKey: String!) {
+  follow(
+    input: {address: $address, handle: $handle, message: $message, signature: $signature, signingKey: $signingKey}
+  ) {
+    status 
+  }
+}
+''';
+
   final String _batchAddressesFollowStatusQuery =
       r'''
 query BatchAddressesFollowStatus($me: AddressEVM!, $toAddrList: [AddressEVM!]!) {
@@ -58,4 +118,17 @@ query BatchAddressesFollowStatus($me: AddressEVM!, $toAddrList: [AddressEVM!]!) 
   }
 }
 ''';
+
+  final String _followMessageMutation =
+      r''' 
+query CreateFollowTypedMessage($operation:FollowOperation!,$address:AddressEVM!, $handle:String!) {
+  createFollowTypedMessage(input: {
+    address: $address,
+    operation: $operation,
+    handle: $handle
+  }) {
+    message
+  }
+}
+  ''';
 }
