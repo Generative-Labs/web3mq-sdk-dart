@@ -4,12 +4,14 @@ import 'package:web3mq/src/api/responses.dart';
 
 import '../error/error.dart';
 import '../http/http_client.dart';
+import '../utils/signer.dart';
 
 class UserApi {
-  /// Initialize a new user api
-  UserApi(this._client);
+  UserApi(this._client, this._signer);
 
   final Web3MQHttpClient _client;
+
+  final Signer _signer;
 
   Future<UserRegisterResponse> register(
       String didType,
@@ -88,6 +90,25 @@ class UserApi {
     final data = res.data;
     if (res.code == 0) {
       return data;
+    }
+    throw Web3MQNetworkError.raw(code: res.code, message: res.message ?? "");
+  }
+
+  /// Updates user profile
+  Future<void> updateProfile(String avatarUrl) async {
+    final signResult = await _signer.signatureForRequest(null);
+    final response = await _client.post(
+      '/api/my_profile/',
+      data: {
+        'avatar_url': avatarUrl,
+        "web3mq_signature": signResult.signature,
+        "userid": signResult.userId,
+        "timestamp": signResult.time.millisecondsSinceEpoch
+      },
+    );
+    final res = CommonResponse.fromJson(response.data);
+    if (res.code == 0) {
+      return;
     }
     throw Web3MQNetworkError.raw(code: res.code, message: res.message ?? "");
   }

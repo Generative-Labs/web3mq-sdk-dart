@@ -38,7 +38,7 @@ class Web3MQService {
       _notification ??= NotificationApi(_client, _signer);
 
   /// Api for user register or getting user info.
-  UserApi get user => _user ??= UserApi(_client);
+  UserApi get user => _user ??= UserApi(_client, _signer);
 
   /// Api for creating and subscribing topic.
   TopicApi get topic => _topic ??= TopicApi(_client, _signer);

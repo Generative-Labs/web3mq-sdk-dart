@@ -32,7 +32,10 @@ class CyberProfileApi {
     }
   }
 
-  final _getProfileByAddressQuery = r'''
+  // TODO: Update profile
+
+  final _getProfileByAddressQuery =
+      r'''
 query ProfileByAddress($address: AddressEVM!) {
     address(address: $address) {
       wallet {

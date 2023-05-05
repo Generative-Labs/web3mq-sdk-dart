@@ -19,6 +19,12 @@ extension RegisterExtension on Web3MQClient {
     return user;
   }
 
+  /// Updates user profile
+  Future<void> updateProfile(String avatarUrl) async {
+    await _service.user.updateProfile(avatarUrl);
+    // TODO: sync to cyber if needed
+  }
+
   /// Gets your main private key.
   Future<RegisterResult> register(DID did, String password,
       {String? domain}) async {
