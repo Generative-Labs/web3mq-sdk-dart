@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:web3mq/src/models/cyber_user_follow_status.dart';
 
 import '../models/channel_state.dart';
 import '../models/cyber_profile.dart';
@@ -790,6 +791,9 @@ class FollowUser {
   final String? avatarUrl;
 
   final String? nickname;
+
+  @JsonKey(includeIfNull: false, toJson: Serializer.readOnly)
+  CyberFollowStatus? cyberStatus;
 
   FollowUser(this.userId, this.followStatus, this.walletAddress,
       this.walletType, this.avatarUrl, this.nickname);

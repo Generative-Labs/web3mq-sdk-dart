@@ -25,7 +25,7 @@ void main() {
 
   setUp(() {
     signer = MockSigner();
-    userApi = UserApi(client);
+    userApi = UserApi(client, signer);
     notificationApi = NotificationApi(client, signer);
     topicApi = TopicApi(client, signer);
   });

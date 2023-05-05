@@ -7,7 +7,6 @@ import 'package:cryptography/cryptography.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:pointycastle/api.dart' as pointycastle;
-import 'package:protobuf/protobuf.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:web3mq/src/api/contacts.api.dart';
 import 'package:web3mq/src/api/cyber_service.dart';
@@ -20,6 +19,7 @@ import 'package:web3mq/src/error/error.dart';
 import 'package:web3mq/src/models/accounts.dart';
 import 'package:web3mq/src/models/channel_state.dart';
 import 'package:web3mq/src/models/cyber_profile.dart';
+import 'package:web3mq/src/models/cyber_user_follow_status.dart';
 import 'package:web3mq/src/utils/sign_text_factory.dart';
 import 'package:web3mq/src/utils/utils.dart';
 import 'package:web3mq/src/ws/models/pb/message.pb.dart';
@@ -250,6 +250,7 @@ class Web3MQClient {
 
     if (_syncCyber) {
       CyberTokenProvider(user.userId).fetchToken().then((value) {
+        print('debug:cyber token: $value');
         if (null != value) {
           _cyberService = CyberService(value);
         }

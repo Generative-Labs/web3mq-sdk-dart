@@ -3,12 +3,14 @@ part of 'client.dart';
 extension ContactsExtension on Web3MQClient {
   /// Get user followings
   Future<Page<FollowUser>> followings(Pagination pagination) async {
-    return await _service.contacts.followings(pagination);
+    final users = await _service.contacts.followings(pagination);
+    return _addCyberFollowStatusIfNeeded(users);
   }
 
   /// Get user followers
   Future<Page<FollowUser>> followers(Pagination pagination) async {
-    return await _service.contacts.followers(pagination);
+    final users = await _service.contacts.followers(pagination);
+    return _addCyberFollowStatusIfNeeded(users);
   }
 
   /// Follows user
@@ -55,7 +57,8 @@ extension ContactsExtension on Web3MQClient {
     final dateFormatter = DateFormat('dd/MM/yyyy HH:mm');
     final formattedDateString = dateFormatter.format(currentDate);
 
-    final signatureRaw = '''
+    final signatureRaw =
+        '''
 Web3MQ wants you to sign in with your $walletTypeName account:
 $walletAddress
 
@@ -102,4 +105,34 @@ Issued At: $formattedDateString`;
   ) async =>
       _service.contacts.unfollow(
           targetUserId, didType, didPublicKey, signContent, signature);
+
+  Future<Page<FollowUser>> _addCyberFollowStatusIfNeeded(
+      Page<FollowUser> users) async {
+    if (_syncCyber) {
+      await _authCyberIfNeeded();
+      final addresses =
+          users.result.map((e) => e.walletAddress).whereType<String>().toList();
+      final me = state.currentUser?.did.value;
+      final cyberStatuses = await _cyberService!.connection
+          .batchAddressesFollowStatus(me ?? '', addresses);
+      users.result = _mergeCyberStatusWithUsers(users.result, cyberStatuses);
+    }
+    return users;
+  }
+
+  List<FollowUser> _mergeCyberStatusWithUsers(
+      List<FollowUser> users, List<CyberFollowStatus> cyberStatusList) {
+    // 将 cyberStatusList 转换为基于 walletAddress 的 Map
+    final cyberStatusMap = {
+      for (var status in cyberStatusList) status.address: status
+    };
+    // 使用 map() 函数将每个用户与其相应的 cyberStatus 进行合并
+    return users.map((user) {
+      final userAddress = user.walletAddress;
+      if (userAddress != null && cyberStatusMap.containsKey(userAddress)) {
+        user.cyberStatus = cyberStatusMap[userAddress];
+      }
+      return user;
+    }).toList();
+  }
 }

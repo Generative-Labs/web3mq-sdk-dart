@@ -1,6 +1,7 @@
 import 'package:graphql/client.dart';
 import 'package:logging/logging.dart';
 import 'package:web3mq/src/api/cyber_auth_api.dart';
+import 'package:web3mq/src/api/cyber_connection_api.dart';
 import 'package:web3mq/src/api/cyber_profile_api.dart';
 
 /// a Cyber Service
@@ -29,9 +30,15 @@ class CyberService {
 
   CyberProfileApi? _profile;
 
+  CyberConnectionApi? _connection;
+
   /// Api for auth.
   CyberAuthApi get auth => _auth ??= CyberAuthApi(_link);
 
-  /// Api for auth.
+  /// Api for profile.
   CyberProfileApi get profile => _profile ??= CyberProfileApi(_link);
+
+  /// Api for connection.
+  CyberConnectionApi get connection =>
+      _connection ??= CyberConnectionApi(_link);
 }
