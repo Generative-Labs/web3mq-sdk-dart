@@ -12,10 +12,14 @@ extension RegisterExtension on Web3MQClient {
           _cyberService!.profile.getProfileByAddress(didValue);
       tasks.add(cyberUserInfoFuture);
     }
-    final List results = await Future.wait(tasks);
-    final user = results[0] as UserInfo?;
-    final cyberUserInfo = results[1] as CyberProfile?;
-    user?.cyberProfile = cyberUserInfo;
+    final results = await Future.wait(tasks);
+    if (results.isEmpty) {
+      return null;
+    }
+    final user = results.first as UserInfo;
+    final cyberUserInfo =
+        results.length > 1 ? results[1] as CyberProfile : null;
+    user.cyberProfile = cyberUserInfo;
     return user;
   }
 
