@@ -1,5 +1,19 @@
 part of 'client.dart';
 
+enum CyberFollowOperation {
+  follow,
+  unfollow;
+
+  String get value {
+    switch (this) {
+      case follow:
+        return 'FOLLOW';
+      case unfollow:
+        return 'UNFOLLOW';
+    }
+  }
+}
+
 extension ContactsExtension on Web3MQClient {
   /// Get user followings
   Future<Page<FollowUser>> followings(Pagination pagination) async {
@@ -18,8 +32,20 @@ extension ContactsExtension on Web3MQClient {
     await _doFollow(FollowAction.follow, userId, message);
   }
 
+  /// Unfollow user
+  Future<void> unfollow(String userId) async =>
+      _doFollow(FollowAction.unfollow, userId, null);
+
   /// Follows cyber profile
-  Future<String> cyberFollow(String targetAddress) async {
+  Future<String> cyberFollow(String targetAddress) async =>
+      _doCyberFollow(CyberFollowOperation.follow, targetAddress);
+
+  /// Unfollows cyber profile
+  Future<String> cyberUnFollow(String targetAddress) async =>
+      _doCyberFollow(CyberFollowOperation.unfollow, targetAddress);
+
+  Future<String> _doCyberFollow(
+      CyberFollowOperation operation, String targetAddress) async {
     if (!_syncCyber) {
       throw Web3MQContactsError.syncCyberDisabled;
     }
@@ -30,23 +56,20 @@ extension ContactsExtension on Web3MQClient {
     final user =
         await _cyberService!.profile.getProfileByAddress(targetAddress);
 
-    if (null == user) {
+    if (null == user || user.handle.isEmpty) {
       throw Web3MQContactsError.cyberUserNotFound;
     }
+
+    final signingKey = await registerCyberSigningKey();
 
     final address = state.currentUser?.did.value ?? '';
     final handle = user.handle;
     final message = await _cyberService!.connection
-        .followGetMessage("FOLLOW", address, handle);
-    final signature = await walletConnector!.personalSign(message, address);
-    // TODO: signingKey concept
-    return await _cyberService!.connection
-        .follow(address, user.handle, signature, '');
-  }
+        .followGetMessage(operation.value, address, handle);
 
-  /// Unfollow user
-  Future<void> unfollow(String userId) async {
-    await _doFollow(FollowAction.unfollow, userId, null);
+    final signature = await walletConnector!.personalSign(message, address);
+    return await _cyberService!.connection
+        .follow(address, user.handle, signature, signingKey);
   }
 
   Future<void> _doFollow(
@@ -83,8 +106,7 @@ extension ContactsExtension on Web3MQClient {
     final dateFormatter = DateFormat('dd/MM/yyyy HH:mm');
     final formattedDateString = dateFormatter.format(currentDate);
 
-    final signatureRaw =
-        '''
+    final signatureRaw = '''
 Web3MQ wants you to sign in with your $walletTypeName account:
 $walletAddress
 

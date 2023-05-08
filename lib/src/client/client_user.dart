@@ -188,6 +188,48 @@ extension RegisterExtension on Web3MQClient {
     return token;
   }
 
+  /// Register cyber signing key
+  Future<String> registerCyberSigningKey() async {
+    if (!_syncCyber) throw Web3MQError('Cyber service did not setup');
+
+    if (null == state.currentUser) {
+      throw Web3MQError('User did not setup');
+    }
+
+    await _authCyberIfNeeded();
+    final address = state.currentUser!.did.value;
+
+    final storage = CyberSigningKeyStorage();
+    final hasKey = await storage.hasSigningKeyByAddress(address);
+    if (hasKey) {
+      return await storage.getSiningKeyByAddress(address);
+    }
+
+    final privateKey = await storage.getSiningKeyByAddress(address);
+    final keyPair = await Ed25519().newKeyPairFromSeed(hex.decode(privateKey));
+    final publicKey = await keyPair.extractPublicKey();
+    final publicKeyHex = hex.encode(publicKey.bytes);
+
+    final acknowledgement = '''
+I authorize CyberConnect from this device using signing key:
+''';
+
+    final message = '$acknowledgement$publicKeyHex';
+    final signature =
+        await Ed25519().sign(utf8.encode(message), keyPair: keyPair);
+    final signatureHex = hex.encode(signature.bytes);
+
+    final status = await _cyberService!.connection
+        .registerSigningKey(address, message, signatureHex, _apiKey);
+    if ('SUCCESS' == status) {
+      // persistence key
+      storage.setSigningKeyByAddress(address, privateKey);
+    } else {
+      throw Web3MQError('Register cyber signing key failed: $status');
+    }
+    return privateKey;
+  }
+
   Future<String> _getOrGenerateUserId(String didType, String didValue) async {
     try {
       final user = await _service.user.userInfo(didType, didValue);

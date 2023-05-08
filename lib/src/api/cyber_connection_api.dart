@@ -22,7 +22,6 @@ class CyberConnectionApi {
       variables: <String, dynamic>{'toAddrList': addresses, 'me': me},
     );
     final QueryResult result = await _client.query(options);
-    print('result.data: ${result.data}');
     if (result.hasException) {
       return [];
     }
@@ -94,8 +93,26 @@ class CyberConnectionApi {
     return result.data?['status'] as String;
   }
 
-  final String _followMutation =
-      r'''
+  ///
+  Future<String> registerSigningKey(
+      String address, String message, String signature, String appId) async {
+    final MutationOptions options = MutationOptions(
+      document: gql(_registerSigningKeyMutation),
+      variables: <String, dynamic>{
+        'address': address,
+        'message': message,
+        'signature': signature,
+        'appId': appId
+      },
+    );
+    final QueryResult result = await _client.mutate(options);
+    if (result.hasException) {
+      throw result.exception!;
+    }
+    return result.data?['status'] as String;
+  }
+
+  final String _followMutation = r'''
 mutation Follow($address: AddressEVM!, $handle: String!, $message: String!, $signature: String!, $signingKey: String!) {
   follow(
     input: {address: $address, handle: $handle, message: $message, signature: $signature, signingKey: $signingKey}
@@ -105,8 +122,7 @@ mutation Follow($address: AddressEVM!, $handle: String!, $message: String!, $sig
 }
 ''';
 
-  final String _batchAddressesFollowStatusQuery =
-      r'''
+  final String _batchAddressesFollowStatusQuery = r'''
 query BatchAddressesFollowStatus($me: AddressEVM!, $toAddrList: [AddressEVM!]!) {
   batchGetAddresses(addresses: $toAddrList) {
     address
@@ -119,8 +135,7 @@ query BatchAddressesFollowStatus($me: AddressEVM!, $toAddrList: [AddressEVM!]!) 
 }
 ''';
 
-  final String _followMessageMutation =
-      r''' 
+  final String _followMessageMutation = r''' 
 query CreateFollowTypedMessage($operation:FollowOperation!,$address:AddressEVM!, $handle:String!) {
   createFollowTypedMessage(input: {
     address: $address,
@@ -128,6 +143,27 @@ query CreateFollowTypedMessage($operation:FollowOperation!,$address:AddressEVM!,
     handle: $handle
   }) {
     message
+  }
+}
+  ''';
+
+// address: String!
+// address the user's address.
+
+// message: String!
+// message the generated message to be signed, including the signing key public key information.
+
+// signature: String!
+// signature the signature from signing the message.
+
+// appId: String = ""
+
+  final _registerSigningKeyMutation = r''' 
+mutation RegisterSigningKey($address: String!, $message: String!, $signature: String!, $appId: String!) {
+  registerSigningKey(
+    input: {address: $address, message: $message, signature: $signature, appId: $appId}
+  ) {
+    status
   }
 }
   ''';

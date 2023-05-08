@@ -19,7 +19,6 @@ class CyberProfileApi {
       variables: <String, dynamic>{'address': address},
     );
     final QueryResult result = await _client.query(options);
-    print('result.data: ${result.data}');
     if (result.hasException) {
       return null;
     }
@@ -32,10 +31,7 @@ class CyberProfileApi {
     }
   }
 
-  // TODO: Update profile
-
-  final _getProfileByAddressQuery =
-      r'''
+  final _getProfileByAddressQuery = r'''
 query ProfileByAddress($address: AddressEVM!) {
     address(address: $address) {
       wallet {
