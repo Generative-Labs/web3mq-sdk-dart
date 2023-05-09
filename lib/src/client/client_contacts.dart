@@ -46,7 +46,7 @@ extension ContactsExtension on Web3MQClient {
 
   Future<String> _doCyberFollow(
       CyberFollowOperation operation, String targetAddress) async {
-    if (!_syncCyber) {
+    if (null == _cyberService) {
       throw Web3MQContactsError.syncCyberDisabled;
     }
     if (null == walletConnector) {
@@ -156,7 +156,7 @@ Issued At: $formattedDateString`;
 
   Future<Page<FollowUser>> _addCyberFollowStatusIfNeeded(
       Page<FollowUser> users) async {
-    if (_syncCyber) {
+    if (null != _cyberService) {
       await _authCyberIfNeeded();
       final addresses =
           users.result.map((e) => e.walletAddress).whereType<String>().toList();

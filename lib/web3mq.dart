@@ -3,6 +3,7 @@
 /// More dartdocs go here.
 library web3mq;
 
+export 'src/api/cyber_service.dart';
 export 'src/api/requests.dart';
 export 'src/api/responses.dart';
 export 'src/client/client.dart';

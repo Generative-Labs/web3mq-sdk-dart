@@ -6,7 +6,7 @@ extension RegisterExtension on Web3MQClient {
   Future<UserInfo?> userInfo(String didType, String didValue) async {
     final userInfoFuture = _service.user.userInfo(didType, didValue);
     final List<Future> tasks = [userInfoFuture];
-    if (_syncCyber) {
+    if (null != _cyberService) {
       await _authCyberIfNeeded();
       final cyberUserInfoFuture =
           _cyberService!.profile.getProfileByAddress(didValue);
@@ -16,18 +16,16 @@ extension RegisterExtension on Web3MQClient {
     if (results.isEmpty) {
       return null;
     }
-    final user = results.first as UserInfo;
-    final cyberUserInfo =
-        results.length > 1 ? results[1] as CyberProfile : null;
-    user.cyberProfile = cyberUserInfo;
+    final user = results.first as UserInfo?;
+    // final cyberUserInfo =
+    //     results.length > 1 ? results[1] as CyberProfile? : null;
+    // user?.cyberProfile = cyberUserInfo;
     return user;
   }
 
   /// Updates user profile
-  Future<void> updateProfile(String avatarUrl) async {
-    await _service.user.updateProfile(avatarUrl);
-    // TODO: sync to cyber if needed
-  }
+  Future<void> updateProfile(String avatarUrl) async =>
+      _service.user.updateProfile(avatarUrl);
 
   /// Gets your main private key.
   Future<RegisterResult> register(DID did, String password,
@@ -151,24 +149,22 @@ extension RegisterExtension on Web3MQClient {
   }
 
   ///
-  Future<String> _authCyberIfNeeded() async {
-    if (null == walletConnector) {
-      throw Web3MQError('WalletConnector did not setup');
-    }
-
+  Future<String?> _authCyberIfNeeded() async {
     if (null == state.currentUser) {
-      throw Web3MQError('User did not setup');
+      return null;
     }
 
-    final userId = state.currentUser!.userId;
-
-    final currentAccessToken = await CyberTokenProvider(userId).fetchToken();
-    if (null != currentAccessToken && currentAccessToken.isNotEmpty) {
-      return currentAccessToken;
+    if (null == walletConnector) {
+      return null;
     }
 
     if (null == _cyberService) {
-      throw Web3MQError('Cyber service did not setup');
+      return null;
+    }
+
+    final currentAccessToken = await _cyberService!.fetchAccessToken();
+    if (null != currentAccessToken) {
+      return currentAccessToken;
     }
 
     final domain = 'web3mq.com';
@@ -180,17 +176,14 @@ extension RegisterExtension on Web3MQClient {
         await _cyberService!.auth.loginVerify(domain, address, signature);
 
     // persistence token
-    CyberTokenProvider(userId).saveToken(token);
-
-    // update cyber service
-    _cyberService = CyberService(token);
+    _cyberService?.saveAccessToken(token);
 
     return token;
   }
 
   /// Register cyber signing key
   Future<String> registerCyberSigningKey() async {
-    if (!_syncCyber) throw Web3MQError('Cyber service did not setup');
+    if (null == _cyberService) throw Web3MQError('Cyber service did not setup');
 
     if (null == state.currentUser) {
       throw Web3MQError('User did not setup');

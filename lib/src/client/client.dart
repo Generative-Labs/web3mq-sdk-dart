@@ -14,11 +14,9 @@ import 'package:web3mq/src/api/requests.dart';
 import 'package:web3mq/src/api/responses.dart' as web3mq;
 import 'package:web3mq/src/api/web3mq_service.dart';
 import 'package:web3mq/src/client/persistence_client.dart';
-import 'package:web3mq/src/client/token_provider.dart';
 import 'package:web3mq/src/error/error.dart';
 import 'package:web3mq/src/models/accounts.dart';
 import 'package:web3mq/src/models/channel_state.dart';
-import 'package:web3mq/src/models/cyber_profile.dart';
 import 'package:web3mq/src/models/cyber_user_follow_status.dart';
 import 'package:web3mq/src/utils/cyber_signingKey_storage.dart';
 import 'package:web3mq/src/utils/sign_text_factory.dart';
@@ -35,10 +33,15 @@ import '../utils/wallet_connector.dart';
 import 'client_state.dart';
 
 part 'client_chat.dart';
+
 part 'client_contacts.dart';
+
 part 'client_group.dart';
+
 part 'client_notification.dart';
+
 part 'client_topic.dart';
+
 part 'client_user.dart';
 
 /// Handler function used for logging records. Function requires a single
@@ -60,11 +63,9 @@ class Web3MQClient {
       Duration receiveTimeout = const Duration(seconds: 15),
       Web3MQService? apiService,
       CyberService? cyberService,
-      bool syncCyber = false,
       Web3MQWebSocket? ws,
       Signer? signer,
-      WalletConnector? wc})
-      : _syncCyber = syncCyber {
+      WalletConnector? wc}) {
     logger.info('Initiating new Client');
 
     final options = Web3MQHttpClientOptions(
@@ -79,13 +80,7 @@ class Web3MQClient {
           logger: detachedLogger('🕸️'),
         );
 
-    if (syncCyber) {
-      if (null != cyberService) {
-        _cyberService = cyberService;
-      } else {
-        _cyberService = CyberService(null);
-      }
-    }
+    _cyberService = cyberService;
 
     _ws = ws ??
         Web3MQWebSocket(
@@ -113,12 +108,8 @@ class Web3MQClient {
   ///
   late final Web3MQService _service;
 
-  /// Always be null if [_syncCyber] is false.
-  /// And always not be null if [_syncCyber] is true.
-  CyberService? _cyberService;
-
   ///
-  final bool _syncCyber;
+  CyberService? _cyberService;
 
   ///
   late final Signer _signer;
@@ -249,14 +240,7 @@ class Web3MQClient {
 
     state.currentUser = user;
 
-    if (_syncCyber) {
-      CyberTokenProvider(user.userId).fetchToken().then((value) {
-        print('debug:cyber token: $value');
-        if (null != value) {
-          _cyberService = CyberService(value);
-        }
-      });
-    }
+    _cyberService?.connect(user.userId);
 
     try {
       if (_originalPersistenceClient != null) {
