@@ -210,10 +210,10 @@ extension RegisterExtension on Web3MQClient {
     final storage = CyberSigningKeyStorage();
     final hasKey = await storage.hasSigningKeyByAddress(address);
     if (hasKey) {
-      return await storage.getSiningKeyByAddress(address);
+      return await storage.getSigningKeyByAddress(address);
     }
 
-    final privateKey = await storage.getSiningKeyByAddress(address);
+    final privateKey = await storage.getSigningKeyByAddress(address);
     final keyPair = await Ed25519().newKeyPairFromSeed(hex.decode(privateKey));
     final publicKey = await keyPair.extractPublicKey();
     final publicKeyHex = hex.encode(publicKey.bytes);

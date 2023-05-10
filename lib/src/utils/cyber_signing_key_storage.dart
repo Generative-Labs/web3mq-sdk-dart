@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 ///
 class CyberSigningKeyStorage {
   ///
-  Future<String> getSiningKeyByAddress(String address) async {
+  Future<String> getSigningKeyByAddress(String address) async {
     final storage = await SharedPreferences.getInstance();
     final cacheKey = _getStorageKeyByAddress(address);
     final cachedSigningKey = storage.getString(cacheKey);
@@ -23,9 +23,9 @@ class CyberSigningKeyStorage {
   }
 
   ///
-  Future<String> getPublicKeyByAddres(String address) async {
-    final privatekey = await getSiningKeyByAddress(address);
-    final bytes = hex.decode(privatekey);
+  Future<String> getPublicKeyByAddress(String address) async {
+    final privateKey = await getSigningKeyByAddress(address);
+    final bytes = hex.decode(privateKey);
     final keyPair = await Ed25519().newKeyPairFromSeed(bytes);
     final publicKey = await keyPair.extractPublicKey();
     return hex.encode(publicKey.bytes);
@@ -46,7 +46,7 @@ class CyberSigningKeyStorage {
 
   ///
   Future<String> signWithSigningKey(String mesage, String address) async {
-    final signingKey = await getSiningKeyByAddress(address);
+    final signingKey = await getSigningKeyByAddress(address);
     final keypair = await Ed25519().newKeyPairFromSeed(hex.decode(signingKey));
     final signature =
         await Ed25519().sign(utf8.encode(mesage), keyPair: keypair);

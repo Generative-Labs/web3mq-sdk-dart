@@ -19,7 +19,7 @@ import 'package:web3mq/src/error/error.dart';
 import 'package:web3mq/src/models/accounts.dart';
 import 'package:web3mq/src/models/channel_state.dart';
 import 'package:web3mq/src/models/cyber_user_follow_status.dart';
-import 'package:web3mq/src/utils/cyber_signingKey_storage.dart';
+import 'package:web3mq/src/utils/cyber_signing_key_storage.dart';
 import 'package:web3mq/src/utils/sign_text_factory.dart';
 import 'package:web3mq/src/utils/utils.dart';
 import 'package:web3mq/src/ws/models/pb/message.pb.dart';
