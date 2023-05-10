@@ -47,7 +47,7 @@ void main() {
                   "did_value": didValue
                 }
               }));
-      final res = await userApi.register(
+      final res = await userApi.setPassword(
           "didType",
           "didValue",
           "userId",

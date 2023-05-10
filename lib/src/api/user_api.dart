@@ -6,6 +6,35 @@ import '../error/error.dart';
 import '../http/http_client.dart';
 import '../utils/signer.dart';
 
+///
+enum SetPasswordType {
+  /// register
+  register,
+
+  /// Reset password
+  reset;
+
+  /// The api path.
+  String get path {
+    switch (this) {
+      case SetPasswordType.register:
+        return "/api/user_register_v2/";
+      case SetPasswordType.reset:
+        return '/api/user_reset_password_v2/';
+    }
+  }
+
+  ///
+  String get purpase {
+    switch (this) {
+      case SetPasswordType.register:
+        return "register";
+      case SetPasswordType.reset:
+        return 'reset password';
+    }
+  }
+}
+
 class UserApi {
   UserApi(this._client, this._signer);
 
@@ -13,7 +42,7 @@ class UserApi {
 
   final Signer _signer;
 
-  Future<UserRegisterResponse> register(
+  Future<UserRegisterResponse> setPassword(
       String didType,
       String didValue,
       String userId,
@@ -22,9 +51,10 @@ class UserApi {
       String signatureRaw,
       String signature,
       DateTime timestamp,
-      String accessKey) async {
+      String accessKey,
+      {SetPasswordType type = SetPasswordType.register}) async {
     final response = await _client.post(
-      '/api/user_register_v2/',
+      type.path,
       data: {
         'userid': userId,
         "did_type": didType,
@@ -70,6 +100,36 @@ class UserApi {
       "pubkey_expired_timestamp": publicKeyExpiredTimestamp
     });
 
+    final res = Web3MQResponse<UserLoginResponse>.fromJson(
+        response.data, (json) => UserLoginResponse.fromJson(json));
+    final data = res.data;
+    if (res.code == 0 && null != data) {
+      return data;
+    }
+    throw Web3MQNetworkError.raw(code: res.code, message: res.message ?? "");
+  }
+
+  Future<UserLoginResponse> resetpassword(
+      String didType,
+      String didValue,
+      String userId,
+      String pubKey,
+      String pubKeyType,
+      String signatureRaw,
+      String signature,
+      DateTime timestamp,
+      String accessKey) async {
+    final response = await _client.post("/api/user_reset_password_v2/", data: {
+      "userid": userId,
+      "did_type": didType,
+      "did_value": didValue,
+      "did_signature": signature,
+      "signature_content": signatureRaw,
+      "pubkey_value": pubKey,
+      "pubkey_type": pubKeyType,
+      "timestamp": timestamp,
+      "testnet_access_key": accessKey,
+    });
     final res = Web3MQResponse<UserLoginResponse>.fromJson(
         response.data, (json) => UserLoginResponse.fromJson(json));
     final data = res.data;

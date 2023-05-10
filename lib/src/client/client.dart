@@ -12,6 +12,7 @@ import 'package:web3mq/src/api/contacts.api.dart';
 import 'package:web3mq/src/api/cyber_service.dart';
 import 'package:web3mq/src/api/requests.dart';
 import 'package:web3mq/src/api/responses.dart' as web3mq;
+import 'package:web3mq/src/api/user_api.dart';
 import 'package:web3mq/src/api/web3mq_service.dart';
 import 'package:web3mq/src/client/persistence_client.dart';
 import 'package:web3mq/src/error/error.dart';

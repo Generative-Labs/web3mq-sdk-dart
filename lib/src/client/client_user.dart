@@ -27,9 +27,21 @@ extension RegisterExtension on Web3MQClient {
   Future<void> updateProfile(String avatarUrl) async =>
       _service.user.updateProfile(avatarUrl);
 
-  /// Gets your main private key.
   Future<RegisterResult> register(DID did, String password,
-      {String? domain}) async {
+          {String? domain, String? userId}) async =>
+      _doSetPassword(did, password,
+          domain: domain, type: SetPasswordType.register, userId: userId);
+
+  Future<RegisterResult> resetPassword(DID did, String password,
+          {String? domain, String? userId}) async =>
+      _doSetPassword(did, password,
+          domain: domain, type: SetPasswordType.reset, userId: userId);
+
+  /// Gets your main private key.
+  Future<RegisterResult> _doSetPassword(DID did, String password,
+      {String? domain,
+      String? userId,
+      SetPasswordType type = SetPasswordType.register}) async {
     if (null == walletConnector) {
       throw Web3MQError('WalletConnector did not setup');
     }
@@ -42,7 +54,7 @@ extension RegisterExtension on Web3MQClient {
         await Ed25519().newKeyPairFromSeed(hex.decode(privateKeyHex));
     final publicKey = await keyPair.extractPublicKey();
     final publicKeyHex = hex.encode(publicKey.bytes);
-    final userId = await _getOrGenerateUserId(didType, didValue);
+    final theUserId = userId ?? await _getOrGenerateUserId(didType, didValue);
 
     final walletTypeName = "Ethereum";
     final pubKeyType = "ed25519";
@@ -53,7 +65,7 @@ extension RegisterExtension on Web3MQClient {
     final domainUrl = domain ?? "www.web3mq.com";
 
     final nonceContentRaw =
-        "$userId$pubKeyType$publicKeyHex$didType$didValue$timestamp";
+        "$theUserId$pubKeyType$publicKeyHex$didType$didValue$timestamp";
 
     final sha224 = pointycastle.Digest("SHA3-224");
     final hashed =
@@ -63,21 +75,22 @@ extension RegisterExtension on Web3MQClient {
     final dateFormatter = DateFormat('dd/MM/yyyy HH:mm');
     final formattedDateString = dateFormatter.format(currentDate);
 
-    final signatureRaw = SignTextFactory.forRegister(
-        walletTypeName, didValue, domainUrl, nonceContent, formattedDateString);
-
+    String signatureRaw = SignTextFactory.forSetPassword(walletTypeName,
+        didValue, domainUrl, nonceContent, formattedDateString, type);
     final signature =
         await walletConnector!.personalSign(signatureRaw, didValue);
-    final response = await _service.user.register(
+
+    final response = await _service.user.setPassword(
         didType,
         didValue,
-        userId,
+        theUserId,
         publicKeyHex,
         pubKeyType,
         signatureRaw,
         signature,
         currentDate,
-        _apiKey);
+        _apiKey,
+        type: type);
     return RegisterResult(response.userId,
         DID(response.didType, response.didValue), privateKeyHex);
   }
@@ -95,16 +108,19 @@ extension RegisterExtension on Web3MQClient {
   /// Gets a user with its `DID` and password, also with an duration for expired.
   /// You can connect that user by `client.connectUser(user)`
   Future<User> userWithDIDAndPassword(
-      DID did, String password, Duration expiredDuration) async {
+      DID did, String password, Duration expiredDuration,
+      {String? userId}) async {
     final privateKey = await retrievePrivateKey(did, password);
-    return await userWithDIDAndPrivateKey(did, privateKey, expiredDuration);
+    return await userWithDIDAndPrivateKey(did, privateKey, expiredDuration,
+        userId: userId);
   }
 
   /// Gets a user with its `DID` and privateKey, also with an duration for expired.
   /// You can connect that user by `client.connectUser(user)`
   Future<User> userWithDIDAndPrivateKey(
-      DID did, String privateKey, Duration expiredDuration) async {
-    final userId = await _getOrGenerateUserId(did.type, did.value);
+      DID did, String privateKey, Duration expiredDuration,
+      {String? userId}) async {
+    final theUserId = userId ?? await _getOrGenerateUserId(did.type, did.value);
     final mainPrivateKeyBytes = hex.decode(privateKey);
     final keyPair = await Ed25519().newKeyPairFromSeed(mainPrivateKeyBytes);
     final mainPublicKey = await keyPair.extractPublicKey();
@@ -118,7 +134,7 @@ extension RegisterExtension on Web3MQClient {
     final publicKeyExpiredTimestamp =
         timestamp + expiredDuration.inMilliseconds;
     final signatureRaw =
-        "$userId$tempPublicKeyHex$publicKeyExpiredTimestamp$timestamp";
+        "$theUserId$tempPublicKeyHex$publicKeyExpiredTimestamp$timestamp";
     final signatureRawBytes = utf8.encode(signatureRaw);
     //
 
@@ -132,7 +148,7 @@ extension RegisterExtension on Web3MQClient {
     final signature = base64Encode(signatureObject.bytes);
 
     final response = await _service.user.login(
-        userId,
+        theUserId,
         did.type,
         did.value,
         signature,
