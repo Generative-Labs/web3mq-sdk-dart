@@ -89,8 +89,7 @@ extension RegisterExtension on Web3MQClient {
     }
     final message = SignTextFactory.forMainPrivateKey(did, password);
     final signature = await walletConnector!.personalSign(message, did.value);
-    final hashed = await Sha256().hash(utf8.encode(signature));
-    return hex.encode(hashed.bytes);
+    return _getPrivateKeyBySignature(signature);
   }
 
   /// Gets a user with its `DID` and password, also with an duration for expired.
@@ -203,7 +202,8 @@ extension RegisterExtension on Web3MQClient {
     final publicKey = await keyPair.extractPublicKey();
     final publicKeyHex = hex.encode(publicKey.bytes);
 
-    final acknowledgement = '''
+    final acknowledgement =
+        '''
 I authorize CyberConnect from this device using signing key:
 ''';
 
@@ -235,5 +235,10 @@ I authorize CyberConnect from this device using signing key:
     final bytes = utf8.encode('$didType:$didValue');
     final sha224Bytes = await Sha224().hash(bytes).then((value) => value.bytes);
     return "user:${hex.encode(sha224Bytes)}";
+  }
+
+  Future<String> _getPrivateKeyBySignature(String signature) async {
+    final hashed = await Sha256().hash(utf8.encode(signature));
+    return hex.encode(hashed.bytes);
   }
 }
