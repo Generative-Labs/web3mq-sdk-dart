@@ -17,9 +17,9 @@ extension RegisterExtension on Web3MQClient {
       return null;
     }
     final user = results.first as UserInfo?;
-    // final cyberUserInfo =
-    //     results.length > 1 ? results[1] as CyberProfile? : null;
-    // user?.cyberProfile = cyberUserInfo;
+    final cyberUserInfo =
+        results.length > 1 ? results[1] as CyberProfile? : null;
+    user?.cyberProfile = cyberUserInfo;
     return user;
   }
 
@@ -202,8 +202,7 @@ extension RegisterExtension on Web3MQClient {
     final publicKey = await keyPair.extractPublicKey();
     final publicKeyHex = hex.encode(publicKey.bytes);
 
-    final acknowledgement =
-        '''
+    final acknowledgement = '''
 I authorize CyberConnect from this device using signing key:
 ''';
 

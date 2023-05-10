@@ -27,6 +27,7 @@ import 'package:web3mq/src/ws/websocket.dart';
 
 import '../api/responses.dart';
 import '../http/http_client.dart';
+import '../models/cyber_profile.dart';
 import '../models/pagination.dart';
 import '../utils/signer.dart';
 import '../utils/wallet_connector.dart';
