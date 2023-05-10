@@ -19,8 +19,7 @@ URI: $domainUrl
 Version: 1
 
 Nonce: $nonceContent
-Issued At: $formattedDateString
-""";
+Issued At: $formattedDateString""";
   }
 
   ///
@@ -33,8 +32,7 @@ If your Web3MQ wallet-associated password and this signature is exposed to any m
 
 In the event of such an incident, don’t panic. You can call Web3MQ’s key revoke API and service to revoke access to the exposed encryption key and generate a new one!
 
-Nonce: $nonce
-""";
+Nonce: $nonce""";
   }
 
   static String generateNonce(DID did, String password) {

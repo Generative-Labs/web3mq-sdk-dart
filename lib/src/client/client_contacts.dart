@@ -106,15 +106,15 @@ extension ContactsExtension on Web3MQClient {
     final dateFormatter = DateFormat('dd/MM/yyyy HH:mm');
     final formattedDateString = dateFormatter.format(currentDate);
 
-    final signatureRaw = '''
+    final signatureRaw =
+        '''
 Web3MQ wants you to sign in with your $walletTypeName account:
 $walletAddress
 
 For follow signature
 
 Nonce: $nonceContent
-Issued At: $formattedDateString`;
-''';
+Issued At: $formattedDateString`''';
 
     final signature =
         await walletConnector.personalSign(signatureRaw, walletAddress);
