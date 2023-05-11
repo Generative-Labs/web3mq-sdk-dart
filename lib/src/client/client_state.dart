@@ -265,9 +265,6 @@ class ClientState {
     /// count unread count
     final unreadCount = _shouldCountMessageAsUnread(message) ? 1 : 0;
 
-    // update channel(optional)
-    _client.addChannel(channelId, channelType, channelId, channelType);
-
     return ChannelModel(
         channelId,
         channelType,
