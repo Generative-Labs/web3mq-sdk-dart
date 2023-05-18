@@ -1,6 +1,6 @@
 /// Support for doing something awesome.
 ///
-/// More dartdocs go here.
+/// More dart docs go here.
 library web3mq;
 
 export 'src/api/cyber_service.dart';

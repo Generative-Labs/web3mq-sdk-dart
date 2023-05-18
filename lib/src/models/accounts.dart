@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'accounts.g.dart';
+
+@JsonSerializable()
 class Account {
   final String namespace;
   final String reference;
@@ -10,6 +15,8 @@ class Account {
   String get absoluteString {
     return '$namespace:$reference:$address';
   }
+
+  Account(this.namespace, this.reference, this.address);
 
   Account.from(String string)
       : assert(CAIP10Helper.isConformsToCAIP10(string)),
@@ -29,6 +36,13 @@ class Account {
   @override
   int get hashCode =>
       address.hashCode ^ reference.hashCode ^ namespace.hashCode;
+
+  /// Create a new instance from a json
+  factory Account.fromJson(Map<String, dynamic> json) =>
+      _$AccountFromJson(json);
+
+  /// Serialize to json
+  Map<String, dynamic> toJson() => _$AccountToJson(this);
 }
 
 class CAIP10Helper {

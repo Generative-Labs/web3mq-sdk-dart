@@ -4,10 +4,11 @@ import 'package:mutex/mutex.dart';
 
 import '../../web3mq.dart';
 import '../client/persistence_client.dart';
+import '../logger/logger.dart';
 import 'db/drift_chat_database.dart';
 import 'db/shared/native_db.dart';
 
-/// Various connection modes on which [StreamChatPersistenceClient] can work
+/// Various connection modes on which [Web3MQPersistenceClient] can work
 enum ConnectionMode {
   /// Connects the [PersistenceClient] on a regular/default isolate
   regular,
@@ -18,12 +19,6 @@ enum ConnectionMode {
 
 /// Signature for a function which provides instance of [DriftChatDatabase]
 typedef DatabaseProvider = DriftChatDatabase Function(String, ConnectionMode);
-
-final _levelEmojiMapper = {
-  Level.INFO: 'ℹ️',
-  Level.WARNING: '⚠️',
-  Level.SEVERE: '🚨',
-};
 
 /// A [DriftChatDatabase] based implementation of the [ChatPersistenceClient]
 class Web3MQPersistenceClient extends PersistenceClient {
@@ -41,7 +36,8 @@ class Web3MQPersistenceClient extends PersistenceClient {
   })  : _connectionMode = connectionMode,
         _webUseIndexedDbIfSupported = webUseExperimentalIndexedDb,
         _logger = Logger.detached('💽')..level = logLevel {
-    _logger.onRecord.listen(logHandlerFunction ?? _defaultLogHandler);
+    _logger.onRecord
+        .listen(logHandlerFunction ?? Web3MQLogger.defaultLogHandler);
   }
 
   /// [DriftChatDatabase] instance used by this client.
@@ -52,15 +48,6 @@ class Web3MQPersistenceClient extends PersistenceClient {
   final ConnectionMode _connectionMode;
   final bool _webUseIndexedDbIfSupported;
   final _mutex = ReadWriteMutex();
-
-  void _defaultLogHandler(LogRecord record) {
-    print(
-      '(${record.time}) '
-      '${_levelEmojiMapper[record.level] ?? record.level.name} '
-      '${record.loggerName} ${record.message}',
-    );
-    if (record.stackTrace != null) print(record.stackTrace);
-  }
 
   Future<T> _readProtected<T>(AsyncValueGetter<T> func) =>
       _mutex.protectRead(func);
@@ -95,7 +82,7 @@ class Web3MQPersistenceClient extends PersistenceClient {
   }) async {
     if (db != null) {
       throw Exception(
-        'An instance of StreamChatDatabase is already connected.\n'
+        'An instance of Web3MQDatabase is already connected.\n'
         'disconnect the previous instance before connecting again.',
       );
     }
