@@ -27,21 +27,38 @@ extension RegisterExtension on Web3MQClient {
   Future<void> updateProfile(String avatarUrl) async =>
       _service.user.updateProfile(avatarUrl);
 
+  ///
   Future<RegisterResult> register(DID did, String password,
           {String? domain, String? userId}) async =>
-      _doSetPassword(did, password,
-          domain: domain, type: SetPasswordType.register, userId: userId);
+      _doRegister(did, password,
+          domain: domain, type: RegisterType.register, userId: userId);
 
+  ///
   Future<RegisterResult> resetPassword(DID did, String password,
           {String? domain, String? userId}) async =>
-      _doSetPassword(did, password,
-          domain: domain, type: SetPasswordType.reset, userId: userId);
+      _doRegister(did, password,
+          domain: domain, type: RegisterType.reset, userId: userId);
+
+  /// Registers a user by proxy.
+  ///
+  /// The [userId] parameter can be generated using the [client.generateUserIdByDid] function.
+  Future<RegisterResult> registerByProxy(DID did, String userId,
+          String password, String dappId, String dappSignature,
+          {String? domain}) async =>
+      _doRegister(did, password,
+          domain: domain,
+          type: RegisterType.registerByProxy,
+          userId: userId,
+          dappId: dappId,
+          dappSignature: dappSignature);
 
   /// Gets your main private key.
-  Future<RegisterResult> _doSetPassword(DID did, String password,
+  Future<RegisterResult> _doRegister(DID did, String password,
       {String? domain,
       String? userId,
-      SetPasswordType type = SetPasswordType.register}) async {
+      String? dappId,
+      String? dappSignature,
+      RegisterType type = RegisterType.register}) async {
     if (null == walletConnector) {
       throw Web3MQError('WalletConnector did not setup');
     }
@@ -80,19 +97,38 @@ extension RegisterExtension on Web3MQClient {
     final signature =
         await walletConnector!.personalSign(signatureRaw, didValue);
 
-    final response = await _service.user.setPassword(
-        didType,
-        didValue,
-        theUserId,
-        publicKeyHex,
-        pubKeyType,
-        signatureRaw,
-        signature,
-        currentDate,
-        _apiKey,
-        type: type);
-    return RegisterResult(response.userId,
-        DID(response.didType, response.didValue), privateKeyHex);
+    switch (type) {
+      case RegisterType.register:
+      case RegisterType.reset:
+        final response = await _service.user.setPassword(
+            didType,
+            didValue,
+            theUserId,
+            publicKeyHex,
+            pubKeyType,
+            signatureRaw,
+            signature,
+            currentDate,
+            _apiKey,
+            type: type);
+        return RegisterResult(response.userId,
+            DID(response.didType, response.didValue), privateKeyHex);
+      case RegisterType.registerByProxy:
+        final response = await _service.user.registerByProxy(
+            dappId ?? '',
+            dappSignature ?? '',
+            didType,
+            didValue,
+            theUserId,
+            publicKeyHex,
+            pubKeyType,
+            signatureRaw,
+            signature,
+            currentDate,
+            _apiKey);
+        return RegisterResult(response.userId,
+            DID(response.didType, response.didValue), privateKeyHex);
+    }
   }
 
   /// Private key in Hex.
@@ -248,7 +284,11 @@ I authorize CyberConnect from this device using signing key:
       }
     } catch (_) {}
     // Generate and return a new user ID if the user ID is null or an exception occurs
-    final bytes = utf8.encode('$didType:$didValue');
+    return await generateUserIdByDid(DID(didType, didValue));
+  }
+
+  Future<String> generateUserIdByDid(DID did) async {
+    final bytes = utf8.encode('${did.type}:${did.value}');
     final sha224Bytes = await Sha224().hash(bytes).then((value) => value.bytes);
     return "user:${hex.encode(sha224Bytes)}";
   }
