@@ -7,7 +7,7 @@ import '../client/persistence_client.dart';
 import 'db/drift_chat_database.dart';
 import 'db/shared/native_db.dart';
 
-/// Various connection modes on which [StreamChatPersistenceClient] can work
+/// Various connection modes on which [Web3MQClientPersistenceClient] can work
 enum ConnectionMode {
   /// Connects the [PersistenceClient] on a regular/default isolate
   regular,
@@ -95,7 +95,7 @@ class Web3MQPersistenceClient extends PersistenceClient {
   }) async {
     if (db != null) {
       throw Exception(
-        'An instance of StreamChatDatabase is already connected.\n'
+        'An instance of Web3MQDatabase is already connected.\n'
         'disconnect the previous instance before connecting again.',
       );
     }

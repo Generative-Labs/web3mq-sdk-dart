@@ -49,7 +49,7 @@ class UserApi {
 
   final Signer _signer;
 
-  Future<UserRegisterResponse> setPassword(
+  Future<UserRegisterResponse> register(
       String didType,
       String didValue,
       String userId,

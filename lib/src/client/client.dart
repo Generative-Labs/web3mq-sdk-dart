@@ -208,12 +208,12 @@ class Web3MQClient {
 
   final LogHandlerFunction logHandlerFunction;
 
-  /// Default logger for the [StreamChatClient].
+  /// Default logger for the [Web3MQClient].
   Logger detachedLogger(String name) => Logger.detached(name)
     ..level = logLevel
     ..onRecord.listen(logHandlerFunction);
 
-  /// Default log handler function for the [StreamChatClient] logger.
+  /// Default log handler function for the [Web3MQClient] logger.
   static void defaultLogHandler(LogRecord record) {
     print(
       '${record.time} '
@@ -349,9 +349,9 @@ class Web3MQClient {
     }
   }
 
-  /// Call this function to dispose the client
+  /// Call this function to dispose the clients
   Future<void> dispose() async {
-    logger.info('Disposing new StreamChatClient');
+    logger.info('Disposing new Web3MQClient');
 
     // disposing state
     state.dispose();

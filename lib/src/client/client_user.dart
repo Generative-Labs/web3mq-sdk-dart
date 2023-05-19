@@ -42,8 +42,13 @@ extension RegisterExtension on Web3MQClient {
   /// Registers a user by proxy.
   ///
   /// The [userId] parameter can be generated using the [client.generateUserIdByDid] function.
-  Future<RegisterResult> registerByProxy(DID did, String userId,
-          String password, String dappId, String dappSignature,
+  Future<RegisterResult> registerByProxy(
+          DID did,
+          String userId,
+          String password,
+          String dappId,
+          String dappSignature,
+          DateTime dateTime,
           {String? domain}) async =>
       _doRegister(did, password,
           domain: domain,
@@ -58,6 +63,7 @@ extension RegisterExtension on Web3MQClient {
       String? userId,
       String? dappId,
       String? dappSignature,
+      DateTime? dateTime,
       RegisterType type = RegisterType.register}) async {
     if (null == walletConnector) {
       throw Web3MQError('WalletConnector did not setup');
@@ -76,7 +82,7 @@ extension RegisterExtension on Web3MQClient {
     final walletTypeName = "Ethereum";
     final pubKeyType = "ed25519";
 
-    final currentDate = DateTime.now();
+    final currentDate = dateTime ?? DateTime.now();
     final timestamp = currentDate.millisecondsSinceEpoch;
 
     final domainUrl = domain ?? "www.web3mq.com";
@@ -100,7 +106,7 @@ extension RegisterExtension on Web3MQClient {
     switch (type) {
       case RegisterType.register:
       case RegisterType.reset:
-        final response = await _service.user.setPassword(
+        final response = await _service.user.register(
             didType,
             didValue,
             theUserId,
@@ -254,8 +260,7 @@ extension RegisterExtension on Web3MQClient {
     final publicKey = await keyPair.extractPublicKey();
     final publicKeyHex = hex.encode(publicKey.bytes);
 
-    final acknowledgement =
-        '''
+    final acknowledgement = '''
 I authorize CyberConnect from this device using signing key:
 ''';
 
