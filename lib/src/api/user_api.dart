@@ -35,6 +35,7 @@ enum SetPasswordType {
   }
 }
 
+///
 class UserApi {
   UserApi(this._client, this._signer);
 
@@ -42,7 +43,8 @@ class UserApi {
 
   final Signer _signer;
 
-  Future<UserRegisterResponse> setPassword(
+  ///
+  Future<UserRegisterResponse> register(
       String didType,
       String didValue,
       String userId,
