@@ -80,16 +80,8 @@ extension RegisterExtension on Web3MQClient {
     final signature =
         await walletConnector!.personalSign(signatureRaw, didValue);
 
-    final response = await _service.user.setPassword(
-        didType,
-        didValue,
-        theUserId,
-        publicKeyHex,
-        pubKeyType,
-        signatureRaw,
-        signature,
-        currentDate,
-        _apiKey,
+    final response = await _service.user.register(didType, didValue, theUserId,
+        publicKeyHex, pubKeyType, signatureRaw, signature, currentDate, _apiKey,
         type: type);
     return RegisterResult(response.userId,
         DID(response.didType, response.didValue), privateKeyHex);
