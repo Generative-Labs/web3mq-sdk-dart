@@ -9,20 +9,26 @@ import 'package:web3mq/src/dapp_connect/model/uri.dart';
 void main() {
   group('A group of uri tests', () {
     test('uri generation should be right', () async {
+      //
+      final sessionProposal = SessionProposalFactory.create(
+          'topic',
+          {
+            'ProposalNamespaceAccountId':
+                ProposalNamespace({''}, {'personal_sign'}, {''})
+          },
+          SessionProperties('expiry'));
+
       final uri = DappConnectURI(
-        'topic',
-        Participant(
-            'publicKey',
-            AppMetadata('name', 'description', 'url', ['icon0', 'icon1'],
-                'redirect_url')),
-        SessionProposalRPCRequest(
+          'topic',
+          Participant(
+              'publicKey',
+              AppMetadata('name', 'description', 'url', ['icon0', 'icon1'],
+                  'redirect_url')),
+          SessionProposalRPCRequest(
             'id',
             'method',
-            SessionProposal({
-              'ProposalNamespaceAccountId':
-                  ProposalNamespace({''}, {'personal_sign'}, {''})
-            }, SessionProperties('expiry'))),
-      );
+            sessionProposal,
+          ));
 
       print('debug:result:${uri.absoluteString}');
     });

@@ -39,6 +39,8 @@ Map<String, dynamic> _$SessionPropertiesToJson(SessionProperties instance) =>
 
 SessionProposal _$SessionProposalFromJson(Map<String, dynamic> json) =>
     SessionProposal(
+      json['id'] as String,
+      json['pairingTopic'] as String,
       (json['requiredNamespaces'] as Map<String, dynamic>).map(
         (k, e) =>
             MapEntry(k, ProposalNamespace.fromJson(e as Map<String, dynamic>)),
@@ -49,6 +51,8 @@ SessionProposal _$SessionProposalFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$SessionProposalToJson(SessionProposal instance) =>
     <String, dynamic>{
+      'id': instance.id,
+      'pairingTopic': instance.pairingTopic,
       'requiredNamespaces':
           instance.requiredNamespaces.map((k, e) => MapEntry(k, e.toJson())),
       'sessionProperties': instance.sessionProperties.toJson(),

@@ -1,0 +1,69 @@
+import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:web3mq/src/dapp_connect/model/session.dart';
+
+/// Session proposal storage.
+abstract class SessionProposalStorage {
+  /// Set session proposal.
+  void setSessionProposal(String proposalId, SessionProposal sessionProposal);
+
+  /// Get session proposal.
+  SessionProposal? getSessionProposal(String proposalId);
+
+  /// Remove session proposal.
+  void removeSessionProposal(String proposalId);
+
+  /// Clear all session proposals.
+  void clear();
+}
+
+///
+class Web3MQSessionProposalStorage extends SessionProposalStorage {
+  // /// Get instance.
+  // factory Web3MQSessionProposalStorage() {
+  //   return _instance;
+  // }
+
+  // static final Web3MQSessionProposalStorage _instance =
+  //     Web3MQSessionProposalStorage._internal();
+
+  // Web3MQSessionProposalStorage._internal();
+
+  final SharedPreferences prefs;
+
+  Web3MQSessionProposalStorage(this.prefs);
+
+  @override
+  SessionProposal? getSessionProposal(String proposalId) {
+    final jsonString = prefs.getString(_getCacheKey(proposalId));
+    if (jsonString == null) {
+      return null;
+    }
+    final json = jsonDecode(jsonString);
+    return SessionProposal.fromJson(json);
+  }
+
+  @override
+  void removeSessionProposal(String proposalId) {
+    prefs.remove(_getCacheKey(proposalId));
+  }
+
+  @override
+  void setSessionProposal(String proposalId, SessionProposal sessionProposal) {
+    prefs.setString(_getCacheKey(proposalId), jsonEncode(sessionProposal));
+  }
+
+  @override
+  void clear() {
+    prefs.getKeys().forEach((key) {
+      if (key.startsWith('com.web3mq.session_proposal_')) {
+        prefs.remove(key);
+      }
+    });
+  }
+
+  ///
+  String _getCacheKey(String proposalId) =>
+      "com.web3mq.session_proposal_$proposalId";
+}
