@@ -20,16 +20,6 @@ abstract class SessionProposalStorage {
 
 ///
 class Web3MQSessionProposalStorage extends SessionProposalStorage {
-  // /// Get instance.
-  // factory Web3MQSessionProposalStorage() {
-  //   return _instance;
-  // }
-
-  // static final Web3MQSessionProposalStorage _instance =
-  //     Web3MQSessionProposalStorage._internal();
-
-  // Web3MQSessionProposalStorage._internal();
-
   final SharedPreferences prefs;
 
   Web3MQSessionProposalStorage(this.prefs);
