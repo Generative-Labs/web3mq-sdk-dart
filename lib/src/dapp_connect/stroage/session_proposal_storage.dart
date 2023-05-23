@@ -57,13 +57,14 @@ class Web3MQSessionProposalStorage extends SessionProposalStorage {
   @override
   void clear() {
     prefs.getKeys().forEach((key) {
-      if (key.startsWith('com.web3mq.session_proposal_')) {
+      if (key.startsWith(_cachePrefix)) {
         prefs.remove(key);
       }
     });
   }
 
+  final _cachePrefix = 'com.web3mq.session_proposal_';
+
   ///
-  String _getCacheKey(String proposalId) =>
-      "com.web3mq.session_proposal_$proposalId";
+  String _getCacheKey(String proposalId) => "$_cachePrefix$proposalId";
 }
