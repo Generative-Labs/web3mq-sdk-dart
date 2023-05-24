@@ -3,14 +3,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web3mq/src/dapp_connect/model/namespace.dart';
 import 'package:web3mq/src/dapp_connect/model/session.dart';
-import 'package:web3mq/src/dapp_connect/stroage/session_proposal_storage.dart';
+import 'package:web3mq/src/dapp_connect/stroage/storage.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Web3MQSessionProposalStorage', () {
-    late SessionProposalStorage storage;
+    late Storage storage;
 
     late Map<String, ProposalNamespace> requiredNamespaces;
 
@@ -19,32 +19,31 @@ void main() {
     setUp(() async {
       final store = FakeSharedPreferencesStore({});
       SharedPreferencesStorePlatform.instance = store;
-      final pfres = await SharedPreferences.getInstance();
-      storage = Web3MQSessionProposalStorage(pfres);
+      storage = Web3MQStorage();
       requiredNamespaces = {
         '456': ProposalNamespace({}, {'personal_sign'}, {})
       };
       sessionProperties = SessionProperties('789');
     });
 
-    test('setSessionProposal and getSessionProposal', () {
+    test('setSessionProposal and getSessionProposal', () async {
       final topic = '123';
       final sessionProposal = SessionProposalFactory.create(
           topic, requiredNamespaces, sessionProperties);
       final proposalId = sessionProposal.id;
-      storage.setSessionProposal(proposalId, sessionProposal);
-      final retrievedProposal = storage.getSessionProposal(proposalId);
+      await storage.setSessionProposal(sessionProposal);
+      final retrievedProposal = await storage.getSessionProposal(proposalId);
       expect(retrievedProposal, equals(sessionProposal));
     });
 
-    test('removeSessionProposal', () {
+    test('removeSessionProposal', () async {
       final topic = '123';
       final sessionProposal = SessionProposalFactory.create(
           topic, requiredNamespaces, sessionProperties);
       final proposalId = sessionProposal.id;
-      storage.setSessionProposal(proposalId, sessionProposal);
-      storage.removeSessionProposal(proposalId);
-      final retrievedProposal = storage.getSessionProposal(proposalId);
+      await storage.setSessionProposal(sessionProposal);
+      await storage.removeSessionProposal(proposalId);
+      final retrievedProposal = await storage.getSessionProposal(proposalId);
       expect(retrievedProposal, isNull);
     });
 
@@ -59,11 +58,12 @@ void main() {
           topic2, requiredNamespaces, sessionProperties);
       final proposalId2 = sessionProposal2.id;
 
-      storage.setSessionProposal(proposalId1, sessionProposal1);
-      storage.setSessionProposal(proposalId2, sessionProposal2);
-      storage.clear();
-      final retrievedProposal1 = storage.getSessionProposal(proposalId1);
-      final retrievedProposal2 = storage.getSessionProposal(proposalId2);
+      await storage.setSessionProposal(sessionProposal1);
+      await storage.setSessionProposal(sessionProposal2);
+      await storage.clear();
+
+      final retrievedProposal1 = await storage.getSessionProposal(proposalId1);
+      final retrievedProposal2 = await storage.getSessionProposal(proposalId2);
 
       expect(retrievedProposal1, isNull);
       expect(retrievedProposal2, isNull);

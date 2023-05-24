@@ -6,13 +6,14 @@ import 'package:web3mq/src/dapp_connect/model/app_metadata.dart';
 import 'package:web3mq/src/dapp_connect/model/request.dart';
 import 'package:web3mq/src/dapp_connect/model/response.dart';
 import 'package:web3mq/src/dapp_connect/model/uri.dart';
+import 'package:web3mq/src/dapp_connect/serializer.dart';
+import 'package:web3mq/src/dapp_connect/stroage/storage.dart';
 import 'package:web3mq/src/logger/logger.dart';
+import 'package:web3mq/web3mq.dart';
 
 import '../error/error.dart';
-import '../models/models.dart';
-import '../ws/models/connection_status.dart';
-import '../ws/models/event.dart';
 import '../ws/websocket.dart';
+import 'error/error.dart';
 import 'model/namespace.dart';
 import 'model/session.dart';
 import 'model/user.dart';
@@ -29,33 +30,35 @@ abstract class DappConnectClientProtocol {
   Stream<Response> get responseStream;
 
   ///
-  void deleteSession(String topic);
+  Future<void> deleteSession(String topic);
 
   ///
   DappConnectURI createSessionProposalURI(
       Map<String, ProposalNamespace> requiredNamespaces);
 
   ///
-  void approveSessionProposal(
+  Future<void> approveSessionProposal(
       String proposalId, Map<String, SessionNamespace> sessionNamespace);
 
   ///
-  void rejectSessionProposal(String proposalId);
+  Future<void> rejectSessionProposal(String proposalId);
 
   ///
-  void sendSuccessResponse(Request request, Map<String, dynamic> result);
+  Future<void> sendSuccessResponse(
+      Request request, Map<String, dynamic> result);
 
   ///
-  void sendErrorResponse(Request request, int code, String message);
+  Future<void> sendErrorResponse(Request request, int code, String message);
 
   ///
-  void sendRequest(String topic, String method, Map<String, dynamic> params);
+  Future<void> sendRequest(
+      String topic, String method, Map<String, dynamic> params);
 
   ///
-  void cleanup();
+  Future<void> cleanup();
 
   ///
-  void connectUser(DappConnectUser user);
+  Future<void> connectUser(DappConnectUser user);
 
   ///
   void closeConnection();
@@ -80,6 +83,10 @@ class DappConnectClient extends DappConnectClientProtocol {
       {this.logLevel = Level.ALL,
       this.logHandlerFunction = Web3MQLogger.defaultLogHandler,
       String? baseURL,
+      Storage? storage,
+      KeyStorage? keyStorage,
+      ShareKeyCoder? shareKeyCoder,
+      Serializer? serializer,
       Web3MQWebSocket? ws}) {
     _ws = ws ??
         Web3MQWebSocket(
@@ -88,6 +95,14 @@ class DappConnectClient extends DappConnectClientProtocol {
           handler: handleEvent,
           logger: detachedLogger('🔌'),
         );
+
+    _storage = storage ?? Web3MQStorage();
+
+    _shareKeyCoder = shareKeyCoder ?? DappConnectShareKeyCoder();
+
+    _keyStorage = keyStorage ?? DappConnectKeyStorage();
+
+    _serializer = serializer ?? Serializer(_keyStorage, _shareKeyCoder);
   }
 
   final _eventController = BehaviorSubject<Event>();
@@ -111,26 +126,65 @@ class DappConnectClient extends DappConnectClientProtocol {
   /// Error to stdout.
   late final Web3MQWebSocket _ws;
 
+  late final KeyStorage _keyStorage;
+
+  late final ShareKeyCoder _shareKeyCoder;
+
+  late final Serializer _serializer;
+
+  late final Storage _storage;
+
   @override
-  void approveSessionProposal(
-      String proposalId, Map<String, SessionNamespace> sessionNamespace) {
-    // TODO: implement approveSessionProposal
+  Future<void> approveSessionProposal(
+      String proposalId, Map<String, SessionNamespace> sessionNamespace) async {
+    final proposal = await _storage.getSessionProposal(proposalId);
+    if (proposal == null) {
+      throw DappConnectError.proposalNotFound();
+    }
+    // 1. send repsonse
+    // 2. remove proposal
+    // 3. set session
+    // 4. redirect to dapp
+
+    // final chatMessage = await MessageFactory.fromText(
+    //     text, topic, user.userId, user.sessionKey, nodeId,
+    //     threadId: threadId,
+    //     needStore: needStore,
+    //     cipherSuite: cipherSuite,
+    //     extraData: extraData);
+    // _ws.send(chatMessage);
+
+    // response.result = sessionNamespace;
+//  let result = RPCResult.response(AnyCodable(SessionNamespacesResult(sessionNamespaces: sessionNamespace,
+//                                                                            metadata: metadata)))
+
+//         let privateKey = KeyManager.shared.privateKey
+//         let selfTopic = UserIdGenerator.userId(appId: appId, publicKeyBase64String: privateKey.publicKeyBase64String)
+
+//         let session = Session(topic: proposal.pairingTopic, pairingTopic: selfTopic, selfParticipant: Participant(publicKey: privateKey.publicKeyHexString, appMetadata: metadata), peerParticipant: proposal.proposer, expiryDate: proposal.sessionProperties?.expiry ?? Date().addingTimeInterval(7*24*60*60).string, namespaces: sessionNamespace)
+
+//         DappMQSessionProposalStorage.shared.remove(proposalId: proposalId)
+//         DappMQSessionStorage.shared.setSession(session)
+
+//         let message = try await connector.send(content: RPCResponse(id: proposalId, method: RequestMethod.providerAuthorization, outcome: result), topic: proposal.pairingTopic)
+//         await Router.backToDapp(redirectUrl: proposal.proposer.appMetadata.redirect)
+//         return message
   }
 
   @override
   DappConnectURI createSessionProposalURI(
       Map<String, ProposalNamespace> requiredNamespaces) {
-    // TODO: implement createSessionProposalURI
     throw UnimplementedError();
   }
 
   @override
-  void deleteSession(String topic) {
-    // TODO: implement deleteSession
+  Future<void> deleteSession(String topic) async {
+    _storage.removeSession(topic);
+    _storage.removeRecord(topic);
   }
 
   @override
-  void rejectSessionProposal(String proposalId) {
+  Future<void> rejectSessionProposal(String proposalId) async {
     // TODO: implement rejectSessionProposal
   }
 
@@ -143,17 +197,20 @@ class DappConnectClient extends DappConnectClientProtocol {
   Stream<Response> get responseStream => throw UnimplementedError();
 
   @override
-  void sendErrorResponse(Request request, int code, String message) {
+  Future<void> sendErrorResponse(
+      Request request, int code, String message) async {
     // TODO: implement sendErrorResponse
   }
 
   @override
-  void sendRequest(String topic, String method, Map<String, dynamic> params) {
+  Future<void> sendRequest(
+      String topic, String method, Map<String, dynamic> params) async {
     // TODO: implement sendRequest
   }
 
   @override
-  void sendSuccessResponse(Request request, Map<String, dynamic> result) {
+  Future<void> sendSuccessResponse(
+      Request request, Map<String, dynamic> result) async {
     // TODO: implement sendSuccessResponse
   }
 
@@ -168,12 +225,12 @@ class DappConnectClient extends DappConnectClientProtocol {
   }
 
   @override
-  void cleanup() {
+  Future<void> cleanup() async {
     // TODO: implement cleanup
   }
 
   @override
-  void connectUser(DappConnectUser user) => _connectUser(user);
+  Future<void> connectUser(DappConnectUser user) => _connectUser(user);
 
   /// Connects the user to the websocket.
   Future<DappConnectUser> _connectUser(DappConnectUser user) async {
@@ -267,5 +324,10 @@ class DappConnectClient extends DappConnectClientProtocol {
     _connectionStatusSubscription = null;
 
     _ws.disconnect();
+  }
+
+  Future<void> _send(dynamic content, String topic, String peerPublicKeyHex,
+      String privateKeyHex) async {
+    // MessageFactory.fromText(text, topic, senderUserId, privateKey, nodeId)
   }
 }
