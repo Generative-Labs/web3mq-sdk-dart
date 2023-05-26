@@ -59,3 +59,22 @@ Map<String, dynamic> _$SessionProposalToJson(SessionProposal instance) =>
           instance.requiredNamespaces.map((k, e) => MapEntry(k, e.toJson())),
       'sessionProperties': instance.sessionProperties.toJson(),
     };
+
+SessionProposalContent _$SessionProposalContentFromJson(
+        Map<String, dynamic> json) =>
+    SessionProposalContent(
+      (json['requiredNamespaces'] as Map<String, dynamic>).map(
+        (k, e) =>
+            MapEntry(k, ProposalNamespace.fromJson(e as Map<String, dynamic>)),
+      ),
+      SessionProperties.fromJson(
+          json['sessionProperties'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$SessionProposalContentToJson(
+        SessionProposalContent instance) =>
+    <String, dynamic>{
+      'requiredNamespaces':
+          instance.requiredNamespaces.map((k, e) => MapEntry(k, e.toJson())),
+      'sessionProperties': instance.sessionProperties.toJson(),
+    };

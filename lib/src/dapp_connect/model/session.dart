@@ -106,6 +106,28 @@ class SessionProposal extends Equatable {
 }
 
 ///
+@JsonSerializable(explicitToJson: true)
+class SessionProposalContent extends Equatable {
+  ///
+  final Map<String, ProposalNamespace> requiredNamespaces;
+
+  ///
+  final SessionProperties sessionProperties;
+
+  SessionProposalContent(this.requiredNamespaces, this.sessionProperties);
+
+  /// Create a new instance from a json
+  factory SessionProposalContent.fromJson(Map<String, dynamic> json) =>
+      _$SessionProposalContentFromJson(json);
+
+  /// Serialize to json
+  Map<String, dynamic> toJson() => _$SessionProposalContentToJson(this);
+
+  @override
+  List<Object?> get props => [requiredNamespaces, sessionProperties];
+}
+
+///
 class SessionProposalFactory {
   ///
   static SessionProposal create(

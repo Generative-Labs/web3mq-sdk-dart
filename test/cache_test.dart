@@ -1,6 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:web3mq/src/dapp_connect/model/app_metadata.dart';
 import 'package:web3mq/src/dapp_connect/model/namespace.dart';
+import 'package:web3mq/src/dapp_connect/model/participant.dart';
 import 'package:web3mq/src/dapp_connect/model/session.dart';
 import 'package:web3mq/src/dapp_connect/stroage/storage.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
@@ -15,6 +17,8 @@ void main() {
 
     late SessionProperties sessionProperties;
 
+    late Participant participant;
+
     setUp(() async {
       final store = FakeSharedPreferencesStore({});
       SharedPreferencesStorePlatform.instance = store;
@@ -23,12 +27,14 @@ void main() {
         '456': ProposalNamespace({}, {'personal_sign'}, {})
       };
       sessionProperties = SessionProperties('789');
+      participant = Participant('publicKey',
+          AppMetadata('name', 'description', 'url', ['icons'], 'redirect'));
     });
 
     test('setSessionProposal and getSessionProposal', () async {
       final topic = '123';
       final sessionProposal = SessionProposalFactory.create(
-          topic, requiredNamespaces, sessionProperties);
+          topic, participant, requiredNamespaces, sessionProperties);
       final proposalId = sessionProposal.id;
       await storage.setSessionProposal(sessionProposal);
       final retrievedProposal = await storage.getSessionProposal(proposalId);
@@ -38,7 +44,7 @@ void main() {
     test('removeSessionProposal', () async {
       final topic = '123';
       final sessionProposal = SessionProposalFactory.create(
-          topic, requiredNamespaces, sessionProperties);
+          topic, participant, requiredNamespaces, sessionProperties);
       final proposalId = sessionProposal.id;
       await storage.setSessionProposal(sessionProposal);
       await storage.removeSessionProposal(proposalId);
@@ -49,12 +55,12 @@ void main() {
     test('clear', () async {
       final topic1 = '123';
       final sessionProposal1 = SessionProposalFactory.create(
-          topic1, requiredNamespaces, sessionProperties);
+          topic1, participant, requiredNamespaces, sessionProperties);
       final proposalId1 = sessionProposal1.id;
 
       final topic2 = '123';
       final sessionProposal2 = SessionProposalFactory.create(
-          topic2, requiredNamespaces, sessionProperties);
+          topic2, participant, requiredNamespaces, sessionProperties);
       final proposalId2 = sessionProposal2.id;
 
       await storage.setSessionProposal(sessionProposal1);

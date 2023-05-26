@@ -47,7 +47,7 @@ class SessionProposalRPCRequest {
   final String method;
 
   ///
-  final SessionProposal params;
+  final SessionProposalContent params;
 
   ///
   SessionProposalRPCRequest(this.id, this.method, this.params);

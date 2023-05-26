@@ -10,13 +10,10 @@ void main() {
   group('A group of uri tests', () {
     test('uri generation should be right', () async {
       //
-      final sessionProposal = SessionProposalFactory.create(
-          'topic',
-          {
-            'ProposalNamespaceAccountId':
-                ProposalNamespace({''}, {'personal_sign'}, {''})
-          },
-          SessionProperties('expiry'));
+      final sessionProposal = SessionProposalContent({
+        'ProposalNamespaceAccountId':
+            ProposalNamespace({''}, {'personal_sign'}, {''})
+      }, SessionProperties('expiry'));
 
       final uri = DappConnectURI(
           'topic',

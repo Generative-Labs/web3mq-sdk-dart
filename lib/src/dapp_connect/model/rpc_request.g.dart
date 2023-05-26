@@ -24,7 +24,7 @@ SessionProposalRPCRequest _$SessionProposalRPCRequestFromJson(
     SessionProposalRPCRequest(
       json['id'] as String,
       json['method'] as String,
-      SessionProposal.fromJson(json['params'] as Map<String, dynamic>),
+      SessionProposalContent.fromJson(json['params'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$SessionProposalRPCRequestToJson(

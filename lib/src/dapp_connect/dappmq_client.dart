@@ -318,12 +318,11 @@ class DappConnectClient extends DappConnectClientProtocol {
     final proposer = Participant(publicKey, _appMetadata);
 
     final proposalId = _idGenerator.next();
-    final proposal = SessionProposal(proposalId, theUser.userId, proposer,
+    final proposal = SessionProposalContent(
         requiredNamespaces, SessionProperties.fromDefault());
     final request = SessionProposalRPCRequest(
         proposalId, RequestMethod.providerAuthorization, proposal);
-    return DappConnectURI(
-        theUser.userId, Participant(publicKey, _appMetadata), request);
+    return DappConnectURI(theUser.userId, proposer, request);
   }
 
   @override
