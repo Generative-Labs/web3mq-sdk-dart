@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:json_annotation/json_annotation.dart';
 import 'package:web3mq/src/dapp_connect/model/participant.dart';
 import 'package:web3mq/src/utils/form_data_converter.dart';
