@@ -18,7 +18,7 @@ class RPCRequest extends Equatable {
   final String method;
 
   ///
-  final dynamic params;
+  final List<int> params;
 
   /// Create a new instance
   RPCRequest(this.id, this.method, this.params);

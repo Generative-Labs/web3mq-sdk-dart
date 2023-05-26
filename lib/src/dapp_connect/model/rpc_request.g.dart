@@ -9,7 +9,7 @@ part of 'rpc_request.dart';
 RPCRequest _$RPCRequestFromJson(Map<String, dynamic> json) => RPCRequest(
       json['id'] as String,
       json['method'] as String,
-      json['params'],
+      (json['params'] as List<dynamic>).map((e) => e as int).toList(),
     );
 
 Map<String, dynamic> _$RPCRequestToJson(RPCRequest instance) =>

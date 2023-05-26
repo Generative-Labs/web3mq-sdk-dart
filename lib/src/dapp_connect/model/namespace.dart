@@ -5,7 +5,7 @@ import 'package:web3mq/src/models/accounts.dart';
 part 'namespace.g.dart';
 
 ///
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class SessionNamespace extends Equatable {
   ///
   final Set<Account> accounts;

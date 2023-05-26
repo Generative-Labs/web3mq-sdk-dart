@@ -3,8 +3,6 @@ import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
 import 'package:flutter_sodium/flutter_sodium.dart' as sodium;
-import 'package:pointycastle/pointycastle.dart' as hide;
-
 import 'stroage/storage.dart';
 
 class AesKeyResult {
@@ -106,30 +104,30 @@ class DappConnectShareKeyCoder extends ShareKeyCoder {
   }
 }
 
-// final keyData = ...; // your key data as a Uint8List
-// final iv = ...; // your initialization vector as a Uint8List
-
-// final cipher = GCMBlockCipher(AESEngine())
-//   ..init(true, AEADParameters(
-//     KeyParameter(keyData),
-//     128,
-//     iv,
-//     Uint8List(0), // associated data
-//   ));
-
-// final plaintext = ...; // your plaintext as a Uint8List
-// final ciphertext = Uint8List(cipher.getOutputSize(plaintext.length));
-
-// final len = cipher.processBytes(plaintext, 0, plaintext.length, ciphertext, 0);
-// cipher.doFinal(ciphertext, len);
-// return ciphertext;
-
 ///
 class Serializer {
   ///
   final KeyStorage keyStorage;
 
+  ///
   final ShareKeyCoder shareKeyCoder;
 
+  ///
   Serializer(this.keyStorage, this.shareKeyCoder);
+
+  ///
+  Future<String> encrypt(
+      List<int> bytes, String peerPublicKeyHex, String? privateKey) async {
+    final fianlPrivateKey = privateKey ?? await keyStorage.privateKeyHex;
+    return await shareKeyCoder.encrypt(
+        bytes, peerPublicKeyHex, fianlPrivateKey);
+  }
+
+  ///
+  Future<List<int>> decrypt(
+      String content, String peerPublicKeyHex, String? privateKey) async {
+    final fianlPrivateKey = privateKey ?? await keyStorage.privateKeyHex;
+    return await shareKeyCoder.decrypt(
+        content, peerPublicKeyHex, fianlPrivateKey);
+  }
 }

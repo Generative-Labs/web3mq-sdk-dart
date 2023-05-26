@@ -17,7 +17,7 @@ SessionNamespace _$SessionNamespaceFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$SessionNamespaceToJson(SessionNamespace instance) =>
     <String, dynamic>{
-      'accounts': instance.accounts.toList(),
+      'accounts': instance.accounts.map((e) => e.toJson()).toList(),
       'methods': instance.methods.toList(),
       'events': instance.events.toList(),
     };

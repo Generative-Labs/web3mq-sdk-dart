@@ -19,7 +19,9 @@ abstract class Storage {
   Future<void> removeSessionProposal(String proposalId);
 
   /// Get session.
-  Future<Session?> getSession(String sessionId);
+  Future<Session?> getSession(String topic);
+
+  Future<List<Session>> getAllSessions();
 
   /// Set session.
   Future<void> setSession(Session session);
@@ -132,6 +134,22 @@ class Web3MQStorage extends Storage {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString(
         _getCacheKey(_recordPrefix, record.topic), jsonEncode(record));
+  }
+
+  @override
+  Future<List<Session>> getAllSessions() async {
+    final prefs = await SharedPreferences.getInstance();
+    final sessions = <Session>[];
+    prefs.getKeys().forEach((key) {
+      if (key.startsWith(_sessionCachePrefix)) {
+        final value = prefs.getString(key);
+        if (value != null) {
+          final session = Session.fromJson(jsonDecode(value));
+          sessions.add(session);
+        }
+      }
+    });
+    return sessions;
   }
 }
 

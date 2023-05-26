@@ -58,6 +58,17 @@ class SessionProperties extends Equatable {
 
   @override
   List<Object?> get props => [expiry];
+
+  /// Create a new instance with default 7 days.
+  factory SessionProperties.fromDefault() {
+    return SessionProperties(
+        DateTime.now().add(Duration(days: 7)).toIso8601String());
+  }
+
+  /// Create a new instance with given duration.
+  factory SessionProperties.fromExpiryDuration(Duration duration) {
+    return SessionProperties(DateTime.now().add(duration).toIso8601String());
+  }
 }
 
 ///
@@ -69,6 +80,9 @@ class SessionProposal extends Equatable {
   /// the sender topic.
   final String pairingTopic;
 
+  /// the proposer.
+  final Participant proposer;
+
   ///
   final Map<String, ProposalNamespace> requiredNamespaces;
 
@@ -76,8 +90,8 @@ class SessionProposal extends Equatable {
   final SessionProperties sessionProperties;
 
   ///
-  SessionProposal(this.id, this.pairingTopic, this.requiredNamespaces,
-      this.sessionProperties);
+  SessionProposal(this.id, this.pairingTopic, this.proposer,
+      this.requiredNamespaces, this.sessionProperties);
 
   /// Create a new instance from a json
   factory SessionProposal.fromJson(Map<String, dynamic> json) =>
@@ -96,10 +110,11 @@ class SessionProposalFactory {
   ///
   static SessionProposal create(
       String pairingTopic,
+      Participant proposer,
       Map<String, ProposalNamespace> requiredNamespaces,
       SessionProperties sessionProperties) {
-    final id = DappConnectIdGenerator().next();
+    final id = DappConnectRequestIdGenerator().next();
     return SessionProposal(
-        id, pairingTopic, requiredNamespaces, sessionProperties);
+        id, pairingTopic, proposer, requiredNamespaces, sessionProperties);
   }
 }

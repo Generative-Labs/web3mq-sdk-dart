@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web3mq/src/dapp_connect/model/namespace.dart';
 import 'package:web3mq/src/dapp_connect/model/session.dart';
 import 'package:web3mq/src/dapp_connect/stroage/storage.dart';

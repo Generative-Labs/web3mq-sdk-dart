@@ -11,7 +11,7 @@ abstract class IdGenerator {
 }
 
 ///
-class DappConnectIdGenerator extends IdGenerator {
+class DappConnectRequestIdGenerator extends IdGenerator {
   ///
   @override
   String next() {

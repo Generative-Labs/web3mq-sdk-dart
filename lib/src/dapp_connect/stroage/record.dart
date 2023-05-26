@@ -27,4 +27,17 @@ class Record {
 
   /// Serialize to json
   Map<String, dynamic> toJson() => _$RecordToJson(this);
+
+  factory Record.fromRequest(Request request) =>
+      Record(request.id, request.topic, request, null);
+
+  /// Copy with
+  Record copyWith({String? id, String? topic, Response? response}) {
+    return Record(
+      id ?? this.id,
+      topic ?? this.topic,
+      request,
+      response ?? this.response,
+    );
+  }
 }

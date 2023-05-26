@@ -4,7 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'app_metadata.g.dart';
 
 ///
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class AppMetadata extends Equatable {
   ///
   final String name;

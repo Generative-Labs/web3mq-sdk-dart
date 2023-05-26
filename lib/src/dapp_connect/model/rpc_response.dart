@@ -1,7 +1,8 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:web3mq/src/dapp_connect/model/rpc_error.dart';
-import 'package:web3mq/src/utils/serializer.dart';
 
 part 'rpc_response.g.dart';
 
@@ -18,11 +19,11 @@ class RPCResponse extends Equatable {
   final String? method;
 
   ///
-  @JsonKey(includeIfNull: false, toJson: Serializer.readOnly)
-  final dynamic result;
+  @JsonKey(includeIfNull: false)
+  final List<int>? result;
 
   ///
-  @JsonKey(includeIfNull: false, toJson: Serializer.readOnly)
+  @JsonKey(includeIfNull: false)
   final RPCError? error;
 
   ///
@@ -37,4 +38,9 @@ class RPCResponse extends Equatable {
 
   @override
   List<Object?> get props => [id, jsonrpc, method, result, error];
+
+  /// Convert to bytes
+  List<int> toBytes() {
+    return utf8.encode(jsonEncode(toJson()));
+  }
 }

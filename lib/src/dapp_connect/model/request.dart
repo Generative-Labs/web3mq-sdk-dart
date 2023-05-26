@@ -1,6 +1,16 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:web3mq/src/dapp_connect/model/rpc_request.dart';
 
 part 'request.g.dart';
+
+///
+class RequestMethod {
+  ///
+  static final String providerAuthorization = 'provider_authorization';
+
+  ///
+  static final String personalSign = 'provider_authorization';
+}
 
 ///
 @JsonSerializable()
@@ -29,4 +39,16 @@ class Request {
 
   /// Serialize to json
   Map<String, dynamic> toJson() => _$RequestToJson(this);
+
+  ///
+  factory Request.fromRpcRequest(
+      RPCRequest request, String topic, String publicKeyHex) {
+    return Request(
+      request.id,
+      request.method,
+      request.params,
+      topic,
+      publicKeyHex,
+    );
+  }
 }
