@@ -31,40 +31,27 @@ extension RegisterExtension on Web3MQClient {
   Future<RegisterResult> register(DID did, String password,
           {String? domain, String? userId}) async =>
       _doRegister(did, password,
-          domain: domain, type: RegisterType.register, userId: userId);
+          domain: domain, type: PasswordSettingType.register, userId: userId);
 
   ///
   Future<RegisterResult> resetPassword(DID did, String password,
           {String? domain, String? userId}) async =>
       _doRegister(did, password,
-          domain: domain, type: RegisterType.reset, userId: userId);
+          domain: domain, type: PasswordSettingType.reset, userId: userId);
 
   /// Registers a user by proxy.
   ///
   /// The [userId] parameter can be generated using the [client.generateUserIdByDid] function.
-  Future<RegisterResult> registerByProxy(
-          DID did,
-          String userId,
-          String password,
-          String dappId,
-          String dappSignature,
-          DateTime dateTime,
-          {String? domain}) async =>
-      _doRegister(did, password,
-          domain: domain,
-          type: RegisterType.registerByProxy,
-          userId: userId,
-          dappId: dappId,
-          dappSignature: dappSignature);
+  Future<UserRegisterResponse> registerByProxy(DID did, String userId,
+          String dappId, String dappSignature, DateTime dateTime) =>
+      _service.user.registerByProxy(dappId, dappSignature, did.type, did.value,
+          userId, dateTime, _apiKey);
 
   /// Gets your main private key.
   Future<RegisterResult> _doRegister(DID did, String password,
       {String? domain,
       String? userId,
-      String? dappId,
-      String? dappSignature,
-      DateTime? dateTime,
-      RegisterType type = RegisterType.register}) async {
+      PasswordSettingType type = PasswordSettingType.register}) async {
     if (null == walletConnector) {
       throw Web3MQError('WalletConnector did not setup');
     }
@@ -82,7 +69,7 @@ extension RegisterExtension on Web3MQClient {
     final walletTypeName = "Ethereum";
     final pubKeyType = "ed25519";
 
-    final currentDate = dateTime ?? DateTime.now();
+    final currentDate = DateTime.now();
     final timestamp = currentDate.millisecondsSinceEpoch;
 
     final domainUrl = domain ?? "www.web3mq.com";
@@ -103,38 +90,12 @@ extension RegisterExtension on Web3MQClient {
     final signature =
         await walletConnector!.personalSign(signatureRaw, didValue);
 
-    switch (type) {
-      case RegisterType.register:
-      case RegisterType.reset:
-        final response = await _service.user.register(
-            didType,
-            didValue,
-            theUserId,
-            publicKeyHex,
-            pubKeyType,
-            signatureRaw,
-            signature,
-            currentDate,
-            _apiKey,
-            type: type);
-        return RegisterResult(response.userId,
-            DID(response.didType, response.didValue), privateKeyHex);
-      case RegisterType.registerByProxy:
-        final response = await _service.user.registerByProxy(
-            dappId ?? '',
-            dappSignature ?? '',
-            didType,
-            didValue,
-            theUserId,
-            publicKeyHex,
-            pubKeyType,
-            signatureRaw,
-            signature,
-            currentDate,
-            _apiKey);
-        return RegisterResult(response.userId,
-            DID(response.didType, response.didValue), privateKeyHex);
-    }
+    final response = await _service.user.register(didType, didValue, theUserId,
+        publicKeyHex, pubKeyType, signatureRaw, signature, currentDate, _apiKey,
+        type: type);
+
+    return RegisterResult(response.userId,
+        DID(response.didType, response.didValue), privateKeyHex);
   }
 
   /// Private key in Hex.

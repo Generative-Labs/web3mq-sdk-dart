@@ -7,37 +7,30 @@ import '../http/http_client.dart';
 import '../utils/signer.dart';
 
 ///
-enum RegisterType {
+enum PasswordSettingType {
   /// register
   register,
 
   /// Reset password
-  reset,
-
-  /// Register by proxy
-  registerByProxy;
+  reset;
 
   /// The api path.
   String get path {
     switch (this) {
-      case RegisterType.register:
+      case PasswordSettingType.register:
         return "/api/user_register_v2/";
-      case RegisterType.reset:
+      case PasswordSettingType.reset:
         return '/api/user_reset_password_v2/';
-      case RegisterType.registerByProxy:
-        return '/api/dapp_register_user/';
     }
   }
 
   ///
   String get purpose {
     switch (this) {
-      case RegisterType.register:
+      case PasswordSettingType.register:
         return "register";
-      case RegisterType.reset:
+      case PasswordSettingType.reset:
         return 'reset password';
-      case RegisterType.registerByProxy:
-        return 'register';
     }
   }
 }
@@ -59,7 +52,7 @@ class UserApi {
       String signature,
       DateTime timestamp,
       String accessKey,
-      {RegisterType type = RegisterType.register}) async {
+      {PasswordSettingType type = PasswordSettingType.register}) async {
     final response = await _client.post(
       type.path,
       data: {
@@ -90,10 +83,6 @@ class UserApi {
       String didType,
       String didValue,
       String userId,
-      String pubKey,
-      String pubKeyType,
-      String signatureRaw,
-      String signature,
       DateTime timestamp,
       String accessKey) async {
     final response = await _client.post(
@@ -104,11 +93,7 @@ class UserApi {
         'userid': userId,
         "did_type": didType,
         "did_value": didValue,
-        "did_signature": signature,
-        "pubkey_value": pubKey,
-        "pubkey_type": pubKeyType,
         "timestamp": timestamp.millisecondsSinceEpoch,
-        "signature_content": signatureRaw,
         "testnet_access_key": accessKey
       },
     );
