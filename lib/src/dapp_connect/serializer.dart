@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
 import 'package:flutter_sodium/flutter_sodium.dart' as sodium;
-import 'stroage/storage.dart';
+import 'storage/storage.dart';
 
 class AesKeyResult {
   final SecretKey secretKey;

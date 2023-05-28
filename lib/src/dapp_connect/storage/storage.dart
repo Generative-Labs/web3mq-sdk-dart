@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web3mq/src/dapp_connect/model/session.dart';
-import 'package:web3mq/src/dapp_connect/stroage/record.dart';
+import 'package:web3mq/src/dapp_connect/storage/record.dart';
 
 import '../../utils/private_key_utils.dart';
 

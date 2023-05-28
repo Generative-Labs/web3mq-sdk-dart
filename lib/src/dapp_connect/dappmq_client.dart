@@ -11,8 +11,8 @@ import 'package:web3mq/src/dapp_connect/model/rpc_response.dart';
 import 'package:web3mq/src/dapp_connect/model/session_proposal_result.dart';
 import 'package:web3mq/src/dapp_connect/model/uri.dart';
 import 'package:web3mq/src/dapp_connect/serializer.dart';
-import 'package:web3mq/src/dapp_connect/stroage/record.dart';
-import 'package:web3mq/src/dapp_connect/stroage/storage.dart';
+import 'package:web3mq/src/dapp_connect/storage/record.dart';
+import 'package:web3mq/src/dapp_connect/storage/storage.dart';
 import 'package:web3mq/src/dapp_connect/utils/id_generator.dart';
 import 'package:web3mq/src/logger/logger.dart';
 import 'package:web3mq/src/utils/private_key_utils.dart';
@@ -257,7 +257,7 @@ class DappConnectClient extends DappConnectClientProtocol {
     final publicKeyHex =
         await KeyPairUtils.publicKeyHexFromPrivateKeyHex(privateKeyHex);
 
-    // 1. send repsonse
+    // 1. send response
     // 2. remove proposal
     // 3. set session
     // 4. redirect to dapps

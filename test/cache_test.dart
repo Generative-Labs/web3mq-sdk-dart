@@ -4,7 +4,7 @@ import 'package:web3mq/src/dapp_connect/model/app_metadata.dart';
 import 'package:web3mq/src/dapp_connect/model/namespace.dart';
 import 'package:web3mq/src/dapp_connect/model/participant.dart';
 import 'package:web3mq/src/dapp_connect/model/session.dart';
-import 'package:web3mq/src/dapp_connect/stroage/storage.dart';
+import 'package:web3mq/src/dapp_connect/storage/storage.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 
 void main() {
