@@ -76,8 +76,7 @@ class UserApi {
     throw Web3MQNetworkError.raw(code: res.code, message: res.message ?? "");
   }
 
-  ///
-  Future<UserRegisterResponse> registerByProxy(
+  Future<UserRegisterResponse> preRegister(
       String dappId,
       String dappSignature,
       String didType,
