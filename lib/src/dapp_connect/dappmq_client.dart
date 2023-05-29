@@ -34,6 +34,9 @@ abstract class DappConnectClientProtocol {
   Future<List<Session>> get sessions;
 
   ///
+  Stream<ConnectionStatus> get connectionStatusStream;
+
+  ///
   Stream<Request> get requestStream;
 
   ///
@@ -120,7 +123,16 @@ class DappConnectClient extends DappConnectClientProtocol {
     _serializer = serializer ?? Serializer(_keyStorage, _shareKeyCoder);
   }
 
+  @override
+  Future<List<Session>> get sessions => _storage.getAllSessions();
+
   final _newMessageController = BehaviorSubject<DappConnectMessage>();
+
+  @override
+  Stream<Request> get requestStream => _newRequestController.stream;
+
+  @override
+  Stream<Response> get responseStream => _newResponseController.stream;
 
   /// Stream of new messages.
   Stream<DappConnectMessage> get newMessageStream =>
@@ -272,14 +284,6 @@ class DappConnectClient extends DappConnectClientProtocol {
   }
 
   @override
-  // TODO: implement requestStream
-  Stream<Request> get requestStream => throw UnimplementedError();
-
-  @override
-  // TODO: implement responseStream
-  Stream<Response> get responseStream => throw UnimplementedError();
-
-  @override
   Future<void> sendRequest(
       String topic, String method, Map<String, dynamic> params) async {
     final requestId = _idGenerator.next();
@@ -309,10 +313,6 @@ class DappConnectClient extends DappConnectClientProtocol {
     await _sendResponse(response, request);
   }
 
-  @override
-  Future<List<Session>> get sessions => _storage.getAllSessions();
-
-  ///
   Future<String> personalSign(String message, String address, String topic,
       {String? password}) async {
     final session = await _storage.getSession(topic);
@@ -341,7 +341,8 @@ class DappConnectClient extends DappConnectClientProtocol {
 
   @override
   Future<void> cleanup() async {
-    // TODO: implement cleanup
+    _storage.clear();
+    _keyStorage.reset();
   }
 
   @override
@@ -381,7 +382,8 @@ class DappConnectClient extends DappConnectClientProtocol {
 
   /// This notifies the connection status of the [_ws] connection.
   /// Listen to this to get notified when the [_ws] tries to reconnect.
-  Stream<ConnectionStatus> get wsConnectionStatusStream =>
+  @override
+  Stream<ConnectionStatus> get connectionStatusStream =>
       _wsConnectionStatusController.stream.distinct();
 
   ///
@@ -406,7 +408,7 @@ class DappConnectClient extends DappConnectClientProtocol {
     _wsConnectionStatus = ConnectionStatus.connecting;
 
     // skipping `ws` seed connection status -> ConnectionStatus.disconnected
-    // otherwise `client.wsConnectionStatusStream` will emit in order
+    // otherwise [connectionStatusStream] will emit in order
     // 1. ConnectionStatus.disconnected -> client seed status
     // 2. ConnectionStatus.connecting -> client connecting status
     // 3. ConnectionStatus.disconnected -> ws seed status
@@ -497,10 +499,6 @@ class DappConnectClient extends DappConnectClientProtocol {
     return completer.future;
   }
 
-  void _bindEvent() {
-    responseStream.listen((event) {});
-  }
-
   Future<void> _sendResponse(RPCResponse response, Request request) async {
     final privateKey = await _keyStorage.privateKeyHex;
     final session = await _storage.getSession(request.topic);
@@ -533,8 +531,30 @@ class DappConnectClient extends DappConnectClientProtocol {
     final publicKeyHex = await KeyPairUtils.publicKeyHexFromKeyPair(keyPair);
     final payload = MesasgePayload(encrypted, publicKeyHex);
     final message = DappConnectMessage(payload, theUser.userId);
+
+    // Check the connection status. If currently connected, send the message.
+    // If not connected, wait for a connection and continue sending the message.
+    if (wsConnectionStatus != ConnectionStatus.connected) {
+      await _waitingForConnected();
+    }
     await _sendDappConnectMessage(
         message, topic, theUser.userId, privateKeyHex);
+  }
+
+  Future<void> _waitingForConnected() async {
+    final completer = Completer<void>();
+    StreamSubscription<ConnectionStatus>? subscription;
+    subscription = connectionStatusStream
+        .where((status) => status == ConnectionStatus.connected)
+        .take(1)
+        .listen((status) {
+      subscription?.cancel();
+      completer.complete();
+    }, onError: (error) {
+      subscription?.cancel();
+      completer.completeError(error);
+    }, cancelOnError: true);
+    await completer.future;
   }
 
   Future<void> _sendDappConnectMessage(DappConnectMessage message, String topic,
