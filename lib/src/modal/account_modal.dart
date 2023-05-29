@@ -28,8 +28,17 @@ class AccountModal extends StatefulWidget {
 }
 
 ///
-class _AccountModalState extends State<AccountModal> {
+class _AccountModalState extends State<AccountModal>
+    with SingleTickerProviderStateMixin {
   UserInfo? _userInfo;
+
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +58,8 @@ class _AccountModalState extends State<AccountModal> {
                   Text('Address: ${_userInfo!.walletAddress}'),
                   Text('UserId: ${_userInfo!.userId}'),
                   TabBar(
+                    controller: _tabController,
+                    labelColor: Colors.black,
                     tabs: [
                       Tab(text: 'Register'),
                       Tab(text: 'Generate Credential'),
@@ -56,15 +67,15 @@ class _AccountModalState extends State<AccountModal> {
                     ],
                   ),
                   Expanded(
-                    child: TabBarView(
-                      children: [
-                        RegisterTab(onPressed: _onRegisterPressed),
-                        GenerateCredentialTab(
-                            onPressed: _onGenerateCredentialPressed),
-                        ResetPasswordTab(onPressed: _onResetPasswordPressed),
-                      ],
-                    ),
-                  ),
+                      child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      RegisterTab(onPressed: _onRegisterPressed),
+                      GenerateCredentialTab(
+                          onPressed: _onGenerateCredentialPressed),
+                      ResetPasswordTab(onPressed: _onResetPasswordPressed),
+                    ],
+                  )),
                 ],
               ));
   }
