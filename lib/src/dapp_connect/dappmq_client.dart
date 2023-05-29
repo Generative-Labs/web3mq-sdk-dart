@@ -163,66 +163,6 @@ class DappConnectClient extends DappConnectClientProtocol {
     }
   }
 
-  void _onReceiveMessage(DappConnectMessage message) async {
-    final privateKey = await _keyStorage.privateKeyHex;
-    final bytes = await _serializer.decrypt(
-        message.payload.content, message.payload.publicKey, privateKey);
-    final json = jsonDecode(utf8.decode(bytes));
-    try {
-      final rpcRequest = RPCRequest.fromJson(json);
-      final request = Request.fromRpcRequest(
-          rpcRequest, message.fromTopic, message.payload.publicKey);
-      _onReceiveRequest(request);
-    } catch (e) {
-      try {
-        final rpcResponse = RPCResponse.fromJson(json);
-        final response = Response.fromRpcResponse(
-            rpcResponse, message.fromTopic, message.payload.publicKey);
-        _onReceiveResponse(response);
-      } catch (e) {
-        logger.warning('Unknown message type: $json');
-      }
-    }
-  }
-
-  void _onReceiveRequest(Request request) {
-    _newRequestController.add(request);
-    _storage.setRecord(Record.fromRequest(request));
-  }
-
-  void _onReceiveResponse(Response response) {
-    _newResponseController.add(response);
-    _storage.getRecord(response.topic).then((value) {
-      if (null != value) {
-        final fianlRecord = value.copyWith(response: response);
-        _storage.setRecord(fianlRecord);
-      }
-    });
-  }
-
-  Future<Response> waitingForResponse(String requestId) async {
-    final completer = Completer<Response>();
-    StreamSubscription<Response>? subscription;
-    subscription = responseStream
-        .timeout(Duration(minutes: 3), onTimeout: (sink) {
-          sink.addError(DappConnectError.timeout);
-        })
-        .where((response) => response.id == requestId)
-        .take(1)
-        .listen((response) {
-          subscription?.cancel();
-          completer.complete(response);
-        }, onError: (error) {
-          subscription?.cancel();
-          completer.completeError(error);
-        }, cancelOnError: true);
-    return completer.future;
-  }
-
-  void _bindEvent() {
-    responseStream.listen((event) {});
-  }
-
   final AppMetadata _appMetadata;
 
   final String _apiKey;
@@ -341,9 +281,7 @@ class DappConnectClient extends DappConnectClientProtocol {
 
   @override
   Future<void> sendRequest(
-      String topic, String method, Map<String, dynamic> params) async {
-    // TODO: implement sendRequest
-  }
+      String topic, String method, Map<String, dynamic> params) async {}
 
   @override
   Future<void> sendErrorResponse(
@@ -388,7 +326,7 @@ class DappConnectClient extends DappConnectClientProtocol {
     final bytes = utf8.encode(paramsJson);
     RPCRequest(requestId, RequestMethod.personalSign, bytes);
     _send(bytes, topic, session.peerParticipant.publicKey, theUser.sessionKey);
-    final response = await waitingForResponse(requestId);
+    final response = await _waitingForResponse(requestId);
     final result = response.result;
     if (null != result) {
       return utf8.decode(result);
@@ -499,6 +437,66 @@ class DappConnectClient extends DappConnectClientProtocol {
     _ws.disconnect();
   }
 
+  void _onReceiveMessage(DappConnectMessage message) async {
+    final privateKey = await _keyStorage.privateKeyHex;
+    final bytes = await _serializer.decrypt(
+        message.payload.content, message.payload.publicKey, privateKey);
+    final json = jsonDecode(utf8.decode(bytes));
+    try {
+      final rpcRequest = RPCRequest.fromJson(json);
+      final request = Request.fromRpcRequest(
+          rpcRequest, message.fromTopic, message.payload.publicKey);
+      _onReceiveRequest(request);
+    } catch (e) {
+      try {
+        final rpcResponse = RPCResponse.fromJson(json);
+        final response = Response.fromRpcResponse(
+            rpcResponse, message.fromTopic, message.payload.publicKey);
+        _onReceiveResponse(response);
+      } catch (e) {
+        logger.warning('Unknown message type: $json');
+      }
+    }
+  }
+
+  void _onReceiveRequest(Request request) {
+    _newRequestController.add(request);
+    _storage.setRecord(Record.fromRequest(request));
+  }
+
+  void _onReceiveResponse(Response response) {
+    _newResponseController.add(response);
+    _storage.getRecord(response.topic).then((value) {
+      if (null != value) {
+        final fianlRecord = value.copyWith(response: response);
+        _storage.setRecord(fianlRecord);
+      }
+    });
+  }
+
+  Future<Response> _waitingForResponse(String requestId) async {
+    final completer = Completer<Response>();
+    StreamSubscription<Response>? subscription;
+    subscription = responseStream
+        .timeout(Duration(minutes: 3), onTimeout: (sink) {
+          sink.addError(DappConnectError.timeout);
+        })
+        .where((response) => response.id == requestId)
+        .take(1)
+        .listen((response) {
+          subscription?.cancel();
+          completer.complete(response);
+        }, onError: (error) {
+          subscription?.cancel();
+          completer.completeError(error);
+        }, cancelOnError: true);
+    return completer.future;
+  }
+
+  void _bindEvent() {
+    responseStream.listen((event) {});
+  }
+
   Future<void> _sendResponse(RPCResponse response, Request request) async {
     final privateKey = await _keyStorage.privateKeyHex;
     final session = await _storage.getSession(request.topic);
@@ -506,6 +504,16 @@ class DappConnectClient extends DappConnectClientProtocol {
       throw DappConnectError.sessionNotFound();
     }
     await _send(response.toBytes(), session.topic,
+        session.peerParticipant.publicKey, privateKey);
+  }
+
+  Future<void> _sendRequest(RPCRequest request, String topic) async {
+    final privateKey = await _keyStorage.privateKeyHex;
+    final session = await _storage.getSession(topic);
+    if (null == session) {
+      throw DappConnectError.sessionNotFound();
+    }
+    await _send(request.toBytes(), session.topic,
         session.peerParticipant.publicKey, privateKey);
   }
 

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -32,6 +34,11 @@ class RPCRequest extends Equatable {
 
   @override
   List<Object?> get props => [id, jsonrpc, method, params];
+
+  /// Convert to bytes
+  List<int> toBytes() {
+    return utf8.encode(jsonEncode(toJson()));
+  }
 }
 
 ///
