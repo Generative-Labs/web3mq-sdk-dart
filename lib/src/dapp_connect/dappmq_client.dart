@@ -281,7 +281,12 @@ class DappConnectClient extends DappConnectClientProtocol {
 
   @override
   Future<void> sendRequest(
-      String topic, String method, Map<String, dynamic> params) async {}
+      String topic, String method, Map<String, dynamic> params) async {
+    final requestId = _idGenerator.next();
+    // convert params to List<int>
+    final rpcRequest = RPCRequest.from(requestId, method, params);
+    _sendRequest(rpcRequest, topic);
+  }
 
   @override
   Future<void> sendErrorResponse(

@@ -35,6 +35,13 @@ class RPCRequest extends Equatable {
   @override
   List<Object?> get props => [id, jsonrpc, method, params];
 
+  ///
+  factory RPCRequest.from(String id, String method, Map<String, dynamic> map) {
+    final paramsJson = jsonEncode(map);
+    final paramsBytes = utf8.encode(paramsJson);
+    return RPCRequest(id, method, paramsBytes);
+  }
+
   /// Convert to bytes
   List<int> toBytes() {
     return utf8.encode(jsonEncode(toJson()));
