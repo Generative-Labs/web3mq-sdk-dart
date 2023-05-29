@@ -2,22 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:web3mq/src/api/responses.dart';
 import 'package:web3mq/src/client/client.dart';
 import 'package:web3mq/src/models/accounts.dart';
-
-enum AccountEvent {
-  registerSuccess,
-  generateCredentialSuccess,
-  resetPasswordSuccess
-}
+import 'package:web3mq/src/ws/models/ws_models.dart';
 
 /// An account modal, for user register, login, password reset.
 class AccountModal extends StatefulWidget {
   ///
-  AccountModal({super.key, this.onEvent, required this.client});
+  AccountModal(
+      {super.key,
+      this.onRegisterSuccess,
+      this.onGenerateCredentialSuccess,
+      this.onResetPasswordSuccess,
+      required this.client});
 
   final Web3MQClient client;
 
   ///
-  final void Function(AccountEvent)? onEvent;
+  final void Function(RegisterResult)? onRegisterSuccess;
+
+  final void Function(User)? onGenerateCredentialSuccess;
+
+  final void Function(RegisterResult)? onResetPasswordSuccess;
 
   @override
   State<AccountModal> createState() => _AccountModalState();
@@ -33,7 +37,6 @@ class _AccountModalState extends State<AccountModal> {
         appBar: AppBar(
           title: const Text('Account Modal'),
         ),
-        // 如果没有连接钱包，展示一个连接按钮，连接完之后展示基本的用户信息，然后由3个基本功能，注册，创建登录凭证，重置密码，这三个功能可以通过一个顶部的 tab 切换，结果通过 event 传递给外界
         body: _userInfo == null
             ? Center(
                 child: ElevatedButton(
@@ -55,11 +58,10 @@ class _AccountModalState extends State<AccountModal> {
                   Expanded(
                     child: TabBarView(
                       children: [
-                        RegisterTab(onSuccess: _handleRegisterSuccess),
+                        RegisterTab(onPressed: _onRegisterPressed),
                         GenerateCredentialTab(
-                            onSuccess: _handleGenerateCredentialSuccess),
-                        ResetPasswordTab(
-                            onSuccess: _handleResetPasswordSuccess),
+                            onPressed: _onGenerateCredentialPressed),
+                        ResetPasswordTab(onPressed: _onResetPasswordPressed),
                       ],
                     ),
                   ),
@@ -84,78 +86,168 @@ class _AccountModalState extends State<AccountModal> {
     }
   }
 
-  void _handleRegisterSuccess() {
-    if (widget.onEvent != null) {
-      widget.onEvent!(AccountEvent.registerSuccess);
+  void _onRegisterPressed(String password) {
+    final did = DID(_userInfo!.didType, _userInfo!.didValue);
+    widget.client.register(did, password).then((value) {
+      _handleRegisterSuccess(value);
+    });
+  }
+
+  void _onGenerateCredentialPressed(String password, Duration duration) {
+    final did = DID(_userInfo!.didType, _userInfo!.didValue);
+    widget.client
+        .userWithDIDAndPassword(did, password, duration)
+        .then((value) => _handleGenerateCredentialSuccess(value));
+  }
+
+  void _onResetPasswordPressed(String password) {
+    final did = DID(_userInfo!.didType, _userInfo!.didValue);
+    widget.client.resetPassword(did, password).then((value) {
+      _handleResetPasswordSuccess(value);
+    });
+  }
+
+  void _handleRegisterSuccess(RegisterResult result) {
+    if (widget.onRegisterSuccess != null) {
+      widget.onRegisterSuccess!(result);
     }
   }
 
-  void _handleGenerateCredentialSuccess() {
-    if (widget.onEvent != null) {
-      widget.onEvent!(AccountEvent.generateCredentialSuccess);
+  void _handleGenerateCredentialSuccess(User user) {
+    if (widget.onGenerateCredentialSuccess != null) {
+      widget.onGenerateCredentialSuccess!(user);
     }
   }
 
-  void _handleResetPasswordSuccess() {
-    if (widget.onEvent != null) {
-      widget.onEvent!(AccountEvent.resetPasswordSuccess);
+  void _handleResetPasswordSuccess(RegisterResult result) {
+    if (widget.onResetPasswordSuccess != null) {
+      widget.onResetPasswordSuccess!(result);
     }
   }
 }
 
 class RegisterTab extends StatelessWidget {
-  RegisterTab({super.key, required this.onSuccess});
+  final _controller = TextEditingController();
 
-  final void Function() onSuccess;
+  final void Function(String) onPressed;
+
+  RegisterTab({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          // Perform registration logic here
-          onSuccess.call();
-        },
-        child: Text('Register'),
+      child: Column(
+        children: [
+          TextField(
+            controller: _controller,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Password',
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => onPressed(_controller.text),
+            child: Text('Register'),
+          )
+        ],
       ),
     );
   }
 }
 
-class GenerateCredentialTab extends StatelessWidget {
-  GenerateCredentialTab({super.key, required this.onSuccess});
+class GenerateCredentialTab extends StatefulWidget {
+  GenerateCredentialTab({super.key, required this.onPressed});
 
-  final void Function() onSuccess;
+  final void Function(String, Duration) onPressed;
+
+  @override
+  State<GenerateCredentialTab> createState() => _GenerateCredentialState();
+}
+
+class _GenerateCredentialState extends State<GenerateCredentialTab> {
+  final _controller = TextEditingController();
+
+  Duration _duration = Duration(days: 7);
+
+  final infiniteDuration = Duration(hours: 1000000);
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          // Perform generate credential logic here
-          onSuccess.call();
-        },
-        child: Text('Generate Credential'),
-      ),
-    );
+        child: Column(
+      children: [
+        TextField(
+          controller: _controller,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'Password',
+          ),
+        ),
+        DropdownButton<Duration>(
+          value: _duration,
+          onChanged: (value) {
+            setState(() {
+              if (null != value) {
+                _duration = value;
+              }
+            });
+          },
+          items: [
+            DropdownMenuItem(
+              value: Duration(days: 1),
+              child: Text('1 days'),
+            ),
+            DropdownMenuItem(
+              value: Duration(days: 7),
+              child: Text('7 days'),
+            ),
+            DropdownMenuItem(
+              value: Duration(days: 14),
+              child: Text('2 weeks'),
+            ),
+            DropdownMenuItem(
+              value: Duration(days: 30),
+              child: Text('1 month'),
+            ),
+            DropdownMenuItem(
+              value: infiniteDuration,
+              child: Text('no expiration'),
+            ),
+          ],
+        ),
+        ElevatedButton(
+          onPressed: () => widget.onPressed(_controller.text, _duration),
+          child: Text('Generate Credential'),
+        ),
+      ],
+    ));
   }
 }
 
 class ResetPasswordTab extends StatelessWidget {
-  ResetPasswordTab({super.key, required this.onSuccess});
+  ResetPasswordTab({super.key, required this.onPressed});
 
-  final void Function() onSuccess;
+  final void Function(String) onPressed;
+
+  final _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          // Perform reset password logic here
-          onSuccess.call();
-        },
-        child: Text('Reset Password'),
-      ),
-    );
+        child: Column(
+      children: [
+        TextField(
+          controller: _controller,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'New Password',
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () => onPressed(_controller.text),
+          child: Text('Reset Password'),
+        ),
+      ],
+    ));
   }
 }
