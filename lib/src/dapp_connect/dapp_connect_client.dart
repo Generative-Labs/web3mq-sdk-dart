@@ -92,7 +92,8 @@ class DappConnectClient extends DappConnectClientProtocol {
       {this.logLevel = Level.ALL,
       this.logHandlerFunction = Web3MQLogger.defaultLogHandler,
       String? baseURL,
-      IdGenerator? idGenerator,
+      UserIdGenerator? userIdGenerator,
+      RequestIdGenerator? idGenerator,
       Storage? storage,
       KeyStorage? keyStorage,
       ShareKeyCoder? shareKeyCoder,
@@ -107,6 +108,8 @@ class DappConnectClient extends DappConnectClientProtocol {
           handler: handleEvent,
           logger: detachedLogger('🔌'),
         );
+
+    _userIdGenerator = userIdGenerator ?? DappConnectUserIdGenerator();
 
     _idGenerator = idGenerator ?? DappConnectRequestIdGenerator();
 
@@ -181,7 +184,9 @@ class DappConnectClient extends DappConnectClientProtocol {
 
   final String _apiKey;
 
-  late final IdGenerator _idGenerator;
+  late final RequestIdGenerator _idGenerator;
+
+  late final UserIdGenerator _userIdGenerator;
 
   /// By default the Chat client will write all messages with level Warn or
   /// Error to stdout.
@@ -365,7 +370,7 @@ class DappConnectClient extends DappConnectClientProtocol {
       final publicKeyBase64String =
           await KeyPairUtils.publicKeyBase64FromKeyPair(keyPair);
       final userId =
-          await UserIdGenerator.create(_apiKey, publicKeyBase64String);
+          await _userIdGenerator.create(_apiKey, publicKeyBase64String);
       final user = DappConnectUser(userId, privateKey);
       await _connectUser(user);
     }

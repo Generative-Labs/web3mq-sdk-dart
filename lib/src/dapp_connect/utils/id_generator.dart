@@ -5,13 +5,18 @@ import 'package:convert/convert.dart';
 import 'package:cryptography/cryptography.dart';
 
 ///
-abstract class IdGenerator {
+abstract class RequestIdGenerator {
   ///
   String next();
 }
 
+abstract class UserIdGenerator {
+  ///
+  Future<String> create(String appId, String publicKeyBase64String);
+}
+
 ///
-class DappConnectRequestIdGenerator extends IdGenerator {
+class DappConnectRequestIdGenerator extends RequestIdGenerator {
   ///
   @override
   String next() {
@@ -22,10 +27,10 @@ class DappConnectRequestIdGenerator extends IdGenerator {
 }
 
 ///
-class UserIdGenerator {
+class DappConnectUserIdGenerator extends UserIdGenerator {
   ///
-  static Future<String> create(
-      String appId, String publicKeyBase64String) async {
+  @override
+  Future<String> create(String appId, String publicKeyBase64String) async {
     final pre = "$appId@$publicKeyBase64String";
     final algorithm = Sha1();
     final bytes = utf8.encode(pre);
