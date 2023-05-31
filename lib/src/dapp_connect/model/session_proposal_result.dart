@@ -29,6 +29,12 @@ class SessionProposalResult {
   /// Serialize to json
   Map<String, dynamic> toJson() => _$SessionProposalResultToJson(this);
 
+  /// Create a new instance from bytes
+  factory SessionProposalResult.fromBytes(List<int> bytes) {
+    final json = utf8.decode(bytes);
+    return SessionProposalResult.fromJson(jsonDecode(json));
+  }
+
   /// Converts to bytes
   List<int> toBytes() {
     return utf8.encode(jsonEncode(toJson()));

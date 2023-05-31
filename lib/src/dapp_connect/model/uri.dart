@@ -23,7 +23,7 @@ class DappConnectURI {
   }
 
   ///
-  String get deepLinkURL => 'web3mq://?$absoluteString';
+  Uri get deepLinkURL => Uri.parse('web3mq://?$absoluteString');
 
   ///
   DappConnectURI(this.topic, this.proposer, this.request);

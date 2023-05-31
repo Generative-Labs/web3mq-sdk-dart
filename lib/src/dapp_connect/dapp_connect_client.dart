@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:logging/logging.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:web3mq/src/dapp_connect/serializer.dart';
 import 'package:web3mq/src/dapp_connect/storage/record.dart';
@@ -200,9 +201,52 @@ class DappConnectClient extends DappConnectClientProtocol {
 
   late final Storage _storage;
 
+  Future<Session> connectWallet(
+      Map<String, ProposalNamespace> requiredNamespaces) async {
+    final theUser = currentUser;
+    if (null == theUser) {
+      throw DappConnectError.currentUserNotFound();
+    }
+    final privateKey = theUser.sessionKey;
+    final publicKey =
+        await KeyPairUtils.publicKeyHexFromPrivateKeyHex(privateKey);
+    final uri = createSessionProposalURI(requiredNamespaces);
+    final deepLink = uri.deepLinkURL;
+    await _openURLIfCould(deepLink);
+    final rawResposne = await _waitingForResponse(uri.request.id);
+    final result = rawResposne.result;
+    if (null != result) {
+      try {
+        // convert List<int> to SessionProposalResult
+        final sessionProposalResult =
+            SessionProposalResult.fromBytes(result.cast<int>());
+        final session = Session(
+            rawResposne.topic,
+            uri.topic,
+            Participant(publicKey, _appMetadata),
+            Participant(rawResposne.publicKey, sessionProposalResult.metadata),
+            sessionProposalResult.sessionProperties.expiry,
+            sessionProposalResult.sessionNamespaces);
+        _storage.setSession(session);
+        return session;
+      } catch (e) {
+        rethrow;
+      }
+    } else {
+      throw rawResposne.error ?? DappConnectError.unknown();
+    }
+  }
+
+  Future<void> _openURLIfCould(Uri uri) async {
+    // open url if could
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
+  }
+
   @override
   Future<void> approveSessionProposal(String proposalId,
-      Map<String, SessionNamespace> sessionNamespace, Duration expire) async {
+      Map<String, SessionNamespace> sessionNamespace, Duration expires) async {
     final proposal = await _storage.getSessionProposal(proposalId);
     if (proposal == null) {
       throw DappConnectError.proposalNotFound();
@@ -220,7 +264,7 @@ class DappConnectClient extends DappConnectClientProtocol {
     // 2. remove proposal
     // 3. set session
     // 4. redirect to dapps
-    final sessionProperties = SessionProperties.fromExpiryDuration(expire);
+    final sessionProperties = SessionProperties.fromExpiryDuration(expires);
 
     final result = SessionProposalResult(
         sessionNamespace, sessionProperties, _appMetadata);
@@ -345,8 +389,9 @@ class DappConnectClient extends DappConnectClientProtocol {
     // convert params to List<int>
     final paramsJson = jsonEncode(params);
     final bytes = utf8.encode(paramsJson);
-    RPCRequest(requestId, RequestMethod.personalSign, bytes);
-    _send(bytes, topic, session.peerParticipant.publicKey, theUser.sessionKey);
+    final request = RPCRequest(requestId, RequestMethod.personalSign, bytes);
+    _send(request.toBytes(), topic, session.peerParticipant.publicKey,
+        theUser.sessionKey);
     final response = await _waitingForResponse(requestId);
     final result = response.result;
     if (null != result) {
