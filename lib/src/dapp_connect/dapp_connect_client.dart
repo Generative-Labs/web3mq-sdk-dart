@@ -364,16 +364,19 @@ class DappConnectClient extends DappConnectClientProtocol {
 
   @override
   Future<void> connectUser({DappConnectUser? user}) async {
-    if (null == user) {
-      final privateKey = await _keyStorage.privateKeyHex;
-      final keyPair = await KeyPairUtils.keyPairFromPrivateKeyHex(privateKey);
-      final publicKeyBase64String =
-          await KeyPairUtils.publicKeyBase64FromKeyPair(keyPair);
-      final userId =
-          await _userIdGenerator.create(_apiKey, publicKeyBase64String);
-      final user = DappConnectUser(userId, privateKey);
-      await _connectUser(user);
+    final paramUser = user;
+    if (null != paramUser) {
+      await _connectUser(paramUser);
+      return;
     }
+    final privateKey = await _keyStorage.privateKeyHex;
+    final keyPair = await KeyPairUtils.keyPairFromPrivateKeyHex(privateKey);
+    final publicKeyBase64String =
+        await KeyPairUtils.publicKeyBase64FromKeyPair(keyPair);
+    final userId =
+        await _userIdGenerator.create(_apiKey, publicKeyBase64String);
+    final newUser = DappConnectUser(userId, privateKey);
+    await _connectUser(newUser);
   }
 
   /// Connects the user to the websocket.
