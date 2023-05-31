@@ -8,7 +8,7 @@ class DappConnectUser {
   ///
   final String userId;
 
-  ///
+  /// private key
   final String sessionKey;
 
   ///

@@ -3,13 +3,7 @@ import 'dart:convert';
 
 import 'package:logging/logging.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:web3mq/src/dapp_connect/model/app_metadata.dart';
-import 'package:web3mq/src/dapp_connect/model/participant.dart';
-import 'package:web3mq/src/dapp_connect/model/request.dart';
-import 'package:web3mq/src/dapp_connect/model/response.dart';
-import 'package:web3mq/src/dapp_connect/model/rpc_response.dart';
-import 'package:web3mq/src/dapp_connect/model/session_proposal_result.dart';
-import 'package:web3mq/src/dapp_connect/model/uri.dart';
+
 import 'package:web3mq/src/dapp_connect/serializer.dart';
 import 'package:web3mq/src/dapp_connect/storage/record.dart';
 import 'package:web3mq/src/dapp_connect/storage/storage.dart';
@@ -21,12 +15,8 @@ import 'package:web3mq/web3mq.dart';
 import '../error/error.dart';
 import '../ws/websocket.dart';
 import 'error/error.dart';
-import 'model/message_payload.dart';
-import 'model/namespace.dart';
-import 'model/rpc_error.dart';
-import 'model/rpc_request.dart';
-import 'model/session.dart';
-import 'model/user.dart';
+
+export 'model/export.dart';
 
 ///
 abstract class DappConnectClientProtocol {
@@ -71,7 +61,7 @@ abstract class DappConnectClientProtocol {
   Future<void> cleanup();
 
   ///
-  Future<void> connectUser(DappConnectUser user);
+  Future<void> connectUser({DappConnectUser user});
 
   ///
   void closeConnection();
@@ -346,7 +336,18 @@ class DappConnectClient extends DappConnectClientProtocol {
   }
 
   @override
-  Future<void> connectUser(DappConnectUser user) => _connectUser(user);
+  Future<void> connectUser({DappConnectUser? user}) async {
+    if (null == user) {
+      final privateKey = await _keyStorage.privateKeyHex;
+      final keyPair = await KeyPairUtils.keyPairFromPrivateKeyHex(privateKey);
+      final publicKeyBase64String =
+          await KeyPairUtils.publicKeyBase64FromKeyPair(keyPair);
+      final userId =
+          await UserIdGenerator.create(_apiKey, publicKeyBase64String);
+      final user = DappConnectUser(userId, privateKey);
+      await _connectUser(user);
+    }
+  }
 
   /// Connects the user to the websocket.
   Future<DappConnectUser> _connectUser(DappConnectUser user) async {
