@@ -27,6 +27,9 @@ abstract class DappConnectClientProtocol {
   Stream<ConnectionStatus> get connectionStatusStream;
 
   ///
+  Stream<SessionProposal> get sessionProposalStream;
+
+  ///
   Stream<Request> get requestStream;
 
   ///
@@ -38,6 +41,9 @@ abstract class DappConnectClientProtocol {
   ///
   DappConnectURI createSessionProposalURI(
       Map<String, ProposalNamespace> requiredNamespaces);
+
+  ///
+  void pairURI(DappConnectURI uri);
 
   ///
   Future<void> approveSessionProposal(String proposalId,
@@ -116,19 +122,25 @@ class DappConnectClient extends DappConnectClientProtocol {
   @override
   Future<List<Session>> get sessions => _storage.getAllSessions();
 
-  final _newMessageController = BehaviorSubject<DappConnectMessage>();
-
   @override
   Stream<Request> get requestStream => _newRequestController.stream;
 
   @override
   Stream<Response> get responseStream => _newResponseController.stream;
 
+  @override
+  Stream<SessionProposal> get sessionProposalStream =>
+      _sessionProposalController.stream;
+
   /// Stream of new messages.
   Stream<DappConnectMessage> get newMessageStream =>
       _newMessageController.stream;
 
   final _newRequestController = BehaviorSubject<Request>();
+
+  final _newMessageController = BehaviorSubject<DappConnectMessage>();
+
+  final _sessionProposalController = BehaviorSubject<SessionProposal>();
 
   /// Stream of new [Request].
   Stream<Request> get newRequestStream => _newRequestController.stream;
@@ -265,6 +277,16 @@ class DappConnectClient extends DappConnectClientProtocol {
     final request = SessionProposalRPCRequest(
         proposalId, RequestMethod.providerAuthorization, proposal);
     return DappConnectURI(theUser.userId, proposer, request);
+  }
+
+  @override
+  void pairURI(DappConnectURI uri) {
+    final request = uri.request;
+    final proposal = request.params;
+    final sessionProposal = SessionProposal(request.id, uri.topic, uri.proposer,
+        proposal.requiredNamespaces, proposal.sessionProperties);
+    _storage.setSessionProposal(sessionProposal);
+    _sessionProposalController.add(sessionProposal);
   }
 
   @override
