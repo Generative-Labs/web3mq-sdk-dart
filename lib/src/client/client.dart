@@ -329,7 +329,7 @@ class Web3MQClient {
     }
   }
 
-  /// Call this function to dispose the client
+  /// Call this function to dispose the clients
   Future<void> dispose() async {
     logger.info('Disposing new Web3MQClient');
 
